@@ -34,6 +34,9 @@ The background will contain a more detailed description of the product and a com
 Discuss what you need to develop this project. This includes background information you will need to acquire, hardware resources, and software resources. If these are not part of the standard Computer Science Department lab resources, these must be identified early and discussed with the instructor.
 
 ## Collaborators
+Bwosley
+Temi
+Yong Huang
 
 <div align="center">
 
