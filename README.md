@@ -37,6 +37,7 @@ Discuss what you need to develop this project. This includes background informat
 Bwosley
 Temi
 Yong Huang
+Ethan
 
 <div align="center">
 
