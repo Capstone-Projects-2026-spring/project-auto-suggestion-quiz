@@ -76,3 +76,111 @@ sidebar_position: 5
 5. The user clicks **Save and Publish**.  
    - If all required fields are completed, the updated grade is saved and the student is notified.  
    - If any fields are incomplete, the user is prompted to complete them.
+  
+## Student User
+
+### Use Case 1 – Student Creates an Account
+*A student registers for a new account to access the platform*
+
+1. Student navigates to the **Sign Up** Page
+2. Student enters required information (name, email, password)
+3. Student clicks the **Create Account** button
+4. System validates the information and creates the account
+5. Student is redirected to the **Login** Page
+
+---
+
+### Use Case 2 – Student Joins a Class Using an Access Code
+*A student enrolls in a course using a class access code provided by the instructor*
+
+1. Student logs in from the **Login** Page
+2. Student navigates to the **Join Class* Page
+3. Student enters the provided class access code
+4. Student clicks the **Join Class** button
+5. System verifies the code and adds the student to the class
+6. Student is redirected to the **Student Dashboard**
+
+---
+
+### Use Case 3 – Student Views Dashboard
+*A student views available assignments, completed work, and grades*
+
+1. Student arrives at the **Student Dashboard**
+2. System displays a list of available problems
+3. System displays previously completed problems
+4. System displays grades and submission statuses
+5. Student selects a problem to begin or resume working
+
+---
+
+### Use Case 4 – Student Begins a Coding Problem
+*A student opens a coding problem and starts working on it*
+
+1. Student selects a problem from the **Student Dashboard**
+2. System loads the **Problem** Page
+3. System displays the problem description and instructions
+4. System displays the code editor with starter code (if applicable)
+5. Student begins typing code in the editor
+
+---
+
+### Use Case 5 – Student Receives and Selects Auto Code Suggestions
+*A student is presented with multiple code suggestions and must choose one*
+
+1. Student types code in the editor on the Problem Page
+2. System detects a point where a suggestion is available
+3. System displays multiple auto code suggestions
+4. Student selects one suggestion from the list
+5. If the selection is correct:
+   - System highlights the correct suggestion
+     OR
+   - System displays an explanation of why it is correct
+6. System inserts the code
+7. Student continues working
+
+---
+
+### Use Case 6 – Student Runs Code to View Output
+*A student executes their code to check its output*
+
+1. Student clicks the **Run Code** button
+2. System compiles and runs the code
+3. System displays the output or error messages
+4. Student reviews results and continues editing if needed
+
+---
+
+### Use Case 7 – Student Submits Completed Work
+*A student submits their solution for grading*
+
+1. Student clicks the **Submit** button on the **Problem** Page
+2. System validates the submission
+3. System records the final code and submission time
+4. System updates the problem status to submitted
+5. Student is redirected to the Student Dashboard
+
+---
+
+### Use Case 8 – Student Saves Progress and Returns Later
+*A student pauses work and resumes it at a later time*
+
+1. Student exits the **Problem** Page without submitting
+2. System automatically saves current progress
+3. Student later logs back into the system
+4. Student navigates to the **Student Dashboard**
+5. Student selects the in-progress problem
+6. System restores the saved code state
+
+---
+
+### Use Case 9 – Student Reviews Completed Problems and Grades
+*A student reviews feedback and grades for completed assignments*
+
+1. Student navigates to the **Student Dashboard**
+2. Student selects a completed problem
+3. System displays the final submission
+4. System displays grade and feedback (if available)
+5. Student reviews performance and explanations
+
+---
+
