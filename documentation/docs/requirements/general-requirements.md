@@ -10,7 +10,6 @@ sidebar_position: 3
   - Internet Access
 
 * Technology: Programming languages, frameworks, API.
-  - Not mandatory for backend to function
   - Python
   - Use of Gemini API key for AI coding assistant and functionality.
 
