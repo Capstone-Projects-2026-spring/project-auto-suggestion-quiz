@@ -11,11 +11,11 @@
 
 ## Keywords
 
-Section #, as well as any words that quickly give your peers insights into the application like programming language, development platform, type of application, etc.
+AI suggested code, quizzes, educational, leetcode, practice
 
 ## Project Abstract
 
-This document proposes a novel application of a text message (SMS or Email) read-out and hands-free call interacted between an Android Smartphone and an infotainment platform (headunit) in a car environment. When a phone receives an SMS or Email, the text message is transferred from the phone to the headunit through a Bluetooth connection. On the headunit, user can control which and when the received SMS or E-mail to be read out through the in-vehicle audio system. The user may press one button on the headunit to activate the hands-free feature to call back the SMS sender.
+AutoSuggestion Quiz is a web-based educational application that helps students develop critical thinking skills when working with AI-generated code commonly found in modern IDEs. Teachers create and upload quizzes, and students can write and run code directly in the platform while answering by selecting from multiple-choice code suggestions. After submission, teachers can score responses and provide feedback. This format encourages students to question AI-generated code and builds confidence in tackling complex programming problems.
 
 ## High Level Requirement
 
@@ -23,21 +23,34 @@ Describe the requirements – i.e., what the product does and how it does it fro
 
 ## Conceptual Design
 
-Describe the initial design concept: Hardware/software architecture, programming language, operating system, etc.
+The frontend of the application will be developed using JavaScript, React, HTML, and CSS. React will be used to build reusable user interface components and manage application state, while HTML and CSS will be used to structure and style the user interface. The frontend will allow users to select quiz topics, start quizzes, submit answers, and view results in real time.
+The backend will be implemented using Python and Django, which will handle user authentication, quiz generation logic, scoring, and data management. The system will store user data, quiz attempts, and performance metrics in a relational database such as SQLite. The backend will also support algorithms that generate or suggest quiz questions based on predefined rules or user interaction history.
+The application will be accessible through a standard web browser and designed to support multiple users concurrently, ensuring reliability and responsiveness.
 
 ## Background
 
-The background will contain a more detailed description of the product and a comparison to existing similar projects/products. A literature search should be conducted and the results listed. Proper citation of sources is required. If there are similar open-source products, you should state whether existing source will be used and to what extent. If there are similar closed-source/proprietary products, you should state how the proposed product will be similar and different.
+AutoSuggestion Quiz (ASQ) was created to address the problem of students accepting AI-suggested code without fully understanding it. Many students rely on these suggestions because they are unsure how to approach LeetCode-style questions, which can often be challenging.
+
+ASQ helps solve this issue by presenting students with options for the next line of auto-suggested code. This gives them direction while encouraging them to think critically about how to solve the problem and evaluate AI-generated suggestions. After a code option is selected, an explanation is provided to clarify why the AI suggested that code.
+
+ASQ also supports teachers by allowing them to upload problems and give students opportunities to practice solving challenging coding tasks. In this way, ASQ helps students build confidence, improve problem-solving skills, and develop a deeper understanding of the code they use.
 
 ## Required Resources
 
-Discuss what you need to develop this project. This includes background information you will need to acquire, hardware resources, and software resources. If these are not part of the standard Computer Science Department lab resources, these must be identified early and discussed with the instructor.
+Devices: Hardware/software must be present in order for application usage.
+
+Windows 11/Mac OS compatibility
+Internet Access
+Technology: Programming languages, frameworks, API.
+
+Python
+Use of Gemini API key for AI coding assistant and functionality.
 
 ## Collaborators
 Bwosley
-Temi
+Temi Raymond
 Yong Huang
-Ethan
+Ethan Freidman
 Henry Le
 Aidan McCammitt
 
