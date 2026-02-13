@@ -13,6 +13,8 @@ function ProblemPage({ problem, onBack }) {
   const monacoRef = useRef(null);
   const idleTimerRef = useRef(null);
   const completionProviderRef = useRef(null);
+  const [pyodide, setPyodide] = useState(null);
+  const [pyodideLoading, setPyodideLoading] = useState(true);
 
   const registerCompletionProvider = useCallback(
     (monaco, lang) => {
@@ -116,6 +118,67 @@ function ProblemPage({ problem, onBack }) {
     };
   }, []);
 
+useEffect(() => {
+  const initPyodide = async () => {
+    try {
+      setPyodideLoading(true);
+
+      // Check if Pyodide is already loaded
+      if (window.loadPyodide) {
+        const pyodideInstance = await window.loadPyodide();
+        setPyodide(pyodideInstance);
+        setPyodideLoading(false);
+        return;
+      }
+
+      // Check if script already exists
+      const existingScript = document.querySelector('script[src*="pyodide.js"]');
+      if (existingScript) {
+        // Wait for it to load
+        existingScript.onload = async () => {
+          const pyodideInstance = await window.loadPyodide();
+          setPyodide(pyodideInstance);
+          setPyodideLoading(false);
+        };
+        return;
+      }
+
+      // Load Pyodide script dynamically
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/pyodide@0.26.4/pyodide.js';
+      script.async = true;
+
+      script.onload = async () => {
+        try {
+          const pyodideInstance = await window.loadPyodide({
+            indexURL: 'https://unpkg.com/pyodide@0.26.4/'
+          });
+          setPyodide(pyodideInstance);
+          setPyodideLoading(false);
+        } catch (err) {
+          console.error('Pyodide init failed:', err);
+          setOutput('Error: Failed to initialize Python runtime\n');
+          setPyodideLoading(false);
+        }
+      };
+
+      script.onerror = () => {
+        console.error('Failed to load Pyodide script');
+        setOutput('Error: Failed to initialize Python runtime\n');
+        setPyodideLoading(false);
+      };
+
+      document.head.appendChild(script);
+    } catch (error) {
+      console.error('Failed to load Pyodide:', error);
+      setOutput('Error: Failed to initialize Python runtime\n');
+      setPyodideLoading(false);
+    }
+  };
+
+  initPyodide();
+}, []);
+
   const handleLanguageChange = (newLang) => {
     setLanguage(newLang);
     setCode(problem.starterCode[newLang] || '');
@@ -126,26 +189,62 @@ function ProblemPage({ problem, onBack }) {
   };
 
   const handleRunCode = async () => {
+    if (!pyodide) {
+      setOutput('Error: Python runtime not loaded yet. Please wait...\n');
+      return;
+    }
+
+    if (language !== 'python') {
+      // Keep the mock execution for other languages
+      setIsRunning(true);
+      setActiveTab('output');
+      setOutput('Running code...\n');
+
+      setTimeout(() => {
+        setOutput(`$ Running ${language} code...\n\nExecution complete.\n`);
+        setIsRunning(false);
+      }, 1500);
+      return;
+    }
+
     setIsRunning(true);
     setActiveTab('output');
-    setOutput('Running code...\n');
+    setOutput('');
 
-    setTimeout(() => {
-      if (problem.examples.length > 0) {
-        let result = `$ Running ${language} code...\n\n`;
-        problem.examples.forEach((ex, i) => {
-          result += `> Test Case ${i + 1}: ${ex.input}\n`;
-          result += `  Expected: ${ex.output}\n\n`;
-        });
-        result += 'Execution complete.\n';
-        setOutput(result);
-      } else {
-        setOutput(
-          `$ Running ${language} code...\n\nNo test cases available.\n`
-        );
+    try {
+        // Run everything in a single Python execution context
+        const fullCode = `
+import sys
+from io import StringIO
+
+# Redirect stdout and stderr
+sys.stdout = StringIO()
+sys.stderr = StringIO()
+
+${code}
+
+# Get the output
+_stdout = sys.stdout.getvalue()
+_stderr = sys.stderr.getvalue()
+`;
+
+        await pyodide.runPythonAsync(fullCode);
+
+        // Get the captured output from Python globals
+        const stdout = pyodide.globals.get('_stdout');
+        const stderr = pyodide.globals.get('_stderr');
+
+        let result = '';
+        if (stdout) result += stdout;
+        if (stderr) result += 'Error: ' + stderr;
+
+        setOutput(result || 'Code executed successfully (no output)\n');
+
+      } catch (error) {
+        setOutput(`Error executing Python code:\n${error.message}\n`);
+      } finally {
+        setIsRunning(false);
       }
-      setIsRunning(false);
-    }, 1500);
   };
 
   const handleSubmit = () => {
@@ -222,9 +321,13 @@ function ProblemPage({ problem, onBack }) {
               <button
                 className="btn btn-run"
                 onClick={handleRunCode}
-                disabled={isRunning}
+                disabled={isRunning || (language === 'python' && pyodideLoading)}
               >
-                {isRunning ? '⏳ Running...' : '▶ Run Code'}
+                {isRunning
+                ? '⏳ Running...'
+                : (language === 'python' && pyodideLoading)
+                ? '⏳ Loading Python...'
+                :'▶ Run Code'}
               </button>
             </div>
           </div>
