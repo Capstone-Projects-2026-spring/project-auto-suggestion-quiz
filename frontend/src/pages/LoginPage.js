@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-//use information from temporary userAuth info
-import { authenticateUser } from '../temporaryBackEnd/loginAuth';
+import { authenticateUser, registerUser } from '../api';
 
 function LoginPage({ onLogin }) {
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('student');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -17,10 +19,20 @@ function LoginPage({ onLogin }) {
       return;
     }
 
+    if (isRegistering && !name.trim()) {
+      setError('Please enter your name.');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const user = await authenticateUser(email, password);
+      let user;
+      if (isRegistering) {
+        user = await registerUser(name, email, password, role);
+      } else {
+        user = await authenticateUser(email, password);
+      }
       onLogin(user);
     } catch (err) {
       setError(err.message);
@@ -40,11 +52,28 @@ function LoginPage({ onLogin }) {
       <div className="login-page">
         <div className="login-card">
           <div className="login-header">
-            <h2 className="login-title">Sign In</h2>
-            <p className="login-subtitle">Enter your credentials to continue</p>
+            <h2 className="login-title">{isRegistering ? 'Create Account' : 'Sign In'}</h2>
+            <p className="login-subtitle">
+              {isRegistering ? 'Register a new account' : 'Enter your credentials to continue'}
+            </p>
           </div>
 
           <form className="login-form" onSubmit={handleSubmit}>
+            {isRegistering && (
+              <div className="form-field">
+                <label className="form-label" htmlFor="name">Name</label>
+                <input
+                  id="name"
+                  type="text"
+                  className="form-input"
+                  placeholder="Your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  autoFocus
+                />
+              </div>
+            )}
+
             <div className="form-field">
               <label className="form-label" htmlFor="email">Email</label>
               <input
@@ -54,7 +83,7 @@ function LoginPage({ onLogin }) {
                 placeholder="student@university.edu"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                autoFocus
+                autoFocus={!isRegistering}
               />
             </div>
 
@@ -70,6 +99,21 @@ function LoginPage({ onLogin }) {
               />
             </div>
 
+            {isRegistering && (
+              <div className="form-field">
+                <label className="form-label" htmlFor="role">Role</label>
+                <select
+                  id="role"
+                  className="form-input"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                >
+                  <option value="student">Student</option>
+                  <option value="teacher">Teacher</option>
+                </select>
+              </div>
+            )}
+
             {error && <p className="form-error">{error}</p>}
 
             <button
@@ -77,21 +121,23 @@ function LoginPage({ onLogin }) {
               className="btn login-btn"
               disabled={isLoading}
             >
-              {isLoading ? 'Signing in...' : 'Sign In'}
+              {isLoading
+                ? (isRegistering ? 'Creating account...' : 'Signing in...')
+                : (isRegistering ? 'Create Account' : 'Sign In')}
             </button>
           </form>
 
           <div className="login-footer">
             <p className="login-footer-text">
-              Don't have an account?{' '}
+              {isRegistering ? 'Already have an account? ' : "Don't have an account? "}
               <button
                 className="link-btn"
                 onClick={() => {
-                  if (!email.trim()) setEmail('newstudent@university.edu');
-                  if (!password.trim()) setPassword('password');
+                  setIsRegistering(!isRegistering);
+                  setError('');
                 }}
               >
-                Register
+                {isRegistering ? 'Sign In' : 'Register'}
               </button>
             </p>
           </div>
