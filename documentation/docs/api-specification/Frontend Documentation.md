@@ -1,5 +1,11 @@
 # Frontend Class Documentation
 
+# Hierarchy 
+- [App](#app)
+
+---
+
+## App
 <details>
 <summary><b>App - Main component to handle the app's navigation between login, dashboard, and problem pages.</b></summary>
 
@@ -21,18 +27,18 @@
 
 - **Methods**
   - **handleLogin**(userData)
-    - **Handles login data and renders depending on userData**
-    - **Calls upon App start**
+    - Handles login data and renders depending on userData
+    - Calls upon App start
     - Arguements:
-      - **userData: Object that will change according to user login details**
+      - userData: Object that will change according to user login details
   - **handleProblem**(problem)
-    - **Sets current page to reflect selected problem type.**
-    - **Arguements:**
-      - **problem: Object pertaining to problem type, and reflects type of problem user will face on page**
+    - Sets current page to reflect selected problem type.
+    - Arguements:
+      - problem: Object pertaining to problem type, and reflects type of problem user will face on page
   - **handleBackToDashboard**()
-    - **Updates the currentPage to 'dashboard'**
-    - **Unselects problem to 'null'**
-    - **return none**
+    - Updates the currentPage to 'dashboard'
+    - Unselects problem to 'null'
+    - return none
 
 
 
