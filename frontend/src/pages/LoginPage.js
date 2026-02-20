@@ -1,15 +1,54 @@
 import React, { useState } from 'react';
 import { authenticateUser, registerUser } from '../api';
 
+/**
+ * @fileoverview Login page component for the AutoSuggestion Quiz application.
+ * @module LoginPage
+ */
+
+/**
+ * @typedef {Object} User
+ * @property {string} email - The authenticated user's email address.
+ * @property {string} [name] - The authenticated user's display name.
+ * @property {string} [role] - The authenticated user's role (e.g. 'student', 'admin').
+ */
+
+/**
+ * A login page component that handles user authentication.
+ * Renders a sign-in form with email and password fields, error messaging,
+ * and a shortcut "Register" button that pre-fills demo credentials.
+ *
+ * @component
+ * @param {Object} props
+ * @param {function(User): void} props.onLogin - Callback invoked with the authenticated
+ *   user object upon successful login.
+ * @returns {React.ReactElement} The rendered login page.
+ *
+ * @example
+ * <LoginPage onLogin={(user) => console.log('Logged in as', user.email)} />
+ */
 function LoginPage({ onLogin }) {
   const [isRegistering, setIsRegistering] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+
+  /** @type {[string, function(string): void]} The controlled password input value. */
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('student');
   const [isLoading, setIsLoading] = useState(false);
+
+  /** @type {[string, function(string): void]} The current error message, or empty string if none. */
   const [error, setError] = useState('');
 
+  /**
+   * Handles form submission by validating inputs and calling the authentication service.
+   * Sets an error message if validation fails or the authentication request rejects.
+   *
+   * @async
+   * @function
+   * @param {React.FormEvent<HTMLFormElement>} e - The form submission event.
+   * @returns {Promise<void>}
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/LoginPage.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/LoginPage.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from 'react';
+// use information from temporary userAuth info
+import { authenticateUser } from '../temporaryBackEnd/loginAuth';
+
+/**
+ * @fileoverview Login page component for the AutoSuggestion Quiz application.
+ * @module LoginPage
+ */
+
+/**
+ * @typedef {Object} User
+ * @property {string} email - The authenticated user's email address.
+ * @property {string} [name] - The authenticated user's display name.
+ * @property {string} [role] - The authenticated user's role (e.g. 'student', 'admin').
+ */
+
+/**
+ * A login page component that handles user authentication.
+ * Renders a sign-in form with email and password fields, error messaging,
+ * and a shortcut "Register" button that pre-fills demo credentials.
+ *
+ * @component
+ * @param {Object} props
+ * @param {function(User): void} props.onLogin - Callback invoked with the authenticated
+ *   user object upon successful login.
+ * @returns {React.ReactElement} The rendered login page.
+ *
+ * @example
+ * &lt;LoginPage onLogin={(user) => console.log('Logged in as', user.email)} />
+ */
+function LoginPage({ onLogin }) {
+  /** @type {[string, function(string): void]} The controlled email input value. */
+  const [email, setEmail] = useState('');
+
+  /** @type {[string, function(string): void]} The controlled password input value. */
+  const [password, setPassword] = useState('');
+
+  /** @type {[boolean, function(boolean): void]} Whether an authentication request is in flight. */
+  const [isLoading, setIsLoading] = useState(false);
+
+  /** @type {[string, function(string): void]} The current error message, or empty string if none. */
+  const [error, setError] = useState('');
+
+  /**
+   * Handles form submission by validating inputs and calling the authentication service.
+   * Sets an error message if validation fails or the authentication request rejects.
+   *
+   * @async
+   * @function
+   * @param {React.FormEvent&lt;HTMLFormElement>} e - The form submission event.
+   * @returns {Promise&lt;void>}
+   */
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (!email.trim() || !password.trim()) {
+      setError('Please enter both email and password.');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const user = await authenticateUser(email, password);
+      onLogin(user);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    &lt;div className="app">
+      &lt;header className="app-header">
+        &lt;div className="header-left">
+          &lt;h1 className="logo">AutoSuggestion Quiz&lt;/h1>
+        &lt;/div>
+      &lt;/header>
+
+      &lt;div className="login-page">
+        &lt;div className="login-card">
+          &lt;div className="login-header">
+            &lt;h2 className="login-title">Sign In&lt;/h2>
+            &lt;p className="login-subtitle">Enter your credentials to continue&lt;/p>
+          &lt;/div>
+
+          &lt;form className="login-form" onSubmit={handleSubmit}>
+            &lt;div className="form-field">
+              &lt;label className="form-label" htmlFor="email">Email&lt;/label>
+              &lt;input
+                id="email"
+                type="text"
+                className="form-input"
+                placeholder="student@university.edu"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoFocus
+              />
+            &lt;/div>
+
+            &lt;div className="form-field">
+              &lt;label className="form-label" htmlFor="password">Password&lt;/label>
+              &lt;input
+                id="password"
+                type="password"
+                className="form-input"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            &lt;/div>
+
+            {error &amp;&amp; &lt;p className="form-error">{error}&lt;/p>}
+
+            &lt;button
+              type="submit"
+              className="btn login-btn"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Signing in...' : 'Sign In'}
+            &lt;/button>
+          &lt;/form>
+
+          &lt;div className="login-footer">
+            &lt;p className="login-footer-text">
+              Don't have an account?{' '}
+              {/**
+               * Shortcut button that pre-fills demo credentials for new users.
+               * Only populates fields that are currently empty to avoid overwriting
+               * anything the user has already typed.
+               */}
+              &lt;button
+                className="link-btn"
+                onClick={() => {
+                  if (!email.trim()) setEmail('newstudent@university.edu');
+                  if (!password.trim()) setPassword('password');
+                }}
+              >
+                Register
+              &lt;/button>
+            &lt;/p>
+          &lt;/div>
+        &lt;/div>
+      &lt;/div>
+    &lt;/div>
+  );
+}
+
+export default LoginPage;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-App.html">App</a></li><li><a href="module-Dashboard.html">Dashboard</a></li><li><a href="module-LoginPage.html">LoginPage</a></li><li><a href="module-ProblemPage.html">ProblemPage</a></li><li><a href="module-constants.html">constants</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Feb 20 2026 16:27:26 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -3,16 +3,19 @@ sidebar_position: 5
 ---
 
 # Use-case descriptions
+
+![alt text](image-1.png)
 ---
 ## Teacher User
-
 ### Use Case 1 - Account Creation
+
 *I want to be able to create an account.*
 
-1. The user opens the AutoSuggestion Quiz web application, and the account creation/sign-in page opens. There are buttons for creating an account and logging into an account.
-2. The user selects **Register** and then selects **Register as a Teacher** to access the account registration form.
-3. The user enters their work email address, creates a password, and clicks the **Register Account** button.
-4. If the information is valid, the user is notified that account creation was successful and is redirected to the home page/dashboard of their account.
+1. The user opens the AutoSuggestion Quiz web application, and the account creation page opens.  
+2. The user provides their email address and university name.  
+3. A one-time password (OTP) is sent to the user’s email address.  
+4. The user enters the OTP.  
+5. If the OTP is valid, the user is notified that account creation was successful and is redirected to the home page/dashboard of their account.
 
 ---
 

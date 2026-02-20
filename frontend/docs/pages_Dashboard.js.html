@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/Dashboard.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/Dashboard.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from 'react';
+import { DIFFICULTY_COLORS, STATUS_CONFIG } from '../constants';
+
+/**
+ * @fileoverview Dashboard component for the AutoSuggestion Quiz application.
+ * @module Dashboard
+ */
+
+/**
+ * @typedef {Object} Problem
+ * @property {string} id - Unique identifier for the problem.
+ * @property {string} title - Display title of the problem.
+ * @property {'easy'|'medium'|'hard'} difficulty - Difficulty level, used to look up a color from {@link DIFFICULTY_COLORS}.
+ * @property {'not-started'|'in-progress'|'completed'} status - Current completion status.
+ * @property {string[]} tags - List of topic tags (e.g. `['arrays', 'sorting']`). Used in search matching.
+ * @property {number} [grade] - Optional numeric grade (0–100) shown as a badge when present.
+ */
+
+/**
+ * A dashboard page that displays all available problems in a filterable,
+ * searchable grid. Also shows aggregate progress statistics at the top.
+ *
+ * Search matches against both problem titles and tags (case-insensitive).
+ * Status filters and search can be applied simultaneously.
+ *
+ * @component
+ * @param {Object} props
+ * @param {Problem[]} props.problems - Full list of problems to display and derive stats from.
+ * @param {function(Problem): void} props.onOpenProblem - Callback invoked with the selected
+ *   problem when the user clicks a problem card.
+ * @returns {React.ReactElement} The rendered dashboard page.
+ *
+ * @example
+ * &lt;Dashboard problems={allProblems} onOpenProblem={(p) => setActiveProblem(p)} />
+ */
+function Dashboard({ problems, onOpenProblem }) {
+  /**
+   * @type {['all'|'not-started'|'in-progress'|'completed', function(string): void]}
+   * The currently active status filter. `'all'` shows every problem regardless of status.
+   */
+  const [filter, setFilter] = useState('all');
+
+  /** @type {[string, function(string): void]} The current search query string. */
+  const [searchQuery, setSearchQuery] = useState('');
+
+  /** @type {number} Number of problems with status `'completed'`. */
+  const completedCount = problems.filter((p) => p.status === 'completed').length;
+
+  /** @type {number} Number of problems with status `'in-progress'`. */
+  const inProgressCount = problems.filter((p) => p.status === 'in-progress').length;
+
+  /** @type {number} Total number of problems, regardless of status. */
+  const totalCount = problems.length;
+
+  /**
+   * The subset of problems that match both the active status filter and the search query.
+   * Search is performed case-insensitively against `problem.title` and each entry in `problem.tags`.
+   *
+   * @type {Problem[]}
+   */
+  const filtered = problems.filter((p) => {
+    const matchesFilter = filter === 'all' || p.status === filter;
+    const matchesSearch =
+      searchQuery === '' ||
+      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesFilter &amp;&amp; matchesSearch;
+  });
+
+  return (
+    &lt;div className="app">
+      &lt;header className="app-header">
+        &lt;div className="header-left">
+          &lt;h1 className="logo">AutoSuggestion Quiz&lt;/h1>
+        &lt;/div>
+        &lt;div className="header-right">
+          &lt;span className="dashboard-greeting">Welcome back, Student&lt;/span>
+        &lt;/div>
+      &lt;/header>
+
+      &lt;div className="dashboard">
+        &lt;div className="stats-bar">
+          &lt;div className="stat-card">
+            &lt;span className="stat-value">{totalCount}&lt;/span>
+            &lt;span className="stat-label">Total Problems&lt;/span>
+          &lt;/div>
+          &lt;div className="stat-card">
+            &lt;span className="stat-value" style={{ color: '#16825d' }}>{completedCount}&lt;/span>
+            &lt;span className="stat-label">Completed&lt;/span>
+          &lt;/div>
+          &lt;div className="stat-card">
+            &lt;span className="stat-value" style={{ color: '#569cd6' }}>{inProgressCount}&lt;/span>
+            &lt;span className="stat-label">In Progress&lt;/span>
+          &lt;/div>
+          &lt;div className="stat-card">
+            &lt;span className="stat-value" style={{ color: '#888' }}>{totalCount - completedCount - inProgressCount}&lt;/span>
+            &lt;span className="stat-label">Not Started&lt;/span>
+          &lt;/div>
+          &lt;div className="stat-card">
+            &lt;div className="progress-bar-container">
+              &lt;div
+                className="progress-bar-fill"
+                style={{ width: `${(completedCount / totalCount) * 100}%` }}
+              />
+            &lt;/div>
+            &lt;span className="stat-label">{Math.round((completedCount / totalCount) * 100)}% Complete&lt;/span>
+          &lt;/div>
+        &lt;/div>
+
+        &lt;div className="dashboard-toolbar">
+          &lt;div className="search-box">
+            &lt;span className="search-icon">⌕&lt;/span>
+            &lt;input
+              type="text"
+              className="search-input"
+              placeholder="Search problems or tags..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          &lt;/div>
+          &lt;div className="filter-group">
+            {['all', 'not-started', 'in-progress', 'completed'].map((f) => (
+              &lt;button
+                key={f}
+                className={`filter-btn ${filter === f ? 'active' : ''}`}
+                onClick={() => setFilter(f)}
+              >
+                {f === 'all' ? 'All' : STATUS_CONFIG[f]?.label || f}
+              &lt;/button>
+            ))}
+          &lt;/div>
+        &lt;/div>
+
+        &lt;div className="problem-grid">
+          {filtered.map((problem) => {
+            const status = STATUS_CONFIG[problem.status];
+            return (
+              /**
+               * Individual problem card. Rendered as a `&lt;button>` so the entire
+               * card surface area is keyboard-accessible and natively focusable.
+               */
+              &lt;button
+                key={problem.id}
+                className="problem-card"
+                onClick={() => onOpenProblem(problem)}
+              >
+                &lt;div className="card-top">
+                  &lt;span
+                    className="difficulty-badge"
+                    style={{ color: DIFFICULTY_COLORS[problem.difficulty] }}
+                  >
+                    {problem.difficulty}
+                  &lt;/span>
+                  &lt;span className="status-indicator" style={{ color: status.color }}>
+                    {status.icon}
+                  &lt;/span>
+                &lt;/div>
+
+                &lt;h3 className="card-title">{problem.title}&lt;/h3>
+
+                &lt;div className="card-tags">
+                  {problem.tags.map((tag) => (
+                    &lt;span key={tag} className="tag">{tag}&lt;/span>
+                  ))}
+                &lt;/div>
+
+                &lt;div className="card-bottom">
+                  &lt;span className="status-label" style={{ color: status.color }}>
+                    {status.label}
+                  &lt;/span>
+                  {problem.grade &amp;&amp; (
+                    &lt;span className="grade-badge">{problem.grade}%&lt;/span>
+                  )}
+                &lt;/div>
+              &lt;/button>
+            );
+          })}
+        &lt;/div>
+
+        {filtered.length === 0 &amp;&amp; (
+          &lt;div className="empty-state">
+            &lt;p>No problems match your search.&lt;/p>
+          &lt;/div>
+        )}
+      &lt;/div>
+    &lt;/div>
+  );
+}
+
+export default Dashboard;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-App.html">App</a></li><li><a href="module-Dashboard.html">Dashboard</a></li><li><a href="module-LoginPage.html">LoginPage</a></li><li><a href="module-ProblemPage.html">ProblemPage</a></li><li><a href="module-constants.html">constants</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Feb 20 2026 16:27:26 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
