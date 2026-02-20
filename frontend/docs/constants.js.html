@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: constants.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: constants.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @fileoverview Application-wide constants for the Auto Suggestion Quiz app.
  * Includes UI config, problem data, and AI suggestion sets.
  * @module constants
@@ -6,7 +34,7 @@
 
 /**
  * Maps difficulty levels to their display colors.
- * @constant {Object.<string, string>}
+ * @constant {Object.&lt;string, string>}
  * @property {string} Easy - Green color for easy problems.
  * @property {string} Medium - Amber color for medium problems.
  * @property {string} Hard - Red color for hard problems.
@@ -18,7 +46,7 @@ export const DIFFICULTY_COLORS = {
 };
 /**
  * Display configuration for each problem status.
- * @constant {Object.<string, {label: string, color: string, icon: string}>}
+ * @constant {Object.&lt;string, {label: string, color: string, icon: string}>}
  */
 export const STATUS_CONFIG = {
   completed: { label: 'Completed', color: '#16825d', icon: '✓' },
@@ -27,7 +55,7 @@ export const STATUS_CONFIG = {
 };
 /**
  * Maps app language keys to Monaco editor language identifiers.
- * @constant {Object.<string, string>}
+ * @constant {Object.&lt;string, string>}
  */
 export const LANGUAGE_MAP = {
   python: 'python',
@@ -66,7 +94,7 @@ export const PROBLEMS = [
       python: 'def two_sum(nums, target):\n    # Write your solution here\n    pass\n',
       javascript: 'function twoSum(nums, target) {\n    // Write your solution here\n\n}\n',
       java: 'class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        // Write your solution here\n        return new int[]{};\n    }\n}\n',
-      c: '#include <stdlib.h>\n\nint* twoSum(int* nums, int numsSize, int target, int* returnSize) {\n    // Write your solution here\n    *returnSize = 0;\n    return NULL;\n}\n',
+      c: '#include &lt;stdlib.h>\n\nint* twoSum(int* nums, int numsSize, int target, int* returnSize) {\n    // Write your solution here\n    *returnSize = 0;\n    return NULL;\n}\n',
     },
   },
   {
@@ -87,7 +115,7 @@ export const PROBLEMS = [
       python: 'def is_valid(s):\n    # Write your solution here\n    pass\n',
       javascript: 'function isValid(s) {\n    // Write your solution here\n\n}\n',
       java: 'class Solution {\n    public boolean isValid(String s) {\n        // Write your solution here\n        return false;\n    }\n}\n',
-      c: '#include <stdbool.h>\n\nbool isValid(char* s) {\n    // Write your solution here\n    return false;\n}\n',
+      c: '#include &lt;stdbool.h>\n\nbool isValid(char* s) {\n    // Write your solution here\n    return false;\n}\n',
     },
   },
   {
@@ -226,7 +254,7 @@ export const PROBLEMS = [
     starterCode: {
       python: 'def three_sum(nums):\n    # Write your solution here\n    pass\n',
       javascript: 'function threeSum(nums) {\n    // Write your solution here\n\n}\n',
-      java: 'class Solution {\n    public List<List<Integer>> threeSum(int[] nums) {\n        // Write your solution here\n        return new ArrayList<>();\n    }\n}\n',
+      java: 'class Solution {\n    public List&lt;List&lt;Integer>> threeSum(int[] nums) {\n        // Write your solution here\n        return new ArrayList&lt;>();\n    }\n}\n',
       c: 'int** threeSum(int* nums, int numsSize, int* returnSize, int** returnColumnSizes) {\n    // Write your solution here\n    *returnSize = 0;\n    return NULL;\n}\n',
     },
   },
@@ -234,7 +262,7 @@ export const PROBLEMS = [
 /**
  * AI autocomplete suggestions indexed by problem ID.
  * Each entry is an array of suggestion objects for the Monaco completion provider.
- * @constant {Object.<number, Object[]>}
+ * @constant {Object.&lt;number, Object[]>}
  * @property {string} suggestions[].label - Display label for the suggestion.
  * @property {string} suggestions[].detail - Short detail string shown in the dropdown.
  * @property {string} suggestions[].insertText - Code snippet to insert.
@@ -254,7 +282,7 @@ export const AI_SUGGESTIONS_BY_PROBLEM = {
     {
       label: 'Sort and use two pointers',
       detail: 'AI Suggestion',
-      insertText: 'indexed = sorted(enumerate(nums), key=lambda x: x[1])\n    left, right = 0, len(indexed) - 1\n    while left < right:\n        total = indexed[left][1] + indexed[right][1]\n        if total == target:\n            return [indexed[left][0], indexed[right][0]]\n        elif total < target:\n            left += 1\n        else:\n            right -= 1',
+      insertText: 'indexed = sorted(enumerate(nums), key=lambda x: x[1])\n    left, right = 0, len(indexed) - 1\n    while left &lt; right:\n        total = indexed[left][1] + indexed[right][1]\n        if total == target:\n            return [indexed[left][0], indexed[right][0]]\n        elif total &lt; target:\n            left += 1\n        else:\n            right -= 1',
     },
   ],
   2: [
@@ -285,12 +313,12 @@ export const AI_SUGGESTIONS_BY_PROBLEM = {
     {
       label: 'Classic binary search loop',
       detail: 'AI Suggestion',
-      insertText: 'left, right = 0, len(nums) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if nums[mid] == target:\n            return mid\n        elif nums[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1',
+      insertText: 'left, right = 0, len(nums) - 1\n    while left &lt;= right:\n        mid = (left + right) // 2\n        if nums[mid] == target:\n            return mid\n        elif nums[mid] &lt; target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1',
     },
     {
       label: 'Recursive binary search',
       detail: 'AI Suggestion',
-      insertText: 'def helper(left, right):\n        if left > right:\n            return -1\n        mid = (left + right) // 2\n        if nums[mid] == target:\n            return mid\n        elif nums[mid] < target:\n            return helper(mid + 1, right)\n        else:\n            return helper(left, mid - 1)\n    return helper(0, len(nums) - 1)',
+      insertText: 'def helper(left, right):\n        if left > right:\n            return -1\n        mid = (left + right) // 2\n        if nums[mid] == target:\n            return mid\n        elif nums[mid] &lt; target:\n            return helper(mid + 1, right)\n        else:\n            return helper(left, mid - 1)\n    return helper(0, len(nums) - 1)',
     },
   ],
 };
@@ -309,4 +337,26 @@ export const DEFAULT_SUGGESTIONS = [
     detail: 'AI Suggestion',
     insertText: 'for item in data:\n        pass',
   },
-];
+];</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-App.html">App</a></li><li><a href="module-Dashboard.html">Dashboard</a></li><li><a href="module-LoginPage.html">LoginPage</a></li><li><a href="module-ProblemPage.html">ProblemPage</a></li><li><a href="module-constants.html">constants</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Feb 20 2026 16:27:26 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
