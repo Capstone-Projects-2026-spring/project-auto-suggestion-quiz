@@ -20,6 +20,14 @@ class LoginRequest(BaseModel):
 
 @router.post("/register")
 def register(req: RegisterRequest):
+    """
+    Register a new user.
+
+    - **name**: Full name of the user
+    - **email**: Must be unique
+    - **password**: Will be hashed before storage
+    - **role**: Must be one of `student`, `teacher`, `admin`
+    """
     if req.role not in ("student", "teacher", "admin"):
         raise HTTPException(status_code=400, detail="Invalid role")
 
@@ -46,6 +54,12 @@ def register(req: RegisterRequest):
 
 @router.post("/login")
 def login(req: LoginRequest):
+    """
+    Authenticate a user and return a JWT token.
+
+    - **email**: Registered email address
+    - **password**: Plain text password to verify against stored hash
+    """
     conn = get_connection()
     cursor = conn.cursor()
 

@@ -5,6 +5,14 @@ DB_PATH = os.path.join(os.path.dirname(__file__), "quiz.db")
 
 
 def get_connection():
+    """
+    Open and return a connection to the SQLite database.
+
+    Foreign key enforcement is enabled and rows are returned as
+    dictionary-like `sqlite3.Row` objects.
+
+    :return: An open `sqlite3.Connection` instance.
+    """
     conn = sqlite3.connect(DB_PATH)
     conn.execute("PRAGMA foreign_keys = ON")
     conn.row_factory = sqlite3.Row
@@ -12,6 +20,15 @@ def get_connection():
 
 
 def init_db():
+    """
+    Initialize the database schema if it does not already exist.
+
+    Creates the following tables:
+    - **users**: Stores registered users with hashed passwords and roles.
+    - **problems**: Stores coding problems created by teachers.
+
+    Safe to call multiple times — uses `CREATE TABLE IF NOT EXISTS`.
+    """
     conn = get_connection()
     cursor = conn.cursor()
 
