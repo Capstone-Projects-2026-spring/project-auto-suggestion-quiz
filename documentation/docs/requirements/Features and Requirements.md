@@ -2,13 +2,6 @@
 sidebar_position: 4
 ---
 
----
-title: Features and Requirements
-sidebar_position: 2
----
-
-# Features and Requirements
-
 ## Functional
 
 ### Quiz Creation and Management
