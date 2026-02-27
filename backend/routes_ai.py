@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from aiSuggestion import ai_suggeestion
+from aiSuggestion import ai_suggestion
 
 
 router = APIRouter(prefix="/ai", tags=["ai"])
@@ -23,11 +23,11 @@ class AISuggestionResponse(BaseModel):
 @router.post("/suggestion", response_model=AISuggestionResponse)
 def get_ai_suggestion(req: AISuggestionRequest) -> AISuggestionResponse:
     """
-    This calls the existing `ai_suggeestion` helper and reshapes the result so
+    This calls the existing `ai_suggestion` helper and reshapes the result so
     the frontend can plug it directly into the suggestions window.
     """
     try:
-        result = ai_suggeestion(req.current_code, req.problem_prompt)
+        result = ai_suggestion(req.current_code, req.problem_prompt)
     except Exception as exc:  # pragma: no cover - defensive
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 

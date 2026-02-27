@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 from openai import OpenAI
 
-def ai_suggeestion( currentCode,  problemPrompt):
+def ai_suggestion( currentCode,  problemPrompt):
 
     # This loads the variables from your .env file into the environment
     load_dotenv()
@@ -29,6 +29,6 @@ def ai_suggeestion( currentCode,  problemPrompt):
     result = completion.choices[0].message.parsed
     return result
 
-test = ai_suggeestion("def add_numbers(a,b):","create a function that adds 2 numbers together")
+test = ai_suggestion("def add_numbers(a,b):","create a function that adds 2 numbers together")
 print(f"Code: {test.suggestion}")
 print(f"Explanation: {test.explanation}")
