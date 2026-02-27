@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from database import init_db
 from routes_auth import router as auth_router
 from routes_ai import router as ai_router
+from routes_problems import router as problems_router
 
 app = FastAPI(
     title="AutoSuggestion Quiz API",
@@ -20,7 +21,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(ai_router)
-
+app.include_router(problems_router)
 
 @app.on_event("startup")
 def startup():
