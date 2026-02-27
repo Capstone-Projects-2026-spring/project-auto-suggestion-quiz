@@ -4,3 +4,7 @@ I've made an example down there in test_back.py that is just 1 + 1, which is tru
 
 If you plan to for some reason make more .pys to test methods in the backend, always start the file with "test_"
 
+I've made a basic example to check if it's true: 1 + 1 == 2 (yes)
+
+Also create the coverage report with: 
+'pytest --cov=. --cov-report=html test_back.py'

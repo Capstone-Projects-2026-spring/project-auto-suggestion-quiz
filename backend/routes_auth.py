@@ -18,7 +18,19 @@ class LoginRequest(BaseModel):
     password: str
 
 
-@router.post("/register")
+class UserResponse(BaseModel):
+    id: int
+    name: str
+    email: str
+    role: str
+
+
+class AuthResponse(BaseModel):
+    token: str
+    user: UserResponse
+
+
+@router.post("/register", response_model=AuthResponse)
 def register(req: RegisterRequest):
     """
     Register a new user.
@@ -52,7 +64,7 @@ def register(req: RegisterRequest):
     return {"token": token, "user": {"id": user_id, "name": req.name, "email": req.email, "role": req.role}}
 
 
-@router.post("/login")
+@router.post("/login", response_model=AuthResponse)
 def login(req: LoginRequest):
     """
     Authenticate a user and return a JWT token.
