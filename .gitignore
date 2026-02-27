@@ -50,3 +50,8 @@ ENV/
 
 # OS
 Thumbs.db
+
+# venv
+.venv/
+venv/
+*.pyc
