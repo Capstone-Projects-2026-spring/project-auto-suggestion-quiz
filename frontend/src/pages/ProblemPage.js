@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
-import { AI_SUGGESTIONS_BY_PROBLEM, DEFAULT_SUGGESTIONS, LANGUAGE_MAP } from '../constants';
+import { AI_SUGGESTIONS_BY_PROBLEM, DEFAULT_AI_SUGGESTIONS, LANGUAGE_MAP } from '../constants';
 
 /**
  * @fileoverview Problem page component for the AutoSuggestion Quiz application.
@@ -106,7 +106,7 @@ function ProblemPage({ problem, onBack }) {
       }
 
       const suggestions =
-        AI_SUGGESTIONS_BY_PROBLEM[problem.id] || DEFAULT_SUGGESTIONS;
+        AI_SUGGESTIONS_BY_PROBLEM[problem.id] || DEFAULT_AI_SUGGESTIONS;
 
       completionProviderRef.current =
         monaco.languages.registerCompletionItemProvider(lang, {

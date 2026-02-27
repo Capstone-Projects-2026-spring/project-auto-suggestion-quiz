@@ -33,7 +33,7 @@ import { DIFFICULTY_COLORS, STATUS_CONFIG } from '../constants';
  * @example
  * <Dashboard problems={allProblems} onOpenProblem={(p) => setActiveProblem(p)} />
  */
-function Dashboard({ problems, onOpenProblem }) {
+function Dashboard({ problems, onOpenProblem, onCreateProblem, user }) {
   /**
    * @type {['all'|'not-started'|'in-progress'|'completed', function(string): void]}
    * The currently active status filter. `'all'` shows every problem regardless of status.
@@ -74,7 +74,12 @@ function Dashboard({ problems, onOpenProblem }) {
           <h1 className="logo">AutoSuggestion Quiz</h1>
         </div>
         <div className="header-right">
-          <span className="dashboard-greeting">Welcome back, Student</span>
+          <span className="dashboard-greeting">Welcome back, {user?.name || 'Student'}</span>
+          {user?.role === 'teacher' && (
+            <button className="btn btn-outline" onClick={onCreateProblem}>
+              + New Problem
+            </button>
+          )}
         </div>
       </header>
 

@@ -3,6 +3,7 @@ import './App.css';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import ProblemPage from './pages/ProblemPage';
+import CreateProblemPage from './pages/CreateProblemPage';
 import { PROBLEMS } from './constants';
 
 /**
@@ -60,6 +61,10 @@ function App() {
     setSelectedProblem(null);
   };
 
+  const handleCreateProblem = () => {
+    setCurrentPage('createProblem');
+  };
+
   if (currentPage === 'login') {
     return <LoginPage onLogin={handleLogin} />;
   }
@@ -73,10 +78,16 @@ function App() {
     );
   }
 
+  if (currentPage === 'createProblem') {
+    return <CreateProblemPage onBack={handleBackToDashboard} />;
+  }
+
   return (
     <Dashboard
       problems={PROBLEMS}
       onOpenProblem={handleOpenProblem}
+      onCreateProblem={handleCreateProblem}
+      user={user}
     />
   );
 }

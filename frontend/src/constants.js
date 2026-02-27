@@ -298,7 +298,7 @@ export const AI_SUGGESTIONS_BY_PROBLEM = {
  * Fallback AI suggestions used when no problem-specific suggestions are defined.
  * @constant {Object[]}
  */
-export const DEFAULT_SUGGESTIONS = [
+export const DEFAULT_AI_SUGGESTIONS = [
   {
     label: 'Initialize result variable',
     detail: 'AI Suggestion',
@@ -310,3 +310,23 @@ export const DEFAULT_SUGGESTIONS = [
     insertText: 'for item in data:\n        pass',
   },
 ];
+export const AVAILABLE_LANGUAGES = [
+  { key: 'python', label: 'Python' },
+  { key: 'javascript', label: 'JavaScript' },
+  { key: 'java', label: 'Java' },
+  { key: 'c', label: 'C' },
+];
+
+export const DEFAULT_BOILERPLATE = {
+  python: 'def solution():\n    # Write your solution here\n    pass\n',
+  javascript: 'function solution() {\n    // Write your solution here\n\n}\n',
+  java: 'class Solution {\n    public void solution() {\n        // Write your solution here\n    }\n}\n',
+  c: '#include <stdio.h>\n\nvoid solution() {\n    // Write your solution here\n}\n',
+};
+
+export const DEFAULT_SUGGESTIONS = {
+  python: { correct: '', distractors: [''] },
+  javascript: { correct: '', distractors: [''] },
+  java: { correct: '', distractors: [''] },
+  c: { correct: '', distractors: [''] },
+};
