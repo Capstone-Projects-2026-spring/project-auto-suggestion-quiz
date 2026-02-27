@@ -66,6 +66,9 @@ function ProblemPage({ problem, onBack }) {
   /** @type {[SuggestionLogEntry[], function(SuggestionLogEntry[]): void]} Log of accepted AI suggestions. */
   const [suggestionLog, setSuggestionLog] = useState([]);
 
+  /** @type {[Object[], function(Object[]): void]} Latest AI suggestions fetched from the backend for the side panel. */
+  const [aiSuggestions, setAiSuggestions] = useState([]);
+
   /** @type {React.MutableRefObject<import('monaco-editor').editor.IStandaloneCodeEditor|null>} Reference to the Monaco editor instance. */
   const editorRef = useRef(null);
 
@@ -198,7 +201,9 @@ function ProblemPage({ problem, onBack }) {
       /**
        * After each content change, reset the idle timer.
        * When the editor has been idle for 2 seconds and still has focus,
-       * the suggestion dropdown is triggered programmatically.
+       * we:
+       * - Fetch fresh AI suggestions from the backend for the side panel.
+       * - Trigger the Monaco suggestion dropdown using the existing hardcoded sets.
        */
       editor.onDidChangeModelContent(() => {
         if (idleTimerRef.current) {
@@ -206,9 +211,45 @@ function ProblemPage({ problem, onBack }) {
         }
 
         idleTimerRef.current = setTimeout(() => {
-          if (editor.hasTextFocus()) {
+          if (!editor.hasTextFocus()) return;
+
+          (async () => {
+            try {
+              const currentCode = editor.getValue();
+              const response = await fetch('http://localhost:8000/ai/suggestion', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  problem_id: problem.id,
+                  current_code: currentCode,
+                  problem_prompt: problem.description,
+                }),
+              });
+
+              if (response.ok) {
+                const data = await response.json();
+                const mappedSuggestions = [
+                  {
+                    label: data.label || 'AI Suggestion',
+                    detail: data.detail || 'AI Suggestion',
+                    insertText: data.insertText || '',
+                    explanation: data.explanation || '',
+                  },
+                ];
+                setAiSuggestions(mappedSuggestions);
+              } else {
+                setAiSuggestions([]);
+              }
+            } catch (err) {
+              console.error('Failed to fetch AI suggestions', err);
+              setAiSuggestions([]);
+            }
+
+            
             editor.trigger('ai-idle', 'editor.action.triggerSuggest', {});
-          }
+          })();
         }, 2000);
       });
 
@@ -314,6 +355,36 @@ function ProblemPage({ problem, onBack }) {
     }
   };
 
+  const handleSuggestionClick = (suggestion) => {
+    if (!editorRef.current) return;
+
+    const editor = editorRef.current;
+    const position = editor.getPosition();
+
+    // Insert the suggestion text at current cursor position
+    editor.executeEdits('ai-suggestion', [{
+      range: {
+        startLineNumber: position.lineNumber,
+        startColumn: position.column,
+        endLineNumber: position.lineNumber,
+        endColumn: position.column,
+      },
+      text: suggestion.insertText,
+    }]);
+
+    // Log the accepted suggestion
+    setSuggestionLog((prev) => [
+      ...prev,
+      {
+        time: new Date().toLocaleTimeString(),
+        action: 'accepted',
+        label: suggestion.label,
+      },
+    ]);
+
+    // Focus back on editor
+    editor.focus();
+  };
   /**
    * Executes the current editor code.
    * - For Python: runs code in-browser via Pyodide, capturing stdout and stderr.
@@ -536,9 +607,9 @@ _stderr = sys.stderr.getvalue()
                 <div className="suggestion-log">
                   {suggestionLog.length === 0 ? (
                     <p className="log-empty">
-                      No suggestions accepted yet. Start typing in the editor
-                      and pause for 2 seconds — AI suggestions will appear as an
-                      autocomplete dropdown. Select one to see it logged here.
+                      No suggestions accepted yet. Click a suggestion from the
+                      panel on the right, or start typing and pause for 2 seconds
+                      to see autocomplete suggestions.
                     </p>
                   ) : (
                     suggestionLog.map((entry, i) => (
@@ -552,6 +623,46 @@ _stderr = sys.stderr.getvalue()
                 </div>
               )}
             </div>
+          </div>
+        </div>
+
+        
+
+        {/* AI Suggestions Panel */}
+        <div className="suggestions-panel">
+          <div className="panel-header">
+            <span className="panel-title">AI Suggestions</span>
+          </div>
+          <div className="suggestions-list">
+            {aiSuggestions.length === 0 ? (
+              <p className="log-empty">
+                Pause typing for 2 seconds to fetch AI suggestions.
+              </p>
+            ) : (
+              aiSuggestions.slice(0, 3).map((suggestion, index) => (
+                <button
+                  key={index}
+                  className="suggestion-card"
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  <div className="suggestion-header">
+                    <span className="suggestion-number">{index + 1}</span>
+                    <span className="suggestion-label">{suggestion.label}</span>
+                  </div>
+                  <pre className="suggestion-code">{suggestion.insertText}</pre>
+                  {suggestion.explanation && (
+                    <div className="suggestion-explanation">
+                      <div className="suggestion-explanation-title">
+                        Why this suggestion
+                      </div>
+                      <p className="suggestion-explanation-body">
+                        {suggestion.explanation}
+                      </p>
+                    </div>
+                  )}
+                </button>
+              ))
+            )}
           </div>
         </div>
       </div>
