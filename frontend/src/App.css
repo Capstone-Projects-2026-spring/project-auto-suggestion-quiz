@@ -1,4 +1,4 @@
-.app {
+ .app {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -1114,10 +1114,11 @@
 .submit-success-icon {
   font-size: 20px;
   font-weight: 700;
+}
 /* AI Suggestions Panel */
 .suggestions-panel {
   width: 280px;
-  min-width: 240px;
+  min-width: 240px; 
   border-left: 1px solid #3c3c3c;
   background-color: #1e1e1e;
   display: flex;

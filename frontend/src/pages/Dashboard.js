@@ -75,7 +75,7 @@ function Dashboard({ problems, onOpenProblem, onCreateProblem, user }) {
         </div>
         <div className="header-right">
           <span className="dashboard-greeting">Welcome back, {user?.name || 'Student'}</span>
-          {user?.role === 'teacher' && (
+          {user?.role === 'student' && (
             <button className="btn btn-outline" onClick={onCreateProblem}>
               + New Problem
             </button>
