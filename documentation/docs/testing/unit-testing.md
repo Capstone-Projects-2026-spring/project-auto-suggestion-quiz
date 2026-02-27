@@ -1,9 +1,15 @@
 ---
 sidebar_position: 1
 ---
-# Unit tests
-For each method, one or more test cases.
+# Frontend Unit Testing
+## React Component Unit Tests
+<details>
+<summary>App</summary>
 
-A test case consists of input parameter values and expected results.
+* Tests the initialization of app without crashing
+    * Input/User action
+        * Type npm test in terminal to render app.
+    * Expected result
+        * Test comes out with positive, rendering the app without crashing.
 
-All external classes should be stubbed using mock objects.
+</details>
