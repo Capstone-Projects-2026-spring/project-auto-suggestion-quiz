@@ -3,6 +3,6 @@
 <details>
 <summary>Backend Coverage Report</summary>
 
-![Coverage Report](./images/coverage-report.png)
+![Coverage Report](./images/coverage.png)
 
 </details>
