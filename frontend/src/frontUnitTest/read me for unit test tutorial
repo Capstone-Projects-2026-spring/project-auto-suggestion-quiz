@@ -1,0 +1,8 @@
+To run this test, you need to be in the frontend folder, not src or frontUnitTest folder.
+This is due to the importance of the .json that those two folders lack.
+After you're in frontend folder, just run npm test in terminal.
+
+
+If npm test doesn't work, consider running these inside the frontend folder to fix:
+npm install --save-dev @testing-library/react
+npm install --save-dev @testing-library/jest-dom
