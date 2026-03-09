@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">Integration tests | Project Auto Suggestion Quiz</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://Capstone-Projects-2026-spring.github.io/project-auto-suggestion-quiz/docs/testing/integration-testing"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Integration tests | Project Auto Suggestion Quiz"><meta data-rh="true" name="description" content="Tests to demonstrate each use-case based on the use-case descriptions and the sequence diagrams. External input should be provided via mock objects and results verified via mock objects. Integration tests should not require manual entry of data nor require manual interpretation of results."><meta data-rh="true" property="og:description" content="Tests to demonstrate each use-case based on the use-case descriptions and the sequence diagrams. External input should be provided via mock objects and results verified via mock objects. Integration tests should not require manual entry of data nor require manual interpretation of results."><link data-rh="true" rel="icon" href="/project-auto-suggestion-quiz/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://Capstone-Projects-2026-spring.github.io/project-auto-suggestion-quiz/docs/testing/integration-testing"><link data-rh="true" rel="alternate" href="https://Capstone-Projects-2026-spring.github.io/project-auto-suggestion-quiz/docs/testing/integration-testing" hreflang="en"><link data-rh="true" rel="alternate" href="https://Capstone-Projects-2026-spring.github.io/project-auto-suggestion-quiz/docs/testing/integration-testing" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Test Procedures","item":"https://Capstone-Projects-2026-spring.github.io/project-auto-suggestion-quiz/docs/category/test-procedures"},{"@type":"ListItem","position":2,"name":"Integration tests","item":"https://Capstone-Projects-2026-spring.github.io/project-auto-suggestion-quiz/docs/testing/integration-testing"}]}</script><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script><link rel="stylesheet" href="/project-auto-suggestion-quiz/assets/css/styles.7aa687c6.css">
-<script src="/project-auto-suggestion-quiz/assets/js/runtime~main.2093c669.js" defer="defer"></script>
+<script src="/project-auto-suggestion-quiz/assets/js/runtime~main.2983172b.js" defer="defer"></script>
 <script src="/project-auto-suggestion-quiz/assets/js/main.8c160156.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -12,6 +12,247 @@
 <symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||"light"),document.documentElement.setAttribute("data-theme-choice",t||"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/project-auto-suggestion-quiz/"><div class="navbar__logo"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Project Auto Suggestion Quiz</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/project-auto-suggestion-quiz/docs/intro">Documentation</a><a class="navbar__item navbar__link" href="/project-auto-suggestion-quiz/tutorial/Intro">Docusaurus Tutorial</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/Capstone-Projects-2026-spring/project-auto-suggestion-quiz" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/project-auto-suggestion-quiz/docs/intro"><span title="Introduction" class="linkLabel_WmDU">Introduction</span></a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/project-auto-suggestion-quiz/docs/category/requirements-specification"><span title="Requirements Specification" class="categoryLinkLabel_W154">Requirements Specification</span></a><button aria-label="Expand sidebar category &#x27;Requirements Specification&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/project-auto-suggestion-quiz/docs/category/system-architecture"><span title="System Architecture" class="categoryLinkLabel_W154">System Architecture</span></a><button aria-label="Expand sidebar category &#x27;System Architecture&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/project-auto-suggestion-quiz/docs/category/api-specification"><span title="API Specification" class="categoryLinkLabel_W154">API Specification</span></a><button aria-label="Expand sidebar category &#x27;API Specification&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--active" href="/project-auto-suggestion-quiz/docs/category/test-procedures"><span title="Test Procedures" class="categoryLinkLabel_W154">Test Procedures</span></a><button aria-label="Collapse sidebar category &#x27;Test Procedures&#x27;" aria-expanded="true" type="button" class="clean-btn menu__caret"></button></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/project-auto-suggestion-quiz/docs/testing/integration-testing"><span title="Integration tests" class="linkLabel_WmDU">Integration tests</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/project-auto-suggestion-quiz/docs/testing/acceptence-testing"><span title="Acceptance test" class="linkLabel_WmDU">Acceptance test</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/project-auto-suggestion-quiz/docs/testing/BackEnd Unit Testing"><span title="Backend Unit Testing" class="linkLabel_WmDU">Backend Unit Testing</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/project-auto-suggestion-quiz/docs/testing/FrontEnd Unit Testing"><span title="Frontend Unit Testing" class="linkLabel_WmDU">Frontend Unit Testing</span></a></li></ul></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/project-auto-suggestion-quiz/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><a class="breadcrumbs__link" href="/project-auto-suggestion-quiz/docs/category/test-procedures"><span>Test Procedures</span></a></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">Integration tests</span></li></ul></nav><div class="theme-doc-markdown markdown"><header><h1>Integration tests</h1></header>
-<p>Tests to demonstrate each use-case based on the use-case descriptions and the sequence diagrams. External input should be provided via mock objects and results verified via mock objects. Integration tests should not require manual entry of data nor require manual interpretation of results.</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/Capstone-Projects-2026-spring/project-auto-suggestion-quiz/edit/main/documentation/docs/testing/integration-testing.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"><details><summary>Revision History</summary><table><thead><tr><th scope="row">Author</th><th scope="row">Revision</th><th scope="row">Date</th></tr></thead><tbody><tr><td colspan="3" style="text-align:center;font-style:italic;color:#666">Loading...</td></tr></tbody></table></details><span class="theme-last-updated">Last updated<!-- --> by <b>github-classroom[bot]</b></span></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/project-auto-suggestion-quiz/docs/category/test-procedures"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Test Procedures</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/project-auto-suggestion-quiz/docs/testing/acceptence-testing"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Acceptance test</div></a></nav></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/project-auto-suggestion-quiz/docs/intro">Documentation</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/Capstone-Projects-2026-spring/project-auto-suggestion-quiz" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a class="footer__link-item" href="/project-auto-suggestion-quiz/tutorial/open-source-usage">Template Contributors</a></li></ul></div></div><div class="footer__bottom text--center"><div class="margin-bottom--sm"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="footer__logo themedComponent_mlkZ themedComponent--light_NVdE"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="footer__logo themedComponent_mlkZ themedComponent--dark_xIcU"></div><div class="footer__copyright">Copyright © 2026 Project Auto Suggestion Quiz, Inc. Built with Docusaurus.</div></div></div></footer></div>
+<p>Tests to demonstrate each use-case based on the use-case descriptions and the sequence diagrams. External input should be provided via mock objects and results verified via mock objects. Integration tests should not require manual entry of data nor require manual interpretation of results.</p>
+<p>Integration Tests</p>
+<p>We will be using Pytest for backend and React Testing Library for the frontend. Integration tests will be based on the use cases description for the teacher and student.</p>
+<p>Teacher User:</p>
+<p>Use Case 1: Account creation
+This is done using RTL and rendering the full application
+verify that the account creation form is displayed when the application loads.
+simulate the user entering a valid email address and university name.
+simulate clicking the “Create Account” button.
+confirm that the mocked OTP API was called with the correct parameters.
+verify that the OTP input field appears after the OTP is successfully “sent”.
+simulate entering a valid OTP.
+simulate clicking the verification button.
+verify that the OTP verification mock was called with the correct data.
+After successful OTP verification, assert that
+A success message is displayed
+The user is redirected to the dashboard page (verified by checking that dashboard content is rendered or that the route changes)
+Use Case 2: Signing in
+Frontend Testing (RTL)
+Verify that when the application loads, the account creation/sign-in page is displayed.
+Simulate the user clicking the “Login” button.
+Verify that the sign-in page is displayed.
+Simulate the user entering a valid email and password into the appropriate input fields.
+Simulate clicking the “Sign In” button.
+Verify that the mocked authentication API is called with the correct email and password.
+If credentials are correct
+Mock a successful authentication response.
+Assert that the user is redirected to the dashboard page by verifying that dashboard content is rendered or that the route changes.
+If not,
+Mock a successful authentication response.
+Assert that the user is redirected to the dashboard page by verifying that dashboard content is rendered or that the route changes.
+Pytest, should be tested independently from frontend
+Successful Login
+Send a POST request to the login endpoint with valid credentials.
+Verify that:
+The response status code indicates success
+A valid authentication token or session identifier is returned.
+The correct user data is included in the response.
+Invalid Credentials
+Send a POST request with
+Incorrect password
+Non-existent email
+Verify that
+The response status code indicates failure
+A error message is returned
+No authentication token is issued
+Edge Case
+Missing email field
+Missing password field
+Empty inputs
+Malformed email format
+Use case 3: Uploading Leetcode Problems
+Frontend Test
+Verify that the dashboard page is displayed after login.
+Simulate the user clicking the “Upload Problem Set” button.
+Verify that the application redirects to the Upload Problem page.
+Confirm that input fields for:
+Question
+Multiple-choice answers
+Code boilerplate
+are displayed.
+Simulate the user entering:
+A valid problem question
+Multiple possible answers
+A valid code boilerplate
+Simulate toggling quiz restriction settings such as:
+Show correct answer</p>
+<p>Allow multiple attempts
+Any other restriction options provided
+Simulate clicking the “Submit” or “Upload” button.
+Verify that the mocked backend API responsible for saving the problem set is called with:
+The question text
+The answer options
+The code boilerplate
+The selected restriction settings
+Mock a successful API response and assert that:
+A success message is displayed
+The user is redirected back to the dashboard
+OR
+The newly uploaded problem appears in a list of available quizzes
+Backend Testing (pytest)
+Successful Problem Upload
+Send a POST request to the problem upload endpoint containing:
+Question text
+Multiple-choice answers
+Code boilerplate
+Restriction settings
+Verify that:
+The response status code indicates success (e.g., 201 Created).
+The problem is correctly stored in the test database.
+The restriction settings are saved correctly.
+The returned response contains the correct problem data.
+Validation
+Test invalid submissions
+Missing question test
+No answer options provided
+Missing code boilerplate
+Invalid restriction configuration
+Verify that
+The response status code indicates failure
+An appropriate validation error message is returned
+No problem is stored in the database
+Use Case 4: Publishing Problems
+Frontend Test (RTL)
+Scenario 1 : successful publish
+Render the application and navigate to a completed quiz editing page.
+Verify that the “Publish” button is displayed at the bottom of the page.
+Simulate clicking the “Publish” button.
+Confirm that the mocked backend publish API is called with the correct quiz identifier.
+Mock a successful backend response that includes a generated access key.
+Assert that:
+A pop-up or modal appears indicating that the quiz has been successfully published.
+The generated access key is displayed in the pop-up.
+The success message matches the expected output.
+Scenario 2 : Incomplete Quiz
+Render the application with a quiz that is missing required fields (e.g., no questions, missing answers, or missing restrictions).
+Simulate clicking the “Publish” button.
+Mock a backend validation failure response indicating that the quiz is incomplete.
+Assert that:
+An error notification is displayed.
+The pop-up success modal does not appear.
+No access key is shown.
+Backend Test
+Scenario 1 : Successful Publish
+Create a valid, fully completed quiz in the test database.
+Send a POST request to the publish endpoint with the quiz ID.
+Verify that:
+The response status code indicates success (e.g., 200 OK).
+A unique access key is generated and returned.
+The quiz’s status in the database changes to “published”.
+The access key is stored in the database and linked to the quiz.
+Scenario 2 : Incomplete Quiz
+Create an incomplete quiz in the test database.
+Send a POST request to the publish endpoint.
+Verify that:
+The response status code indicates failure (e.g., 400 Bad Request).
+An appropriate validation error message is returned.
+No access key is generated.
+The quiz remains unpublished in the database.
+Use case 5: Navigating Dashboard
+Scenario 1 : viewing student progress
+Render the application in an authenticated state so that the dashboard is displayed.
+Verify that the dashboard contains buttons for:
+Uploading quizzes
+Viewing existing quizzes
+Viewing student progress and grades
+Simulate clicking the “View Student Progress and Grades” button.
+Verify that the application redirects to the student progress page.
+Confirm that:
+A list of students or progress summaries is displayed.
+A search input field is visible.
+Simulate entering a student’s name in the search field.
+Verify that the list updates to show matching results.
+Simulate clicking on a specific student’s progress.
+Assert that a modal or new window opens displaying:
+The student’s progress
+Their submitted answers
+Scenario 2 : Grading and publishing (success)
+With the student progress window open, verify that:
+A grade input field is displayed.
+A notes input field is available.
+A “Save and Publish” button is visible.
+Simulate entering a valid grade.
+Simulate entering optional notes.
+Simulate clicking “Save and Publish”.
+Confirm that the mocked grading API is called with:
+The correct student identifier
+The entered grade
+The notes (if provided)
+Mock a successful backend response.
+Assert that:
+A success notification appears stating that the grade has been published.
+The modal closes or updates to reflect the published status.
+Scenario 3 : Incomplete Input Validation
+Leave the grade field empty
+Simulate clicking “Save and Publish”.
+Assert that:</p>
+<p>An error message appears prompting the user to complete required fields.
+The mocked API is not called.
+No success notification appears.
+Backend Testing (pytest)
+Scenario 1 Retrieving Student Progress
+Insert sample student data and quiz submissions into the test database.
+Send a GET request to the student progress endpoint.
+Verify that:
+The response status code indicates success.
+The returned data includes correct student progress information.
+Submitted answers are correctly returned.
+Scenario 2 Saving and Publishing Grades (Successful Case)
+Send a POST or PUT request to the grading endpoint with:
+Student ID
+Grade value
+Notes (if applicable)
+Verify that:
+The response status code indicates success.
+The grade is correctly stored in the database.
+The grade status is updated to “published”.
+The correct confirmation response is returned.
+Scenario 3 Incomplete Input Validation
+Attempt to submit a grade without a required field (for example, missing grade value).
+Verify that:
+The response status code indicates failure (for example, 400 Bad Request).
+A validation error message is returned.
+No grade is stored or published
+Use case 7 - deleting a question from a quiz
+Frontend (RTL)
+Scenario 1 – Successful Question Deletion
+Render the application in an authenticated state so that the dashboard is displayed.
+Simulate clicking the “View Existing Quizzes” button.
+Verify that the application redirects to the existing quizzes page.
+Confirm that a list of quizzes is displayed.
+Simulate selecting a specific quiz that contains multiple questions.</p>
+<p>Verify that the quiz editing page is displayed and that each question has an associated “Delete” button.
+Simulate clicking the “Delete” button next to a specific question.
+Verify that a confirmation pop-up appears asking the user to confirm the deletion.
+Simulate confirming the deletion.
+Confirm that the mocked delete API is called with the correct quiz ID and question ID.
+Mock a successful backend response.
+Assert that:
+The question is no longer displayed in the list of quiz questions.
+A success notification appears indicating that the question was deleted successfully.
+Scenario 2 – Deletion Cancelled
+Navigate to the quiz editing page as described above.
+Simulate clicking the “Delete” button for a question.
+When the confirmation pop-up appears, simulate cancelling the action.</p>
+<p>Assert that:
+The delete API is not called.
+The question remains visible in the quiz.
+No success notification appears.
+Backend (Pytest)
+Scenario 1. Successful Question Deletion
+Insert a quiz with multiple questions into the test database.
+Send a DELETE request to the question deletion endpoint with the quiz ID and question ID.
+Verify that:
+The response status code indicates success (for example, 200 OK).
+The specified question is removed from the database.
+The quiz no longer contains the deleted question.
+Scenario 2. Attempting to Delete a Non-Existent Question
+Send a DELETE request using an invalid or non-existent question ID.
+Verify that:
+The response status code indicates failure (for example, 404 Not Found).
+No other questions are affected.</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/Capstone-Projects-2026-spring/project-auto-suggestion-quiz/edit/main/documentation/docs/testing/integration-testing.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"><details><summary>Revision History</summary><table><thead><tr><th scope="row">Author</th><th scope="row">Revision</th><th scope="row">Date</th></tr></thead><tbody><tr><td colspan="3" style="text-align:center;font-style:italic;color:#666">Loading...</td></tr></tbody></table></details><span class="theme-last-updated">Last updated<!-- --> by <b>tup80767</b></span></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/project-auto-suggestion-quiz/docs/category/test-procedures"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Test Procedures</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/project-auto-suggestion-quiz/docs/testing/acceptence-testing"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Acceptance test</div></a></nav></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/project-auto-suggestion-quiz/docs/intro">Documentation</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/Capstone-Projects-2026-spring/project-auto-suggestion-quiz" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a class="footer__link-item" href="/project-auto-suggestion-quiz/tutorial/open-source-usage">Template Contributors</a></li></ul></div></div><div class="footer__bottom text--center"><div class="margin-bottom--sm"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="footer__logo themedComponent_mlkZ themedComponent--light_NVdE"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="footer__logo themedComponent_mlkZ themedComponent--dark_xIcU"></div><div class="footer__copyright">Copyright © 2026 Project Auto Suggestion Quiz, Inc. Built with Docusaurus.</div></div></div></footer></div>
 </body>
 </html>
