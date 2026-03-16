@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import ProblemPage from './pages/ProblemPage';
 import CreateProblemPage from './pages/CreateProblemPage';
 import { PROBLEMS } from './constants';
+import TeacherDashboard from './pages/TeacherDashboard';
 
 /**
  * @fileoverview Root application component for the Auto Suggestion Quiz app.
@@ -81,7 +82,15 @@ function App() {
   if (currentPage === 'createProblem') {
     return <CreateProblemPage onBack={handleBackToDashboard} />;
   }
-
+  if (user?.role === 'teacher') {
+      return (
+          <TeacherDashboard
+                user={user}
+                onCreateProblem={handleCreateProblem}
+                onOpenProblem={handleOpenProblem}
+          />
+      );
+  }
   return (
     <Dashboard
       problems={PROBLEMS}
