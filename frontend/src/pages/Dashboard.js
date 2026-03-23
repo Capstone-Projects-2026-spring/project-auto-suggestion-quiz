@@ -75,11 +75,9 @@ function Dashboard({ problems = [], onOpenProblem, onCreateProblem, onLogout, us
         </div>
         <div className="header-right">
           <span className="dashboard-greeting">Welcome back, {user?.name || 'Student'}</span>
-          {user?.role === 'teacher' && (
             <button className="btn btn-outline" onClick={onCreateProblem}>
               + New Problem
             </button>
-          )}
           <button className="btn btn-outline" onClick={onLogout}>
             Log Out
           </button>
