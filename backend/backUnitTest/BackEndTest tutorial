@@ -33,7 +33,12 @@ python -m pytest backend/backUnitTest/ -v
 ## Creating coverage
 From the root directory, run:
 ```
+For Mac OS:
 PYTHONPATH=. python3 -m pytest backend/backUnitTest/ -v --cov=backend --cov-report=html
+
+For Windows:
+$env:PYTHONPATH="."
+python -m pytest backend/backUnitTest/ -v --cov=backend --cov-report=html
 
 ```
 
