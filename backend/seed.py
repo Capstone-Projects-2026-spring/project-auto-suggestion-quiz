@@ -38,18 +38,18 @@ cursor.execute(
     "INSERT INTO users (name, email, role) VALUES (%s, %s, %s) RETURNING id",
     ("Seed Teacher", "seed@autoquiz.dev", "teacher"),
 )
-teacher_id = cursor.fetchone()["id"]
-print(f"Created seed teacher (id={teacher_id})")
+user_id = cursor.fetchone()["id"]
+print(f"Created seed teacher (id={user_id})")
 
 # ── Seed problem ───────────────────────────────────────────────────────────────
 cursor.execute(
     """INSERT INTO problems
-       (teacher_id, access_code, title, description, language, languages,
+       (user_id, access_code, title, description, language, languages,
         time_limit_minutes, max_attempts, allow_copy_paste, track_tab_switching)
        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
        RETURNING id""",
     (
-        teacher_id,
+        user_id,
         "123456",
         "Most Frequent Element",
         (

@@ -111,7 +111,11 @@ async def verify_otp(req: OtpVerifyRequest):
         raise HTTPException(status_code=401, detail="Invalid or expired OTP")
 
     data = response.json()
-    supabase_email = data.get("user", {}).get("email", req.email)
+    supabase_email = (
+        data.get("user", {}).get("email")
+        or data.get("email")
+        or req.email
+    )
 
     conn = get_connection()
     cursor = conn.cursor()
