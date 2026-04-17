@@ -357,12 +357,28 @@ function ProblemPage({ problem, onBack, studentName }) {
 
   // Run code
   const handleRunCode = async () => {
-    if (!pyodide) { setOutput('Error: Python runtime not loaded yet. Please wait...\n'); return; }
     if (language !== 'python') {
-      setIsRunning(true); setActiveTab('output'); setOutput('Running code...\n');
-      setTimeout(() => { setOutput(`$ Running ${language} code...\n\nExecution complete.\n`); setIsRunning(false); }, 1500);
+      setIsRunning(true);
+      setActiveTab('output');
+      setOutput('Running code...\n');
+
+      try {
+        const result = await executeCode(code, language, '');
+        let outputText = result.output || '';
+        if (result.error) {
+          outputText += `${outputText ? '\n' : ''}Error: ${result.error}`;
+        }
+        setOutput(outputText || 'Code executed successfully (no output)\n');
+      } catch (error) {
+        const errorMessage = error?.message || String(error) || 'Unknown error';
+        setOutput(`Error executing ${language} code:\n${errorMessage}\n`);
+      } finally {
+        setIsRunning(false);
+      }
       return;
     }
+
+    if (!pyodide) { setOutput('Error: Python runtime not loaded yet. Please wait...\n'); return; }
     setIsRunning(true); setActiveTab('output'); setOutput('');
     try {
       const fullCode = `
