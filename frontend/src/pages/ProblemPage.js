@@ -19,7 +19,7 @@ import { AI_SUGGESTIONS_BY_PROBLEM, DEFAULT_AI_SUGGESTIONS, LANGUAGE_MAP } from 
  * @property {string} id - Unique identifier used to look up AI suggestions.
  * @property {string} title - Display title of the problem.
  * @property {string} description - Full problem description shown to the user.
- * @property {Object.<string, string>} starterCode - Map of language key to starter code string (e.g. `{ python: '...', javascript: '...' }`).
+ * @property {Object.<string, string>} starterCode - Map of language key to starter code string.
  * @property {Example[]} examples - List of input/output examples shown in the problem panel.
  */
 
@@ -30,73 +30,100 @@ import { AI_SUGGESTIONS_BY_PROBLEM, DEFAULT_AI_SUGGESTIONS, LANGUAGE_MAP } from 
  * @property {string} label - The label of the accepted suggestion.
  */
 
-/**
- * A full-page coding environment that presents a problem description alongside
- * a Monaco editor. Features include:
- * - Per-problem AI autocompletion suggestions that trigger after 2 seconds of idle typing.
- * - In-browser Python execution via Pyodide.
- * - Mock execution for non-Python languages.
- * - A suggestion log that records every accepted AI suggestion.
- *
- * @component
- * @param {Object} props
- * @param {Problem} props.problem - The problem data to display and solve.
- * @param {function(): void} props.onBack - Callback invoked when the user navigates back or submits.
- * @returns {React.ReactElement} The rendered problem page.
- *
- * @example
- * <ProblemPage problem={selectedProblem} onBack={() => setPage('home')} />
- */
 function ProblemPage({ problem, onBack }) {
-  /** @type {[string, function(string): void]} Currently selected language key (e.g. `'python'`). */
   const [language, setLanguage] = useState('python');
-
-  /** @type {[string, function(string): void]} Current contents of the code editor. */
-  const [code, setCode] = useState(problem.starterCode.python);
-
-  /** @type {[string, function(string): void]} Output text displayed in the output tab. */
+  const [code, setCode] = useState(problem.starterCode.python || '');
   const [output, setOutput] = useState('');
-
-  /** @type {[boolean, function(boolean): void]} Whether code is currently being executed. */
+  const [testResults, setTestResults] = useState([]);
   const [isRunning, setIsRunning] = useState(false);
-
-  /** @type {['output'|'log', function(string): void]} Which bottom panel tab is active. */
   const [activeTab, setActiveTab] = useState('output');
-
-  /** @type {[SuggestionLogEntry[], function(SuggestionLogEntry[]): void]} Log of accepted AI suggestions. */
   const [suggestionLog, setSuggestionLog] = useState([]);
-
-  /** @type {[Object[], function(Object[]): void]} Latest AI suggestions fetched from the backend for the side panel. */
   const [aiSuggestions, setAiSuggestions] = useState([]);
+  const [suggestionQueue, setSuggestionQueue] = useState([]);
+  const [isFetchingSuggestions, setIsFetchingSuggestions] = useState(false);
 
-  /** @type {React.MutableRefObject<import('monaco-editor').editor.IStandaloneCodeEditor|null>} Reference to the Monaco editor instance. */
   const editorRef = useRef(null);
-
-  /** @type {React.MutableRefObject<typeof import('monaco-editor')|null>} Reference to the Monaco namespace. */
   const monacoRef = useRef(null);
-
-  /** @type {React.MutableRefObject<ReturnType<typeof setTimeout>|null>} Timer ref for the idle-trigger debounce. */
   const idleTimerRef = useRef(null);
-
-  /** @type {React.MutableRefObject<{dispose: function(): void}|null>} Disposable returned by `registerCompletionItemProvider`. */
   const completionProviderRef = useRef(null);
 
-  /** @type {[Object|null, function(Object|null): void]} The loaded Pyodide instance, or null if not yet ready. */
   const [pyodide, setPyodide] = useState(null);
-
-  /** @type {[boolean, function(boolean): void]} Whether Pyodide is still initializing. */
   const [pyodideLoading, setPyodideLoading] = useState(true);
 
   /**
-   * Registers (or re-registers) the AI completion item provider for the given language.
-   * Disposes of any previously registered provider before creating a new one.
-   * Suggestions are sourced from {@link AI_SUGGESTIONS_BY_PROBLEM} keyed by problem ID,
-   * falling back to {@link DEFAULT_SUGGESTIONS}.
-   *
-   * @function
-   * @param {typeof import('monaco-editor')} monaco - The Monaco namespace.
-   * @param {string} lang - The Monaco language identifier (e.g. `'python'`, `'javascript'`).
-   * @returns {void}
+   * Fetches one AI suggestion from the backend.
+   */
+  const fetchSuggestionFromBackend = useCallback(
+    async (currentCode) => {
+      const response = await fetch('http://localhost:8000/ai/suggestion', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          problem_id: problem.id,
+          current_code: currentCode,
+          problem_prompt: problem.description,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch AI suggestion');
+      }
+
+      const data = await response.json();
+
+      return {
+        label: data.label || 'AI Suggestion',
+        detail: data.detail || 'AI Suggestion',
+        insertText: data.insertText || '',
+        explanation: data.explanation || '',
+      };
+    },
+    [problem.id, problem.description]
+  );
+
+  /**
+   * Preloads multiple suggestions to reduce visible wait time.
+   */
+  const preloadSuggestions = useCallback(
+    async (currentCode, count = 3) => {
+      if (isFetchingSuggestions) return;
+
+      try {
+        setIsFetchingSuggestions(true);
+
+        const requests = Array.from({ length: count }, () =>
+          fetchSuggestionFromBackend(currentCode)
+        );
+
+        const results = await Promise.allSettled(requests);
+
+        const validSuggestions = results
+          .filter((result) => result.status === 'fulfilled')
+          .map((result) => result.value)
+          .filter((item) => item.insertText && item.insertText.trim() !== '');
+
+        if (validSuggestions.length > 0) {
+          setSuggestionQueue(validSuggestions);
+          setAiSuggestions(validSuggestions.slice(0, 3));
+        } else {
+          setSuggestionQueue([]);
+          setAiSuggestions([]);
+        }
+      } catch (err) {
+        console.error('Failed to preload AI suggestions', err);
+        setSuggestionQueue([]);
+        setAiSuggestions([]);
+      } finally {
+        setIsFetchingSuggestions(false);
+      }
+    },
+    [fetchSuggestionFromBackend, isFetchingSuggestions]
+  );
+
+  /**
+   * Registers the AI completion item provider for Monaco.
    */
   const registerCompletionProvider = useCallback(
     (monaco, lang) => {
@@ -111,14 +138,6 @@ function ProblemPage({ problem, onBack }) {
       completionProviderRef.current =
         monaco.languages.registerCompletionItemProvider(lang, {
           triggerCharacters: [],
-
-          /**
-           * Provides AI completion items at the current cursor position.
-           *
-           * @param {import('monaco-editor').editor.ITextModel} model - The current text model.
-           * @param {import('monaco-editor').Position} position - The current cursor position.
-           * @returns {{ suggestions: import('monaco-editor').languages.CompletionItem[] }}
-           */
           provideCompletionItems(model, position) {
             const word = model.getWordUntilPosition(position);
             const range = {
@@ -155,112 +174,15 @@ function ProblemPage({ problem, onBack }) {
   );
 
   /**
-   * Callback fired when the Monaco editor finishes mounting.
-   * Attaches the AI suggestion acceptance action, an optional paste interceptor,
-   * an idle-trigger for autocomplete, and registers the initial completion provider.
-   *
-   * @function
-   * @param {import('monaco-editor').editor.IStandaloneCodeEditor} editor - The mounted editor instance.
-   * @param {typeof import('monaco-editor')} monaco - The Monaco namespace.
-   * @returns {void}
+   * When the page first loads or language changes, preload suggestions.
    */
-  const handleEditorDidMount = useCallback(
-    (editor, monaco) => {
-      editorRef.current = editor;
-      monacoRef.current = monaco;
-
-      editor.addCommand(0, () => {}, '');
-
-      /**
-       * Editor action that records an accepted AI suggestion to the suggestion log.
-       * Triggered via the `'ai-suggestion-accepted'` command attached to each completion item.
-       */
-      editor.addAction({
-        id: 'ai-suggestion-accepted',
-        label: 'AI Suggestion Accepted',
-        run: (_ed, label) => {
-          setSuggestionLog((prev) => [
-            ...prev,
-            {
-              time: new Date().toLocaleTimeString(),
-              action: 'accepted',
-              label: label || 'unknown',
-            },
-          ]);
-        },
-      });
-
-      editor.onKeyDown((e) => {
-        if ((e.ctrlKey || e.metaKey) && e.code === 'KeyV') {
-          // Uncomment to enable anti-paste:
-          // e.preventDefault();
-          // e.stopPropagation();
-        }
-      });
-
-      /**
-       * After each content change, reset the idle timer.
-       * When the editor has been idle for 2 seconds and still has focus,
-       * we:
-       * - Fetch fresh AI suggestions from the backend for the side panel.
-       * - Trigger the Monaco suggestion dropdown using the existing hardcoded sets.
-       */
-      editor.onDidChangeModelContent(() => {
-        if (idleTimerRef.current) {
-          clearTimeout(idleTimerRef.current);
-        }
-
-        idleTimerRef.current = setTimeout(() => {
-          if (!editor.hasTextFocus()) return;
-
-          (async () => {
-            try {
-              const currentCode = editor.getValue();
-              const response = await fetch('http://localhost:8000/ai/suggestion', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  problem_id: problem.id,
-                  current_code: currentCode,
-                  problem_prompt: problem.description,
-                }),
-              });
-
-              if (response.ok) {
-                const data = await response.json();
-                const mappedSuggestions = [
-                  {
-                    label: data.label || 'AI Suggestion',
-                    detail: data.detail || 'AI Suggestion',
-                    insertText: data.insertText || '',
-                    explanation: data.explanation || '',
-                  },
-                ];
-                setAiSuggestions(mappedSuggestions);
-              } else {
-                setAiSuggestions([]);
-              }
-            } catch (err) {
-              console.error('Failed to fetch AI suggestions', err);
-              setAiSuggestions([]);
-            }
-
-            
-            editor.trigger('ai-idle', 'editor.action.triggerSuggest', {});
-          })();
-        }, 2000);
-      });
-
-      registerCompletionProvider(monaco, LANGUAGE_MAP[language]);
-    },
-    [registerCompletionProvider, language]
-  );
+  useEffect(() => {
+    const initialCode = problem.starterCode[language] || '';
+    preloadSuggestions(initialCode, 3);
+  }, [preloadSuggestions, problem, language]);
 
   /**
-   * Cleanup effect: clears the idle timer and disposes the completion provider
-   * when the component unmounts to prevent memory leaks.
+   * Cleanup effect.
    */
   useEffect(() => {
     return () => {
@@ -270,15 +192,7 @@ function ProblemPage({ problem, onBack }) {
   }, []);
 
   /**
-   * Initialization effect: dynamically loads the Pyodide script and initializes
-   * the Python runtime on mount. Handles three scenarios:
-   * 1. `window.loadPyodide` is already available (e.g. cached).
-   * 2. The script tag is already in the DOM but still loading.
-   * 3. The script needs to be injected fresh into `document.head`.
-   *
-   * On failure, sets an error message in the output panel.
-   *
-   * @see {@link https://pyodide.org/en/stable/}
+   * Initialize Pyodide.
    */
   useEffect(() => {
     const initPyodide = async () => {
@@ -309,7 +223,7 @@ function ProblemPage({ problem, onBack }) {
         script.onload = async () => {
           try {
             const pyodideInstance = await window.loadPyodide({
-              indexURL: 'https://unpkg.com/pyodide@0.26.4/'
+              indexURL: 'https://unpkg.com/pyodide@0.26.4/',
             });
             setPyodide(pyodideInstance);
             setPyodideLoading(false);
@@ -338,41 +252,113 @@ function ProblemPage({ problem, onBack }) {
   }, []);
 
   /**
-   * Handles switching the active editor language.
-   * Updates the language state, swaps the editor content to the appropriate
-   * starter code, and re-registers the completion provider for the new language.
-   *
-   * @function
-   * @param {string} newLang - The language key to switch to (must be a key of {@link LANGUAGE_MAP}).
-   * @returns {void}
+   * Handles Monaco editor mount.
+   */
+  const handleEditorDidMount = useCallback(
+    (editor, monaco) => {
+      editorRef.current = editor;
+      monacoRef.current = monaco;
+
+      editor.addCommand(0, () => {}, '');
+
+      editor.addAction({
+        id: 'ai-suggestion-accepted',
+        label: 'AI Suggestion Accepted',
+        run: (_ed, label) => {
+          setSuggestionLog((prev) => [
+            ...prev,
+            {
+              time: new Date().toLocaleTimeString(),
+              action: 'accepted',
+              label: label || 'unknown',
+            },
+          ]);
+        },
+      });
+
+      editor.onKeyDown((e) => {
+        if ((e.ctrlKey || e.metaKey) && e.code === 'KeyV') {
+          // Uncomment if you want to block paste:
+          // e.preventDefault();
+          // e.stopPropagation();
+        }
+      });
+
+      editor.onDidChangeModelContent(() => {
+        if (idleTimerRef.current) {
+          clearTimeout(idleTimerRef.current);
+        }
+
+        idleTimerRef.current = setTimeout(() => {
+          if (!editor.hasTextFocus()) return;
+
+          (async () => {
+            try {
+              const currentCode = editor.getValue();
+
+              if (suggestionQueue.length > 0) {
+                setAiSuggestions(suggestionQueue.slice(0, 3));
+
+                const remaining = suggestionQueue.slice(1);
+                setSuggestionQueue(remaining);
+
+                if (remaining.length < 2) {
+                  preloadSuggestions(currentCode, 3);
+                }
+              } else {
+                await preloadSuggestions(currentCode, 3);
+              }
+
+              editor.trigger('ai-idle', 'editor.action.triggerSuggest', {});
+            } catch (err) {
+              console.error('Failed to update AI suggestions', err);
+              setAiSuggestions([]);
+            }
+          })();
+        }, 2000);
+      });
+
+      registerCompletionProvider(monaco, LANGUAGE_MAP[language]);
+    },
+    [language, preloadSuggestions, registerCompletionProvider, suggestionQueue]
+  );
+
+  /**
+   * Handles switching languages.
    */
   const handleLanguageChange = (newLang) => {
     setLanguage(newLang);
-    setCode(problem.starterCode[newLang] || '');
+    const nextCode = problem.starterCode[newLang] || '';
+    setCode(nextCode);
 
     if (monacoRef.current) {
       registerCompletionProvider(monacoRef.current, LANGUAGE_MAP[newLang]);
     }
+
+    preloadSuggestions(nextCode, 3);
   };
 
+  /**
+   * Inserts a clicked suggestion into the editor and logs it.
+   */
   const handleSuggestionClick = (suggestion) => {
     if (!editorRef.current) return;
 
     const editor = editorRef.current;
     const position = editor.getPosition();
 
-    // Insert the suggestion text at current cursor position
-    editor.executeEdits('ai-suggestion', [{
-      range: {
-        startLineNumber: position.lineNumber,
-        startColumn: position.column,
-        endLineNumber: position.lineNumber,
-        endColumn: position.column,
+    editor.executeEdits('ai-suggestion', [
+      {
+        range: {
+          startLineNumber: position.lineNumber,
+          startColumn: position.column,
+          endLineNumber: position.lineNumber,
+          endColumn: position.column,
+        },
+        text: suggestion.insertText,
       },
-      text: suggestion.insertText,
-    }]);
+    ]);
 
-    // Log the accepted suggestion
     setSuggestionLog((prev) => [
       ...prev,
       {
@@ -382,18 +368,25 @@ function ProblemPage({ problem, onBack }) {
       },
     ]);
 
-    // Focus back on editor
+    const remainingSuggestions = aiSuggestions.filter(
+      (item) =>
+        !(
+          item.label === suggestion.label &&
+          item.insertText === suggestion.insertText
+        )
+    );
+
+    setAiSuggestions(remainingSuggestions);
+
+    if (remainingSuggestions.length < 2) {
+      preloadSuggestions(editor.getValue(), 3);
+    }
+
     editor.focus();
   };
+
   /**
-   * Executes the current editor code.
-   * - For Python: runs code in-browser via Pyodide, capturing stdout and stderr.
-   *   The code is wrapped in a StringIO redirect so `print()` output is captured.
-   * - For other languages: simulates execution with a short timeout and a mock result.
-   *
-   * @async
-   * @function
-   * @returns {Promise<void>}
+   * Runs the code.
    */
   const handleRunCode = async () => {
     if (!pyodide) {
@@ -405,6 +398,7 @@ function ProblemPage({ problem, onBack }) {
       setIsRunning(true);
       setActiveTab('output');
       setOutput('Running code...\n');
+      setTestResults([]);
 
       setTimeout(() => {
         setOutput(`$ Running ${language} code...\n\nExecution complete.\n`);
@@ -416,19 +410,18 @@ function ProblemPage({ problem, onBack }) {
     setIsRunning(true);
     setActiveTab('output');
     setOutput('');
+    setTestResults([]);
 
     try {
       const fullCode = `
 import sys
 from io import StringIO
 
-# Redirect stdout and stderr
 sys.stdout = StringIO()
 sys.stderr = StringIO()
 
 ${code}
 
-# Get the output
 _stdout = sys.stdout.getvalue()
 _stderr = sys.stderr.getvalue()
 `;
@@ -443,7 +436,6 @@ _stderr = sys.stderr.getvalue()
       if (stderr) result += 'Error: ' + stderr;
 
       setOutput(result || 'Code executed successfully (no output)\n');
-
     } catch (error) {
       setOutput(`Error executing Python code:\n${error.message}\n`);
     } finally {
@@ -452,12 +444,93 @@ _stderr = sys.stderr.getvalue()
   };
 
   /**
-   * Handles solution submission.
-   * Displays a submission confirmation message in the output panel,
-   * then redirects to the dashboard via `onBack` after a short delay.
-   *
-   * @function
-   * @returns {void}
+   * Runs the code against test cases.
+   */
+ const handleRunAndTest = async () => {
+  if (!pyodide) {
+    setOutput('Error: Python runtime not loaded yet.\n');
+    return;
+  }
+
+  if (language !== 'python') {
+    setActiveTab('output');
+    setOutput('Run & Test currently supports Python only.\n');
+    setTestResults([]);
+    return;
+  }
+
+  setIsRunning(true);
+  setActiveTab('output');
+  setOutput('');
+  setTestResults([]);
+
+  try {
+    const testCases =
+      problem.examples && problem.examples.length > 0
+        ? problem.examples.map((ex) => ({
+            input: ex.input,
+            expected: ex.output,
+          }))
+        : [
+            { input: 's = "()"', expected: 'true' },
+            { input: 's = "()[]{}"', expected: 'true' },
+            { input: 's = "(]"', expected: 'false' },
+          ];
+
+    const results = [];
+
+    for (const test of testCases) {
+      let actualInput = String(test.input).trim();
+
+      if (actualInput.includes('=')) {
+        actualInput = actualInput.split('=').slice(1).join('=').trim();
+      }
+
+      if (
+        (actualInput.startsWith('"') && actualInput.endsWith('"')) ||
+        (actualInput.startsWith("'") && actualInput.endsWith("'"))
+      ) {
+        actualInput = actualInput.slice(1, -1);
+      }
+
+      const fullCode = `
+${code}
+
+result = is_valid(${JSON.stringify(actualInput)})
+print(str(result).lower())
+`;
+
+      await pyodide.runPythonAsync(fullCode);
+
+      const actual = pyodide.globals.get('result');
+      const cleanedActual = String(actual).toLowerCase().trim();
+      const cleanedExpected = String(test.expected).toLowerCase().trim();
+
+      results.push({
+        input: test.input,
+        expected: cleanedExpected,
+        actual: cleanedActual,
+        passed: cleanedActual === cleanedExpected,
+      });
+    }
+
+    setTestResults(results);
+
+    const allPassed = results.length > 0 && results.every((t) => t.passed);
+    setOutput(
+      allPassed
+        ? '🎉 All tests passed!\n'
+        : 'Tests completed. Some tests failed.\n'
+    );
+  } catch (err) {
+    setOutput(`Error running tests:\n${err.message}\n`);
+  } finally {
+    setIsRunning(false);
+  }
+};
+
+  /**
+   * Handles submission.
    */
   const handleSubmit = () => {
     setActiveTab('output');
@@ -529,17 +602,14 @@ _stderr = sys.stderr.getvalue()
                 </button>
               ))}
             </div>
+
             <div className="editor-actions">
               <button
                 className="btn btn-run"
-                onClick={handleRunCode}
-                disabled={isRunning || (language === 'python' && pyodideLoading)}
+                onClick={handleRunAndTest}
+                disabled={isRunning || pyodideLoading}
               >
-                {isRunning
-                  ? '⏳ Running...'
-                  : language === 'python' && pyodideLoading
-                  ? '⏳ Loading Python...'
-                  : '▶ Run Code'}
+                🚀 Run & Test
               </button>
             </div>
           </div>
@@ -598,11 +668,35 @@ _stderr = sys.stderr.getvalue()
                 )}
               </button>
             </div>
+
             <div className="bottom-content">
               {activeTab === 'output' ? (
-                <pre className="output-text">
-                  {output || 'Click "Run Code" to see output here.'}
-                </pre>
+                <div>
+                  <pre className="output-text">
+                    {output || 'Click "Run Code" to see output here.'}
+                  </pre>
+
+                  <h3>Test Results</h3>
+
+                  {testResults.length === 0 ? (
+                    <p>No test results yet.</p>
+                  ) : (
+                    testResults.map((t, i) => (
+                      <div key={i} style={{ marginBottom: '10px' }}>
+                        <p>
+                          <strong>Input:</strong> {t.input}
+                        </p>
+                        <p>
+                          <strong>Expected:</strong> {t.expected}
+                        </p>
+                        <p>
+                          <strong>Actual:</strong> {t.actual}
+                        </p>
+                        <p>{t.passed ? '✅ Pass' : '❌ Fail'}</p>
+                      </div>
+                    ))
+                  )}
+                </div>
               ) : (
                 <div className="suggestion-log">
                   {suggestionLog.length === 0 ? (
@@ -626,9 +720,6 @@ _stderr = sys.stderr.getvalue()
           </div>
         </div>
 
-        
-
-        {/* AI Suggestions Panel */}
         <div className="suggestions-panel">
           <div className="panel-header">
             <span className="panel-title">AI Suggestions</span>
@@ -636,7 +727,9 @@ _stderr = sys.stderr.getvalue()
           <div className="suggestions-list">
             {aiSuggestions.length === 0 ? (
               <p className="log-empty">
-                Pause typing for 2 seconds to fetch AI suggestions.
+                {isFetchingSuggestions
+                  ? 'Loading AI suggestions...'
+                  : 'Pause typing for 2 seconds to fetch AI suggestions.'}
               </p>
             ) : (
               aiSuggestions.slice(0, 3).map((suggestion, index) => (
