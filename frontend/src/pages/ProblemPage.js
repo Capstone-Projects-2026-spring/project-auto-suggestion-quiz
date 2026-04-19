@@ -124,7 +124,8 @@ function ProblemPage({ problem, onBack, studentName }) {
                 },
                 insertText: codeText,
                 insertTextRules:
-                  monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                  monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet |
+                  monaco.languages.CompletionItemInsertTextRule.KeepWhitespace,
                 range,
                 sortText: `0${idx}`,
               };
