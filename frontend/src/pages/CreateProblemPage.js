@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { AVAILABLE_LANGUAGES } from '../constants';
 import { createProblem } from '../api';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 
 const STEPS = ['Details', 'Languages', 'Sections', 'Test Cases','Settings'];
 
@@ -250,7 +252,7 @@ function SectionCard({ section, index, onChange, onRemove, canRemove, selectedLa
 }
 
 
-function StepSections({ sections, setSections, selectedLanguages, errors }) {
+function StepSections({ sections, setSections, selectedLanguages, boilerplate, errors }) {
   const addSection = () => {
     const newSection = makeSection();
     // Initialise code map for each selected language
@@ -301,14 +303,18 @@ function StepSections({ sections, setSections, selectedLanguages, errors }) {
         <div className="cp-preview-label">Boilerplate Preview (what students will see)</div>
         <pre className="cp-preview-code">
           {selectedLanguages.length > 0
-            ? sections.map((s, i) => {
+            ? (() => {
                 const lang = selectedLanguages[0];
-                const commentChar = lang === 'python' ? '#' : '//';
-                const label = s.label.trim() || `Section ${i + 1}`;
-                const header = `${commentChar} ${label} ${'-'.repeat(Math.max(0, 40 - label.length))}`;
-                const code = (s.code && s.code[lang]) || '';
-                return `${header}\n${code}`;
-              }).join('\n')
+                const bp = boilerplate && boilerplate[lang] ? boilerplate[lang] + '\n' : '';
+                const sectionCode = sections.map((s, i) => {
+                  const commentChar = lang === 'python' ? '#' : '//';
+                  const label = s.label.trim() || `Section ${i + 1}`;
+                const header = `${commentChar} ${label}`;
+                  const code = (s.code && s.code[lang]) || '';
+                  return `${header}\n${code}`;
+                }).join('\n');
+                return bp + sectionCode;
+              })()
             : '- select a language to preview -'
           }
         </pre>
@@ -321,7 +327,8 @@ function StepSections({ sections, setSections, selectedLanguages, errors }) {
 // ─── Step 4: Settings ────────────────────────────────────────────────────────
 
 function StepSettings({
-  timeLimitMinutes, setTimeLimitMinutes,
+  timeLimitMins, setTimeLimitMins,
+  timeLimitSecs, setTimeLimitSecs,
   maxSubmissions, setMaxSubmissions,
   allowCopyPaste, setAllowCopyPaste,
   trackTabSwitching, setTrackTabSwitching,
@@ -337,16 +344,28 @@ function StepSettings({
       <div className="form-row">
         <div className="form-field form-field-half">
           <label className="form-label">Time Limit</label>
-          <div className="time-limit-wrapper">
+          <div className="time-limit-wrapper" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <input
               type="number"
               className="form-input"
-              placeholder="None"
-              value={timeLimitMinutes}
-              min={1}
-              onChange={e => setTimeLimitMinutes(e.target.value)}
+              placeholder="0"
+              value={timeLimitMins}
+              min={0}
+              style={{ width: '72px' }}
+              onChange={e => setTimeLimitMins(e.target.value)}
             />
-            <span className="time-limit-unit">minutes</span>
+            <span className="time-limit-unit">min</span>
+            <input
+              type="number"
+              className="form-input"
+              placeholder="0"
+              value={timeLimitSecs}
+              min={0}
+              max={59}
+              style={{ width: '72px' }}
+              onChange={e => setTimeLimitSecs(e.target.value)}
+            />
+            <span className="time-limit-unit">sec</span>
           </div>
           <span className="form-hint">Leave blank for no time limit.</span>
         </div>
@@ -487,15 +506,62 @@ function StepTestCases({ testCases, setTestCases }) {
   );
 }
 
+// ─── Autofill Modal ──────────────────────────────────────────────────────────
+
+function AutofillModal({ onClose, onStartBackgroundGenerate }) {
+  const [rawText, setRawText] = useState('');
+  const [error, setError] = useState('');
+
+  const handleGenerate = () => {
+    if (rawText.trim().length < 30) {
+      setError('Please provide more detail before generating.');
+      return;
+    }
+    onStartBackgroundGenerate(rawText);
+  };
+
+  return (
+    <div className="restore-overlay">
+      <div className="restore-dialog" style={{ maxWidth: '560px', width: '90%', textAlign: 'left' }}>
+        <h3 style={{ margin: '0 0 0.5rem' }}>Auto-fill from notes</h3>
+        <p style={{ color: '#888', fontSize: '13px', margin: '0 0 1rem' }}>
+          Paste anything you have about the problem: a description, function signature, example inputs/outputs, or existing code. The more detail you provide, the better the result.
+        </p>
+        <textarea
+          className="form-input form-textarea"
+          rows={10}
+          placeholder="e.g. Write a function add(x, y) that returns the sum of two numbers. add(1, 2) should return 3."
+          value={rawText}
+          onChange={e => { setRawText(e.target.value); setError(''); }}
+          style={{ fontFamily: 'monospace', fontSize: '13px', width: '100%', boxSizing: 'border-box' }}
+          autoFocus
+        />
+        {error && (
+          <p style={{ color: '#f44336', fontSize: '13px', margin: '0.5rem 0 0' }}>{error}</p>
+        )}
+        <div className="restore-actions" style={{ marginTop: '1.25rem' }}>
+          <button className="btn btn-run" onClick={handleGenerate}>
+            Generate in Background
+          </button>
+          <button className="btn btn-outline" onClick={onClose}>
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Component ──────────────────────────────────────────────────────────
 
-function CreateProblemPage({ onBack }) {
+function CreateProblemPage({ onBack, onCreated, autofillResult, onAutofillConsumed, onAutofillReady }) {
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [accessCode, setAccessCode] = useState('');
   const [submitError, setSubmitError] = useState('');
-
+  const [showAutofill, setShowAutofill] = useState(false);
+  const autofillAppliedRef = React.useRef(false);
   // Step 1
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -512,18 +578,81 @@ function CreateProblemPage({ onBack }) {
     return s;
   };
   const [sections, setSections] = useState([initSection()]);
+  const [boilerplate, setBoilerplate] = useState({});
 
   // Step 4
   const [testCases, setTestCases] = useState([{ input: '', expected: '', explanation: '' }]);
   
   //Step 5
-  const [timeLimitMinutes, setTimeLimitMinutes] = useState('');
+  const [timeLimitMins, setTimeLimitMins] = useState('');
+  const [timeLimitSecs, setTimeLimitSecs] = useState('');
   const [maxSubmissions, setMaxSubmissions] = useState('');
   const [allowCopyPaste, setAllowCopyPaste] = useState(true);
   const [trackTabSwitching, setTrackTabSwitching] = useState(false);
 
-  const toggleLanguage = (key) => {
-    setSelectedLanguages(prev => {
+  React.useEffect(() => {
+    if (autofillResult && !autofillAppliedRef.current) {
+      autofillAppliedRef.current = true;
+      applyAutofill(autofillResult);
+      if (onAutofillConsumed) onAutofillConsumed();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autofillResult]);
+
+  // ── Autofill handler — maps OpenAI response into all form state ──
+  const applyAutofill = (data) => {
+    if (data.title) setTitle(data.title);
+    if (data.description) setDescription(data.description);
+
+    const langs = Array.isArray(data.languages) && data.languages.length > 0
+      ? data.languages
+      : ['python'];
+    setSelectedLanguages(langs);
+
+    if (data.boilerplate && typeof data.boilerplate === 'object') {
+      setBoilerplate(data.boilerplate);
+    }
+
+    if (Array.isArray(data.sections) && data.sections.length > 0) {
+      const mapped = data.sections
+        .sort((a, b) => a.order - b.order)
+        .map((s) => {
+          const codeMap = typeof s.code === 'object' ? s.code : {};
+          // Ensure every selected language has an entry
+          langs.forEach(l => { if (!codeMap[l]) codeMap[l] = ''; });
+
+          const suggestions = Array.isArray(s.suggestions) && s.suggestions.length > 0
+            ? s.suggestions.map(sg => ({
+                id: Date.now() + Math.random(),
+                type: sg.type || 'ai',
+                content: sg.content || '',
+                isCorrect: sg.isCorrect !== undefined ? sg.isCorrect : true,
+              }))
+            : [makeSuggestion()];
+
+          return {
+            id: Date.now() + Math.random(),
+            label: s.label || '',
+            code: codeMap,
+            suggestions,
+          };
+        });
+      setSections(mapped);
+    }
+
+    if (Array.isArray(data.testCases) && data.testCases.length > 0) {
+      setTestCases(data.testCases.map(tc => ({
+        input: tc.input || '',
+        expected: tc.expected || '',
+        explanation: tc.explanation || '',
+      })));
+    }
+
+    setShowAutofill(false);
+    setStep(0);
+  };
+
+  const toggleLanguage = (key) => {    setSelectedLanguages(prev => {
       if (prev.includes(key)) {
         if (prev.length === 1) return prev;
         return prev.filter(l => l !== key);
@@ -570,19 +699,21 @@ function CreateProblemPage({ onBack }) {
     const errs = validate();
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
 
-    // Compile boilerplate per language by joining section code blocks in order
-    const boilerplate = Object.fromEntries(
-      selectedLanguages.map(lang => [
-        lang,
-        sections.map(s => (s.code && s.code[lang]) || '').join('\n'),
-      ])
-    );
+    // Use autofill boilerplate if available, otherwise compile from section code
+    const compiledBoilerplate = Object.keys(boilerplate).length > 0
+      ? boilerplate
+      : Object.fromEntries(
+          selectedLanguages.map(lang => [
+            lang,
+            sections.map(s => (s.code && s.code[lang]) || '').join('\n'),
+          ])
+        );
 
     const problemData = {
       title: title.trim(),
       description: description.trim(),
       languages: selectedLanguages,
-      boilerplate,
+      boilerplate: compiledBoilerplate,
       sections: sections.map((s, i) => ({
         order: i + 1,
         label: s.label.trim(),
@@ -594,7 +725,9 @@ function CreateProblemPage({ onBack }) {
         })),
       })),
       testCases: testCases,
-      timeLimitMinutes: timeLimitMinutes !== '' ? Number(timeLimitMinutes) : null,
+      timeLimitSeconds: (timeLimitMins !== '' || timeLimitSecs !== '')
+        ? (Number(timeLimitMins || 0) * 60 + Number(timeLimitSecs || 0)) || null
+        : null,
       maxSubmissions: maxSubmissions !== '' ? Number(maxSubmissions) : null,
       allowCopyPaste,
       trackTabSwitching,
@@ -606,6 +739,7 @@ function CreateProblemPage({ onBack }) {
       const result = await createProblem(problemData, localStorage.getItem('teacher_token'));
       setAccessCode(result.access_code);
       setSubmitted(true);
+      if (onCreated) onCreated(result);
     } catch (err) {
       setSubmitError(err.message);
     }
@@ -614,6 +748,26 @@ function CreateProblemPage({ onBack }) {
   // ── Render ──
   return (
     <div className="app">
+      {showAutofill && (
+        <AutofillModal
+          onClose={() => setShowAutofill(false)}
+          onStartBackgroundGenerate={(rawText) => {
+            setShowAutofill(false);
+            onBack();
+            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+            fetch(`${apiUrl}/ai/autofill`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ raw_text: rawText }),
+            })
+              .then(res => res.json())
+              .then(data => {
+                if (data && !data.error && onAutofillReady) onAutofillReady(data);
+              })
+              .catch(() => {});
+          }}
+        />
+      )}
       <header className="app-header">
         <div className="header-left">
           <h1 className="logo">AutoSuggestion Quiz</h1>
@@ -626,7 +780,19 @@ function CreateProblemPage({ onBack }) {
       <div className="create-problem-page">
         <div className="create-problem-container">
           <div className="create-problem-header">
-            <h2 className="create-problem-title">Create New Problem</h2>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+              <h2 className="create-problem-title" style={{ margin: 0 }}>Create New Problem</h2>
+              {!submitted && (
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  style={{ fontSize: '13px' }}
+                  onClick={() => setShowAutofill(true)}
+                >
+                  Auto-fill from notes
+                </button>
+              )}
+            </div>
             <StepIndicator currentStep={step} />
           </div>
 
@@ -661,6 +827,7 @@ function CreateProblemPage({ onBack }) {
                   sections={sections}
                   setSections={setSections}
                   selectedLanguages={selectedLanguages}
+                  boilerplate={boilerplate}
                   errors={errors}
                 />
               )}
@@ -672,7 +839,8 @@ function CreateProblemPage({ onBack }) {
               )}
               {step === 4 && (
                 <StepSettings
-                  timeLimitMinutes={timeLimitMinutes} setTimeLimitMinutes={setTimeLimitMinutes}
+                  timeLimitMins={timeLimitMins} setTimeLimitMins={setTimeLimitMins}
+                  timeLimitSecs={timeLimitSecs} setTimeLimitSecs={setTimeLimitSecs}
                   maxSubmissions={maxSubmissions} setMaxSubmissions={setMaxSubmissions}
                   allowCopyPaste={allowCopyPaste} setAllowCopyPaste={setAllowCopyPaste}
                   trackTabSwitching={trackTabSwitching} setTrackTabSwitching={setTrackTabSwitching}

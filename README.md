@@ -1,9 +1,9 @@
 <div align="center">
 
 # Autosuggestion Quiz
-[![Report Issue on Jira](https://img.shields.io/badge/Report%20Issues-Jira-0052CC?style=flat&logo=jira-software)](https://temple-cis-projects-in-cs.atlassian.net/jira/software/c/projects/DT/issues)
-[![Deploy Docs](https://github.com/ApplebaumIan/tu-cis-4398-docs-template/actions/workflows/deploy.yml/badge.svg)](https://github.com/ApplebaumIan/tu-cis-4398-docs-template/actions/workflows/deploy.yml)
-[![Documentation Website Link](https://img.shields.io/badge/-Documentation%20Website-brightgreen)](https://applebaumian.github.io/tu-cis-4398-docs-template/)
+[![Report Issue on Jira](https://img.shields.io/badge/Report%20Issues-Jira-0052CC?style=flat&logo=jira-software)](https://temple-cis-projects-in-cs.atlassian.net/jira/software/c/projects/ASQ/issues)
+[![Deploy Docs](https://github.com/Capstone-Projects-2026-spring/project-auto-suggestion-quiz/actions/workflows/deploy.yml/badge.svg)](https://github.com/Capstone-Projects-2026-spring/project-auto-suggestion-quiz/actions/workflows/deploy.yml)
+[![Documentation Website Link](https://img.shields.io/badge/-Documentation%20Website-brightgreen)](https://capstone-projects-2026-spring.github.io/project-auto-suggestion-quiz/)
 
 
 </div>
@@ -23,9 +23,7 @@ Describe the requirements – i.e., what the product does and how it does it fro
 
 ## Conceptual Design
 
-The frontend of the application will be developed using JavaScript, React, HTML, and CSS. React will be used to build reusable user interface components and manage application state, while HTML and CSS will be used to structure and style the user interface. The frontend will allow users to select quiz topics, start quizzes, submit answers, and view results in real time.
-The backend will be implemented using Python and Django, which will handle user authentication, quiz generation logic, scoring, and data management. The system will store user data, quiz attempts, and performance metrics in a relational database such as SQLite. The backend will also support algorithms that generate or suggest quiz questions based on predefined rules or user interaction history.
-The application will be accessible through a standard web browser and designed to support multiple users concurrently, ensuring reliability and responsiveness.
+The frontend is built with React (Create React App), providing a Monaco editor-based coding environment where students write and run Python code directly in the browser using Pyodide. The backend is implemented in Python using FastAPI, which handles teacher authentication, problem management, AI suggestion generation, and submission storage. The database is PostgreSQL hosted on Supabase. AI code suggestions are generated via the OpenAI API (GPT-4o mini). OTP-based teacher authentication is handled through Supabase's email auth service.
 
 ## Background
 
@@ -41,12 +39,14 @@ ASQ also supports teachers by allowing them to upload problems and give students
 - Internet access
 - [Node.js](https://nodejs.org) v16+
 - [Python](https://www.python.org) 3.10+
+- A free [Supabase](https://supabase.com) account (PostgreSQL database and OTP auth)
 - An [OpenAI API key](https://platform.openai.com/api-keys) for AI code suggestions
 
 ---
 
 ## Running Locally
 
+For full setup instructions including Supabase configuration, schema SQL, environment variables, and how to run all tests, see [LOCAL_SETUP.md](./LOCAL_SETUP.md).
 ### Backend
 
 ```bash
@@ -225,13 +225,8 @@ Live app: https://autosuggestions.onrender.com/
 Bwosley
 Temi Raymond
 Yong Huang
-Ethan Freidman
+Ethan Friedman
 Henry Le
 Aidan McCammitt
 
-<div align="center">
 
-[//]: # (Replace with your collaborators)
-[Ian Tyler Applebaum](https://github.com/ApplebaumIan) • [Kyle Dragon Lee](https://github.com/leekd99)
-
-</div>

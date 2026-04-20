@@ -41,6 +41,13 @@ export const AVAILABLE_LANGUAGES = [
   { key: 'c', label: 'C' },
 ];
 
+export const LANGUAGE_COMMENT_PREFIX = {
+  python: '#',
+  javascript: '//',
+  java: '//',
+  c: '//',
+};
+
 export const DEFAULT_BOILERPLATE = {
   python: 'def solution():\n    # Write your solution here\n    pass\n',
   javascript: 'function solution() {\n    // Write your solution here\n\n}\n',

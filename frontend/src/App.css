@@ -226,6 +226,23 @@
     background-color: rgba(86, 156, 214, 0.2);
 }
 
+.lang-select {
+    padding: 4px 8px;
+    background: #2d2d2d;
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: #ccc;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+}
+
+.lang-select:focus {
+    border-color: #569cd6;
+    color: #fff;
+}
+
 .editor-actions {
     display: flex;
     align-items: center;
@@ -1357,6 +1374,12 @@
     border-left: 2px solid rgba(192, 139, 48, 0.7) !important;
 }
 
+/* Monaco paste highlight decoration */
+.paste-highlight-line {
+    background-color: rgba(86, 156, 214, 0.12) !important;
+    border-left: 2px solid rgba(86, 156, 214, 0.6) !important;
+}
+
 .review-test-case {
     background-color: #252526;
     border: 1px solid #3c3c3c;
@@ -1884,3 +1907,7 @@
   .save-status { font-size: 0.8rem; color: var(--text-muted, #888); }
   .save-status--saved { color: #4caf50; }
   .save-status--error { color: #f44336; max-width: 200px; }
+  .timer-display { font-size: 0.9rem; font-weight: 600; color: var(--text-muted, #888); font-variant-numeric: tabular-nums; }
+  .timer-display--urgent { color: #f44336; animation: timer-pulse 1s ease-in-out infinite; }
+  @keyframes timer-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+  @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 2px #1e1e1e, 0 0 0 4px rgba(86,156,214,0.4); } 50% { box-shadow: 0 0 0 2px #1e1e1e, 0 0 0 6px rgba(86,156,214,0); } }

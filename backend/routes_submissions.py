@@ -22,9 +22,30 @@ class SuggestionLogEntry(BaseModel):
     label: str
 
 
+class TabSwitchEntry(BaseModel):
+    time: str
+
+
+class TestResult(BaseModel):
+    input: str
+    expected: str
+    actual: str
+    passed: bool
+
+
+class PasteLogEntry(BaseModel):
+    time: str
+    type: str
+    charCount: int
+    preview: str
+
+
 class SubmitRequest(BaseModel):
     code: str
     suggestion_log: list[SuggestionLogEntry] = []
+    tab_switch_log: list[TabSwitchEntry] = []
+    test_results: list[TestResult] = []
+    paste_log: list[PasteLogEntry] = []
 
 
 @router.post("/start", status_code=201)
@@ -60,7 +81,7 @@ def start_submission(req: StartSubmissionRequest):
             )
 
     cursor.execute(
-        """SELECT id, code FROM sessions
+        """SELECT id, code, started_at FROM sessions
            WHERE problem_id = %s AND student_name = %s AND submitted_at IS NULL
            ORDER BY started_at DESC LIMIT 1""",
         (req.problem_id, req.student_name),
@@ -73,11 +94,12 @@ def start_submission(req: StartSubmissionRequest):
             "session_id": draft["id"],
             "has_draft": True,
             "code": draft["code"],
+            "started_at": draft["started_at"].isoformat() if draft["started_at"] else None,
         }
 
     cursor.execute(
         """INSERT INTO sessions (problem_id, student_name)
-           VALUES (%s, %s) RETURNING id""",
+           VALUES (%s, %s) RETURNING id, started_at""",
         (req.problem_id, req.student_name),
     )
     new_session = cursor.fetchone()
@@ -88,6 +110,7 @@ def start_submission(req: StartSubmissionRequest):
         "session_id": new_session["id"],
         "has_draft": False,
         "code": None,
+        "started_at": new_session["started_at"].isoformat() if new_session["started_at"] else None,
     }
 
 
@@ -154,11 +177,15 @@ def submit_session(session_id: int, req: SubmitRequest):
             raise HTTPException(status_code=403, detail="Submission limit reached")
 
     log_json = json.dumps([e.dict() for e in req.suggestion_log])
+    tab_log_json = json.dumps([e.dict() for e in req.tab_switch_log])
+    test_results_json = json.dumps([e.dict() for e in req.test_results])
+    paste_log_json = json.dumps([e.dict() for e in req.paste_log])
     cursor.execute(
         """UPDATE sessions
-           SET code = %s, suggestion_log = %s, submitted_at = NOW()
+           SET code = %s, suggestion_log = %s, tab_switch_log = %s,
+               test_results = %s, paste_log = %s, submitted_at = NOW()
            WHERE id = %s""",
-        (req.code, log_json, session_id),
+        (req.code, log_json, tab_log_json, test_results_json, paste_log_json, session_id),
     )
     conn.commit()
     conn.close()

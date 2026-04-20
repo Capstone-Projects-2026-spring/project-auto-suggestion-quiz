@@ -71,7 +71,9 @@ function DeleteModal({ problem, onConfirm, onClose }) {
 function EditModal({ problem, token, onSaved, onClose }) {
     const [title, setTitle] = useState(problem.title);
     const [description, setDescription] = useState(problem.description);
-    const [timeLimitMinutes, setTimeLimitMinutes] = useState(problem.time_limit_minutes ?? '');
+    const totalSecs = problem.time_limit_seconds ?? null;
+    const [timeLimitMins, setTimeLimitMins] = useState(totalSecs !== null ? Math.floor(totalSecs / 60) : '');
+    const [timeLimitSecs, setTimeLimitSecs] = useState(totalSecs !== null ? totalSecs % 60 : '');
     const [maxSubmissions, setMaxSubmissions] = useState(problem.max_attempts ?? '');
     const [allowCopyPaste, setAllowCopyPaste] = useState(problem.allow_copy_paste);
     const [trackTabSwitching, setTrackTabSwitching] = useState(problem.track_tab_switching);
@@ -86,7 +88,9 @@ function EditModal({ problem, token, onSaved, onClose }) {
             const updated = await editProblem(problem.id, {
                 title: title.trim(),
                 description: description.trim(),
-                timeLimitMinutes: timeLimitMinutes !== '' ? Number(timeLimitMinutes) : null,
+                timeLimitSeconds: (timeLimitMins !== '' || timeLimitSecs !== '')
+                    ? (Number(timeLimitMins || 0) * 60 + Number(timeLimitSecs || 0)) || null
+                    : null,
                 maxSubmissions: maxSubmissions !== '' ? Number(maxSubmissions) : null,
                 allowCopyPaste,
                 trackTabSwitching,
@@ -127,15 +131,30 @@ function EditModal({ problem, token, onSaved, onClose }) {
                     </div>
                     <div style={{ display: 'flex', gap: '16px' }}>
                         <div className="form-field" style={{ flex: 1 }}>
-                            <label className="form-label">Time Limit (minutes)</label>
-                            <input
-                                type="number"
-                                className="form-input"
-                                placeholder="None"
-                                value={timeLimitMinutes}
-                                min={1}
-                                onChange={(e) => setTimeLimitMinutes(e.target.value)}
-                            />
+                        <label className="form-label">Time Limit</label>
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                <input
+                                    type="number"
+                                    className="form-input"
+                                    placeholder="0"
+                                    value={timeLimitMins}
+                                    min={0}
+                                    style={{ width: '80px' }}
+                                    onChange={(e) => setTimeLimitMins(e.target.value)}
+                                />
+                                <span style={{ color: '#aaa', fontSize: '13px' }}>min</span>
+                                <input
+                                    type="number"
+                                    className="form-input"
+                                    placeholder="0"
+                                    value={timeLimitSecs}
+                                    min={0}
+                                    max={59}
+                                    style={{ width: '72px' }}
+                                    onChange={(e) => setTimeLimitSecs(e.target.value)}
+                                />
+                                <span style={{ color: '#aaa', fontSize: '13px' }}>sec</span>
+                            </div>
                         </div>
                         <div className="form-field" style={{ flex: 1 }}>
                             <label className="form-label">Max Submissions</label>
@@ -386,7 +405,7 @@ function ProblemCard({ problem, onShare, onDelete, onEdit, onViewSubmissions }) 
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 
-function Dashboard({ problems = [], problemsLoading = false, problemsError = '', onCreateProblem, onDeleteProblem, onLogout, user, onProblemsUpdate, onRefresh, onReview }) {
+function Dashboard({ problems = [], problemsLoading = false, problemsError = '', onCreateProblem, onDeleteProblem, onLogout, user, onProblemsUpdate, onRefresh, onReview, autofillPending = false }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [shareModal, setShareModal] = useState(null);
     const [deleteModal, setDeleteModal] = useState(null);
@@ -458,8 +477,21 @@ function Dashboard({ problems = [], problemsLoading = false, problemsError = '',
                     <button className="btn btn-outline" onClick={onRefresh} disabled={problemsLoading} title="Refresh problems">
                         {problemsLoading ? '↻ Loading…' : '↻ Refresh'}
                     </button>
-                    <button className="btn btn-outline" onClick={onCreateProblem}>
+                    <button className="btn btn-outline" onClick={onCreateProblem} style={{ position: 'relative' }}>
                         + New Problem
+                        {autofillPending && (
+                            <span style={{
+                                position: 'absolute',
+                                top: '-6px',
+                                right: '-6px',
+                                width: '10px',
+                                height: '10px',
+                                borderRadius: '50%',
+                                backgroundColor: '#569cd6',
+                                boxShadow: '0 0 0 2px #1e1e1e',
+                                animation: 'pulse 1.5s ease-in-out infinite',
+                            }} />
+                        )}
                     </button>
                     <button className="btn btn-outline" onClick={onLogout}>
                         Log Out

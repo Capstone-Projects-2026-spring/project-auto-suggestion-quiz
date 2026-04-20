@@ -32,7 +32,8 @@ function App() {
     const [problems, setProblems] = useState([]);
     const [problemsLoading, setProblemsLoading] = useState(false);
     const [problemsError, setProblemsError] = useState('');
-    const [reviewTarget, setReviewTarget] = useState(null); // { submission, problem }
+    const [reviewTarget, setReviewTarget] = useState(null);
+    const [autofillResult, setAutofillResult] = useState(null);
 
     const loadProblems = (token) => {
         setProblemsLoading(true);
@@ -133,6 +134,9 @@ function App() {
             <CreateProblemPage
                 onBack={handleBackToDashboard}
                 onCreated={handleProblemCreated}
+                autofillResult={autofillResult}
+                onAutofillConsumed={() => setAutofillResult(null)}
+                onAutofillReady={(data) => setAutofillResult(data)}
             />
         );
     }
@@ -149,6 +153,7 @@ function App() {
             onReview={(submission, problem, allSubmissions) => setReviewTarget({ submission, problem, allSubmissions })}
             onLogout={handleLogout}
             user={user}
+            autofillPending={autofillResult !== null}
         />
     );
 }
