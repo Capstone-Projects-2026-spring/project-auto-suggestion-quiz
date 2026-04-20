@@ -208,21 +208,21 @@ function ProblemPage({ problem, onBack, studentName }) {
   // Session start
   useEffect(() => {
     if (monacoRef.current && editorRef.current) {
-      registerCompletionProvider(monacoRef.current, LANGUAGE_MAP[selectedLanguage]);
+      registerCompletionProvider(monacoRef.current, LANGUAGE_MAP[language]);
     }
-  }, [selectedLanguage, registerCompletionProvider]);
+  }, [language, registerCompletionProvider]);
 
   useEffect(() => {
     const newStarterCode = (problem.sections || [])
       .sort((a, b) => a.order_index - b.order_index)
       .map((s) => {
-        const sectionCode = (typeof s.code === 'object' ? s.code[selectedLanguage] : s.code) || '';
-        const prefix = LANGUAGE_COMMENT_PREFIX[selectedLanguage] || '#';
+        const sectionCode = (typeof s.code === 'object' ? s.code[language] : s.code) || '';
+        const prefix = LANGUAGE_COMMENT_PREFIX[language] || '#';
         return `${prefix} ${s.label}\n${sectionCode}`;
       })
       .join('\n');
     setCode(newStarterCode);
-  }, [selectedLanguage, problem.sections]);
+  }, [language, problem.sections]);
 
   useEffect(() => {
     if (!studentName) return;
