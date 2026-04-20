@@ -141,6 +141,24 @@ export async function submitCode(sessionId, code, suggestionLog = [], tabSwitchL
     return response.json();
 }
 
+// --- Feedback (teacher flow) ---
+
+export async function saveSessionFeedback(sessionId, feedback, token) {
+    const response = await fetch(`${API_URL}/submissions/${sessionId}/feedback`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ feedback }),
+    });
+    if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.detail || 'Failed to save feedback');
+    }
+    return response.json();
+}
+
 // --- Grading (teacher flow) ---
 
 export async function gradeSubmission(problemId, sessionId, grade, token) {

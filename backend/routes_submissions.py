@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException, Header
 from pydantic import BaseModel
 from typing import Optional
 from database import get_connection
+from auth import decode_token
 
 router = APIRouter(prefix="/submissions", tags=["submissions"])
 
@@ -46,6 +47,10 @@ class SubmitRequest(BaseModel):
     tab_switch_log: list[TabSwitchEntry] = []
     test_results: list[TestResult] = []
     paste_log: list[PasteLogEntry] = []
+
+
+class FeedbackRequest(BaseModel):
+    feedback: str
 
 
 @router.post("/start", status_code=201)
@@ -212,3 +217,36 @@ def get_session(session_id: int):
         "code": session["code"],
         "submitted": session["submitted_at"] is not None,
     }
+
+
+@router.put("/{session_id}/feedback")
+def save_feedback(
+    session_id: int,
+    req: FeedbackRequest,
+    authorization: Optional[str] = Header(default=None),
+):
+    """Save teacher feedback on a submission."""
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing or invalid token")
+    token = authorization[len("Bearer "):]
+    try:
+        user = decode_token(token)
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    if user.get("role") not in ("teacher", "admin"):
+        raise HTTPException(status_code=403, detail="Only teachers can leave feedback")
+
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM sessions WHERE id = %s", (session_id,))
+    if not cursor.fetchone():
+        conn.close()
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    cursor.execute(
+        "UPDATE sessions SET feedback = %s WHERE id = %s",
+        (req.feedback, session_id),
+    )
+    conn.commit()
+    conn.close()
+    return {"session_id": session_id, "status": "saved"}

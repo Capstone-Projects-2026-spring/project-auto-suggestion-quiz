@@ -115,6 +115,7 @@ function App() {
                 allSubmissions={reviewTarget.allSubmissions}
                 problem={reviewTarget.problem}
                 onBack={() => setReviewTarget(null)}
+                token={user?.token}
             />
         );
     }

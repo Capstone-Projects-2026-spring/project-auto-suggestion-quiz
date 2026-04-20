@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { LANGUAGE_MAP } from '../constants';
+import { saveSessionFeedback } from '../api';
 
 /**
  * @fileoverview Teacher review page — read-only view of a student's submission.
@@ -63,7 +64,7 @@ function getPasteHighlightedLines(code, pasteLog) {
   return highlighted;
 }
 
-function ReviewPage({ submission, allSubmissions = [], problem, onBack }) {
+function ReviewPage({ submission, allSubmissions = [], problem, onBack, token }) {
   const language = problem.language || 'python';
 
   // Default to the newest submission (allSubmissions is pre-sorted newest-first)
@@ -80,6 +81,8 @@ function ReviewPage({ submission, allSubmissions = [], problem, onBack }) {
   const passedCount = testResults.filter(r => r.passed).length;
 
   const [activeTab, setActiveTab] = useState('log');
+  const [feedbackText, setFeedbackText] = useState(activeSubmission.feedback || '');
+  const [feedbackStatus, setFeedbackStatus] = useState('idle'); // idle | saving | saved | error
   const editorRef = useRef(null);
   const monacoRef = useRef(null);
   const decorationsRef = useRef([]);
@@ -130,6 +133,22 @@ function ReviewPage({ submission, allSubmissions = [], problem, onBack }) {
       applyDecorations(editorRef.current, monacoRef.current, code, suggestionLog, pasteLog);
     }
   }, [activeSubmission, applyDecorations, code, suggestionLog]);
+
+  // Reset feedback state when switching submissions
+  useEffect(() => {
+    setFeedbackText(activeSubmission.feedback || '');
+    setFeedbackStatus('idle');
+  }, [activeSubmission]);
+
+  const handleSaveFeedback = async () => {
+    setFeedbackStatus('saving');
+    try {
+      await saveSessionFeedback(activeSubmission.session_id, feedbackText, token);
+      setFeedbackStatus('saved');
+    } catch {
+      setFeedbackStatus('error');
+    }
+  };
 
   const formattedDate = submitted_at
     ? new Date(submitted_at).toLocaleString()
@@ -324,6 +343,15 @@ function ReviewPage({ submission, allSubmissions = [], problem, onBack }) {
                   </span>
                 )}
               </button>
+              <button
+                className={`tab-btn ${activeTab === 'feedback' ? 'active' : ''}`}
+                onClick={() => setActiveTab('feedback')}
+              >
+                Feedback
+                {activeSubmission.feedback && (
+                  <span className="log-count" style={{ backgroundColor: '#16825d' }}>&#10003;</span>
+                )}
+              </button>
             </div>
 
             <div className="bottom-content">
@@ -373,7 +401,7 @@ function ReviewPage({ submission, allSubmissions = [], problem, onBack }) {
                     ))
                   )}
                 </div>
-              ) : (
+              ) : activeTab === 'tests' ? (
                 <div className="suggestion-log">
                   {testResults.length === 0 ? (
                     <p className="log-empty">No test results were recorded for this submission.</p>
@@ -405,6 +433,52 @@ function ReviewPage({ submission, allSubmissions = [], problem, onBack }) {
                       </div>
                     ))
                   )}
+                </div>
+              ) : (
+                <div className="suggestion-log" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <textarea
+                    value={feedbackText}
+                    onChange={(e) => { setFeedbackText(e.target.value); setFeedbackStatus('idle'); }}
+                    placeholder="Leave feedback for this student..."
+                    style={{
+                      width: '100%',
+                      minHeight: '100px',
+                      background: '#2d2d2d',
+                      color: '#d4d4d4',
+                      border: '1px solid #3c3c3c',
+                      borderRadius: '4px',
+                      padding: '10px',
+                      fontSize: '13px',
+                      lineHeight: '1.6',
+                      resize: 'vertical',
+                      fontFamily: 'inherit',
+                      boxSizing: 'border-box',
+                    }}
+                  />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <button
+                      onClick={handleSaveFeedback}
+                      disabled={feedbackStatus === 'saving'}
+                      style={{
+                        padding: '6px 16px',
+                        background: '#0e639c',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '4px',
+                        fontSize: '12px',
+                        cursor: feedbackStatus === 'saving' ? 'not-allowed' : 'pointer',
+                        opacity: feedbackStatus === 'saving' ? 0.7 : 1,
+                      }}
+                    >
+                      {feedbackStatus === 'saving' ? 'Saving...' : 'Save Feedback'}
+                    </button>
+                    {feedbackStatus === 'saved' && (
+                      <span style={{ fontSize: '12px', color: '#16825d' }}>Saved</span>
+                    )}
+                    {feedbackStatus === 'error' && (
+                      <span style={{ fontSize: '12px', color: '#c0392b' }}>Failed to save</span>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
