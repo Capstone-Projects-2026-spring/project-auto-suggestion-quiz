@@ -129,6 +129,11 @@ In Terminal:
 open -a TextEdit "/Users/[Your Computer Name]/Library/Group Containers/group.com.docker/settings-store.json"
 ```
 
+## Windows
+
+For Windows user, trying to run the script will prompt a choice between Git Windows and VS Studio Code.
+Pick Git Windows, and do not click "Always run this program". 
+
 Then replace the file contents with:
 
 ```json
