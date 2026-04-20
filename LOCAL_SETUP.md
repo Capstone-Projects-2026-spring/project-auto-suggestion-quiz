@@ -70,16 +70,20 @@ Replace `[password]` with the database password you set in step 2.1.
 Open the **SQL Editor** in the Supabase dashboard and run the following SQL in full. This creates every table the application depends on.
 
 ```sql
--- Teachers
-CREATE TABLE IF NOT EXISTS teachers (
+-- users
+CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
-    email TEXT UNIQUE NOT NULL
+    name TEXT,
+    email TEXT UNIQUE NOT NULL,
+    password TEXT,
+    role TEXT DEFAULT 'teacher',
+    created_at TIMESTAMP DEFAULT NOW()
 );
 
 -- Problems
 CREATE TABLE IF NOT EXISTS problems (
     id SERIAL PRIMARY KEY,
-    teacher_id INTEGER REFERENCES teachers(id),
+    user_id INTEGER REFERENCES users(id),
     title TEXT NOT NULL,
     description TEXT,
     access_code TEXT UNIQUE NOT NULL,
