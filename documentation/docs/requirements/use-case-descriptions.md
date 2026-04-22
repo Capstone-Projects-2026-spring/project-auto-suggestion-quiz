@@ -38,7 +38,7 @@ sidebar_position: 5
 
 ---
 
-### Use Case 6 - Publishing Problems
+### Use Case 4 - Publishing Problems
 *I want to publish the problem and generate a shareable access key.*  
 
 1. After the quiz has been completed, the user clicks the **Publish** button at the bottom of the page.
@@ -47,7 +47,7 @@ sidebar_position: 5
 
 ---
 
-### Use Case 7 - Navigating Dashboard
+### Use Case 5 - Navigating Dashboard
 *I want to view my students’ progress, grade their work, and publish the grades.* 
 
 1. After login or account creation, the dashboard displays buttons for uploading quizzes, viewing existing quizzes, and viewing student progress and grades.
@@ -58,7 +58,9 @@ sidebar_position: 5
    - If not all input fields have been filled out, the user is notified to complete them.  
    - If all fields are complete, the user is notified that the grade has been published.
 
-### Use Case 8 - Deleting a Question from a Quiz
+---
+
+### Use Case 6 - Deleting a Question from a Quiz
 *I want to remove an incorrect or outdated question from a quiz.*
 
 1. The user navigates to **View Existing Quizzes** from the dashboard.
@@ -69,7 +71,7 @@ sidebar_position: 5
 
 ---
 
-### Use Case 9 - Changing a Grade for a Student
+### Use Case 7 - Changing a Grade for a Student
 *I want to update a previously entered grade for a student.* 
 
 1. The user navigates to **View Student Progress and Grades** from the dashboard.
@@ -82,7 +84,7 @@ sidebar_position: 5
   
 ## Student User
 
-### Use Case 1 – Student Creates an Account
+### Use Case 1 - Student Creates an Account
 *A student registers for a new account to access the platform*
 
 1. Student navigates to the **Sign Up** Page
@@ -93,11 +95,11 @@ sidebar_position: 5
 
 ---
 
-### Use Case 2 – Student Joins a Class Using an Access Code
+### Use Case 2 - Student Joins a Class Using an Access Code
 *A student enrolls in a course using a class access code provided by the instructor*
 
 1. Student logs in from the **Login** Page
-2. Student navigates to the **Join Class* Page
+2. Student navigates to the **Join Class** Page
 3. Student enters the provided class access code
 4. Student clicks the **Join Class** button
 5. System verifies the code and adds the student to the class
@@ -105,7 +107,7 @@ sidebar_position: 5
 
 ---
 
-### Use Case 3 – Student Views Dashboard
+### Use Case 3 - Student Views Dashboard
 *A student views available assignments, completed work, and grades*
 
 1. Student arrives at the **Student Dashboard**
@@ -116,7 +118,7 @@ sidebar_position: 5
 
 ---
 
-### Use Case 4 – Student Begins a Coding Problem
+### Use Case 4 - Student Begins a Coding Problem
 *A student opens a coding problem and starts working on it*
 
 1. Student selects a problem from the **Student Dashboard**
@@ -127,7 +129,7 @@ sidebar_position: 5
 
 ---
 
-### Use Case 5 – Student Receives and Selects Auto Code Suggestions
+### Use Case 5 - Student Receives and Selects Auto Code Suggestions
 *A student is presented with multiple code suggestions and must choose one*
 
 1. Student types code in the editor on the Problem Page
@@ -143,7 +145,7 @@ sidebar_position: 5
 
 ---
 
-### Use Case 6 – Student Runs Code to View Output
+### Use Case 6 - Student Runs Code to View Output
 *A student executes their code to check its output*
 
 1. Student clicks the **Run Code** button
@@ -153,7 +155,7 @@ sidebar_position: 5
 
 ---
 
-### Use Case 7 – Student Submits Completed Work
+### Use Case 7 - Student Submits Completed Work
 *A student submits their solution for grading*
 
 1. Student clicks the **Submit** button on the **Problem** Page
@@ -164,7 +166,7 @@ sidebar_position: 5
 
 ---
 
-### Use Case 8 – Student Saves Progress and Returns Later
+### Use Case 8 - Student Saves Progress and Returns Later
 *A student pauses work and resumes it at a later time*
 
 1. Student exits the **Problem** Page without submitting
@@ -176,7 +178,7 @@ sidebar_position: 5
 
 ---
 
-### Use Case 9 – Student Reviews Completed Problems and Grades
+### Use Case 9 - Student Reviews Completed Problems and Grades
 *A student reviews feedback and grades for completed assignments*
 
 1. Student navigates to the **Student Dashboard**
