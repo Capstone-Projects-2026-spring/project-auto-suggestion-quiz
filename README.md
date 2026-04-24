@@ -153,6 +153,7 @@ Reopen Docker, and the app should be able to reach Judge0.
 ---
 
 ## Windows
+On windows, it is recommended to use Git Bash or WSL to run the scripts for judge 0, to access this, CTRL + SHIFT + P, and type in 'Git Bash' or 'WSL'
 
 For Windows user, trying to run the script will prompt a choice between Git Windows and VS Studio Code.
 Pick Git Windows, and do not click "Always run this program". 
