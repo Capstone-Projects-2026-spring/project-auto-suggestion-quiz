@@ -181,10 +181,10 @@ def submit_session(session_id: int, req: SubmitRequest):
             conn.close()
             raise HTTPException(status_code=403, detail="Submission limit reached")
 
-    log_json = json.dumps([e.dict() for e in req.suggestion_log])
-    tab_log_json = json.dumps([e.dict() for e in req.tab_switch_log])
-    test_results_json = json.dumps([e.dict() for e in req.test_results])
-    paste_log_json = json.dumps([e.dict() for e in req.paste_log])
+    log_json = json.dumps([e.model_dump() for e in req.suggestion_log])
+    tab_log_json = json.dumps([e.model_dump() for e in req.tab_switch_log])
+    test_results_json = json.dumps([e.model_dump() for e in req.test_results])
+    paste_log_json = json.dumps([e.model_dump() for e in req.paste_log])
     cursor.execute(
         """UPDATE sessions
            SET code = %s, suggestion_log = %s, tab_switch_log = %s,

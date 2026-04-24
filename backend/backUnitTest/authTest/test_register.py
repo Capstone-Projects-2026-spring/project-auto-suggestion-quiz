@@ -18,8 +18,7 @@ def test_register_success():
     mock_cursor = MagicMock()
     mock_conn = MagicMock()
     mock_conn.cursor.return_value = mock_cursor
-    mock_cursor.fetchone.return_value = None  
-    mock_cursor.lastrowid = 1
+    mock_cursor.fetchone.side_effect = [None, {"id": 1}]
 
     with patch("routes_auth.get_connection", return_value=mock_conn):
         response = client.post("/auth/register", json={
@@ -41,7 +40,7 @@ def test_register_email_already_exists():
     mock_cursor = MagicMock()
     mock_conn = MagicMock()
     mock_conn.cursor.return_value = mock_cursor
-    mock_cursor.fetchone.return_value = (1,)  
+    mock_cursor.fetchone.return_value = {"id": 1}
 
     with patch("routes_auth.get_connection", return_value=mock_conn):
         response = client.post("/auth/register", json={
