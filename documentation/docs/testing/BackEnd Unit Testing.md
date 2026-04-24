@@ -1,5 +1,11 @@
 # Backend Unit Testing
 
+## Coverage
+<details>
+<summary>Coverage Snapshot (Click to Expand)</summary>
+
+![Coverage Report](./images/coverage.png)
+
 This page documents the backend unit-test organization, what each suite validates, and the standard commands used to run tests and coverage.
 
 ## Test Location
@@ -16,6 +22,24 @@ From the repository root:
 cd backend
 venv/bin/python -m pytest backUnitTest -q
 ```
+
+Latest scoped backend-module run summary:
+
+| Module | Coverage |
+| --- | --- |
+| `aiSuggestion.py` | `100%` |
+| `auth.py` | `100%` |
+| `database.py` | `100%` |
+| `main.py` | `100%` |
+| `routes_ai.py` | `100%` |
+| `routes_auth.py` | `100%` |
+| `routes_judge.py` | `100%` |
+| `routes_problems.py` | `100%` |
+| `routes_quiz.py` | `100%` |
+| `routes_submissions.py` | `100%` |
+| `TOTAL` | `100%` |
+
+</details>
 
 Run coverage for backend app modules:
 
@@ -94,6 +118,3 @@ Common mock helpers are centralized in:
 - `backend/backUnitTest/test_helpers.py`
 
 This keeps DB mock setup consistent and avoids duplicated helper code across suites.
-
-
-
