@@ -102,7 +102,7 @@ const config = {
         specs: [
           {
             id: 'using-single-yaml',
-            spec: 'static/openapi.yml.yaml',
+            spec: 'https://autosuggestions.onrender.com/openapi.json',
             route: '/api/',
           },
         ],
