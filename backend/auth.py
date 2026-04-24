@@ -42,7 +42,7 @@ def create_token(user_id: int, email: str, role: str) -> str:
         "user_id": user_id,
         "email": email,
         "role": role,
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(days=TOKEN_LIFETIME_DAYS),
+        "exp": datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=TOKEN_LIFETIME_DAYS),
     }
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
