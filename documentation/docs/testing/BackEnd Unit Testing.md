@@ -22,17 +22,17 @@ Run coverage for backend app modules:
 ```bash
 cd backend
 venv/bin/python -m pytest backUnitTest -q \
-  --cov=aiSuggestion \
-  --cov=auth \
-  --cov=database \
-  --cov=main \
-  --cov=routes_ai \
-  --cov=routes_auth \
-  --cov=routes_judge \
-  --cov=routes_problems \
-  --cov=routes_quiz \
-  --cov=routes_submissions \
-  --cov-report=term-missing
+	--cov=aiSuggestion \
+	--cov=auth \
+	--cov=database \
+	--cov=main \
+	--cov=routes_ai \
+	--cov=routes_auth \
+	--cov=routes_judge \
+	--cov=routes_problems \
+	--cov=routes_quiz \
+	--cov=routes_submissions \
+	--cov-report=term-missing
 ```
 
 ## Suite Map
