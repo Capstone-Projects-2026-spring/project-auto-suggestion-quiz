@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import App from '../App';
 
 // Mock API module
@@ -65,9 +65,13 @@ beforeEach(() => {
     getTeacherProblems.mockResolvedValue([]);
 });
 
+afterEach(async () => {
+    await waitFor(() => {});
+});
+
 // Rendering
 
-test('renders without crashing', () => {
+test('renders without crashing', async () => {
     render(<App />);
 });
 
@@ -167,7 +171,7 @@ test('Student ProblemPage to Dashboard using back button', () => {
     expect(screen.getByText('LoginPage')).toBeInTheDocument();
 });
 
-// API
+// API Integration Test
 
 test('Problems api loads when teacher accesses dashboard', async () => {
     const { getTeacherProblems } = require('../api');
