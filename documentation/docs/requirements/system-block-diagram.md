@@ -4,127 +4,93 @@ sidebar_position: 2
 
 # System Block Diagram
 
-## Complete System Overview
+## Complete system overview
+
+The diagram below shows the main logical parts of the system: two actor types, one React client, the FastAPI application, external integrations, PostgreSQL, and in-browser execution for Python.
 
 ```mermaid
 flowchart TB
     subgraph Actors
         S[Student]
-        T[Teacher / Instructor]
-        A[Admin]
+        T[Teacher]
     end
 
-    subgraph UI["Web Application (React/Vite)"]
-        SUI[Student UI]
-        TUI[Instructor UI]
-        AUI[Admin UI]
+    subgraph UI["Web client React"]
+        SUI[Student experience]
+        TUI[Teacher experience]
     end
 
-    subgraph Backend["Backend Server (FastAPI or Node)"]
-        AUTH[Auth Service]
-        CORE[Core Services]
-        LOG[Logging Service]
+    subgraph API["Backend FastAPI"]
+        AUTH[Auth and JWT]
+        PROB[Problems and grading]
+        SESS[Sessions and submissions]
+        AIJ[AI and Judge0 integration]
     end
 
-    subgraph External[External Services]
-        AI[AI Suggestion Engine]
-        RUN[Code Runner]
+    subgraph Ext["External services"]
+        SUPA[Supabase Auth OTP]
+        OAI[OpenAI]
+        JUDGE[Judge0]
     end
 
-    DB[(Database)]
+    PY[Pyodide in browser]
+    DB[(PostgreSQL)]
 
     S --> SUI
     T --> TUI
-    A --> AUI
 
-    SUI & TUI & AUI --> AUTH
-    SUI & TUI & AUI --> CORE
+    SUI --> AUTH
+    SUI --> PROB
+    SUI --> SESS
+    SUI --> AIJ
+    SUI --> PY
 
-    CORE --> AI
-    CORE --> RUN
+    TUI --> AUTH
+    TUI --> PROB
+    TUI --> SESS
+    TUI --> AIJ
 
-    AUTH & CORE & LOG --> DB
-    RUN --> DB
+    AUTH --> SUPA
+    AIJ --> OAI
+    AIJ --> JUDGE
 
-    AUTH --> LOG
-    CORE --> LOG
+    AUTH & PROB & SESS & AIJ --> DB
 ```
 
-**Figure Description**
+**Figure description**
 
-This block diagram gives a high-level view of the major system components (actors, UI, backend, external services and the database) and how data and requests flow between them.
-The Core Services within the backend represent the primary application logic layer of the system. These services are responsible for:
+- **Web client (React):** One application serves teacher flows (sign-in, dashboard, create and edit problems, review submissions) and student flows (join with an access code, editor, run tests, submit).
+- **Backend (FastAPI):** Exposes authentication and JWTs, problem CRUD and grading, session lifecycle and submissions, and coordinates OpenAI and Judge0. There is no separate “logging service.” Attempt-related telemetry and similar data are written to the database as part of normal API handling.
+- **External services:** Supabase supports teacher email OTP. OpenAI powers suggestions and assistive autofill. Judge0 runs non-Python code when the backend runs execution. Python for students is executed with **Pyodide in the browser**, not through Judge0 on that path.
+- **PostgreSQL:** System of record for users, problems, sessions, suggestions, test cases, submissions, and related data.
 
-Managing classes and enrollments
-
-Creating, editing, and publishing problems and quizzes
-
-Handling student submissions
-
-Processing grading and feedback
-
-Coordinating AI suggestion requests
-
-Invoking the Code Runner for execution
-
-Enforcing role-based permissions
-
-The **Core Services** act as the central orchestrator of system behavior, ensuring that all user actions are validated, processed, and persisted correctly.
-
-The **Auth Service** handles user authentication and access control, while the Logging Service records login events, quiz interactions, submissions, grading actions, and administrative operations for auditing and analytics purposes.
-
-External services such as the AI Suggestion Engine and Code Runner are invoked by the backend but operate independently to improve modularity, scalability, and security. All persistent data is stored in the shared SQL database.
-
-## Student Flow
+## Student flow
 
 ```mermaid
 flowchart LR
     S[Student] --> SUI[Student UI]
-    
-    SUI --> AUTH[Auth Service]
-    SUI --> CORE[Quiz + Submission]
-
-    CORE --> AI[AI Suggestions]
-    CORE --> RUN[Code Runner]
-
-    AUTH & CORE --> LOG[Logging]
-    AUTH & CORE & LOG & RUN --> DB[(Database)]
+    SUI --> API[FastAPI]
+    SUI --> PY[Pyodide]
+    API --> OAI[OpenAI]
+    API --> JUDGE[Judge0]
+    API --> DB[(PostgreSQL)]
 ```
 
-**Figure Description**
+**Figure description**
 
-This student flow diagram shows the typical path a student takes: interacting with the UI, authenticating, submitting quizzes, receiving AI suggestions or runner results, and how those interactions are logged and persisted.
+A student uses an **access code** to load a problem, starts a **session** through the API, works in the editor with **AI suggestions** and **Pyodide** for Python (or the API plus **Judge0** for other languages), and **submits** work. The backend stores session data, telemetry, and final attempts in PostgreSQL.
 
-## Instructor Flow
+## Teacher flow
 
 ```mermaid
 flowchart LR
-    T[Instructor] --> TUI[Instructor UI]
-    
-    TUI --> AUTH[Auth Service]
-    TUI --> CORE[Quiz/Grading Service]
-
-    AUTH & CORE --> LOG[Logging]
-    AUTH & CORE & LOG --> DB[(Database)]
+    T[Teacher] --> TUI[Teacher UI]
+    TUI --> API[FastAPI]
+    TUI --> SUPA[Supabase Auth OTP]
+    API --> OAI[OpenAI]
+    API --> DB[(PostgreSQL)]
 ```
 
-**Figure Description**
+**Figure description**
 
-This instructor flow highlights how teacher/instructor requests (quiz creation, grading) pass through authentication and core services and are recorded in logs and the database.
-
-## Admin Flow
-
-```mermaid
-flowchart LR
-    A[Admin] --> AUI[Admin UI]
-    
-    AUI --> AUTH[Auth Service]
-    AUI --> ADMIN[Admin Service]
-
-    AUTH & ADMIN --> LOG[Logging]
-    AUTH & ADMIN & LOG --> DB[(Database)]
-```
-
-**Figure Description**
-
-This admin flow illustrates administrative actions and how they are routed through the admin service, logged, and stored in the database for auditing and recovery.
+A teacher signs in (OTP in production, or a development login when allowed), **creates and edits problems** (optionally with AI-assisted content), and **grades** student work. Sign-in is coordinated with **Supabase**; business data and grading are stored in **PostgreSQL** through the API.
