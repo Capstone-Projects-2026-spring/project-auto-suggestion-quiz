@@ -3,256 +3,1220 @@
 <head>
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
-<title data-rh="true">Integration tests | Project Auto Suggestion Quiz</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://Capstone-Projects-2026-spring.github.io/project-auto-suggestion-quiz/docs/testing/integration-testing"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Integration tests | Project Auto Suggestion Quiz"><meta data-rh="true" name="description" content="Tests to demonstrate each use-case based on the use-case descriptions and the sequence diagrams. External input should be provided via mock objects and results verified via mock objects. Integration tests should not require manual entry of data nor require manual interpretation of results."><meta data-rh="true" property="og:description" content="Tests to demonstrate each use-case based on the use-case descriptions and the sequence diagrams. External input should be provided via mock objects and results verified via mock objects. Integration tests should not require manual entry of data nor require manual interpretation of results."><link data-rh="true" rel="icon" href="/project-auto-suggestion-quiz/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://Capstone-Projects-2026-spring.github.io/project-auto-suggestion-quiz/docs/testing/integration-testing"><link data-rh="true" rel="alternate" href="https://Capstone-Projects-2026-spring.github.io/project-auto-suggestion-quiz/docs/testing/integration-testing" hreflang="en"><link data-rh="true" rel="alternate" href="https://Capstone-Projects-2026-spring.github.io/project-auto-suggestion-quiz/docs/testing/integration-testing" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Test Procedures","item":"https://Capstone-Projects-2026-spring.github.io/project-auto-suggestion-quiz/docs/category/test-procedures"},{"@type":"ListItem","position":2,"name":"Integration tests","item":"https://Capstone-Projects-2026-spring.github.io/project-auto-suggestion-quiz/docs/testing/integration-testing"}]}</script><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script><link rel="stylesheet" href="/project-auto-suggestion-quiz/assets/css/styles.7aa687c6.css">
-<script src="/project-auto-suggestion-quiz/assets/js/runtime~main.63b39f97.js" defer="defer"></script>
+<title data-rh="true">**Integration Tests** | Project Auto Suggestion Quiz</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://Capstone-Projects-2026-spring.github.io/project-auto-suggestion-quiz/docs/testing/integration-testing"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="**Integration Tests** | Project Auto Suggestion Quiz"><meta data-rh="true" name="description" content="We will be using Pytest for backend and React Testing Library for the frontend. Integration tests will be based on the use cases description for the teacher and student."><meta data-rh="true" property="og:description" content="We will be using Pytest for backend and React Testing Library for the frontend. Integration tests will be based on the use cases description for the teacher and student."><link data-rh="true" rel="icon" href="/project-auto-suggestion-quiz/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://Capstone-Projects-2026-spring.github.io/project-auto-suggestion-quiz/docs/testing/integration-testing"><link data-rh="true" rel="alternate" href="https://Capstone-Projects-2026-spring.github.io/project-auto-suggestion-quiz/docs/testing/integration-testing" hreflang="en"><link data-rh="true" rel="alternate" href="https://Capstone-Projects-2026-spring.github.io/project-auto-suggestion-quiz/docs/testing/integration-testing" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Test Procedures","item":"https://Capstone-Projects-2026-spring.github.io/project-auto-suggestion-quiz/docs/category/test-procedures"},{"@type":"ListItem","position":2,"name":"**Integration Tests**","item":"https://Capstone-Projects-2026-spring.github.io/project-auto-suggestion-quiz/docs/testing/integration-testing"}]}</script><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script><link rel="stylesheet" href="/project-auto-suggestion-quiz/assets/css/styles.7aa687c6.css">
+<script src="/project-auto-suggestion-quiz/assets/js/runtime~main.b5ee8352.js" defer="defer"></script>
 <script src="/project-auto-suggestion-quiz/assets/js/main.f61c02a8.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
 <svg style="display: none;"><defs>
 <symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
-<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||"light"),document.documentElement.setAttribute("data-theme-choice",t||"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/project-auto-suggestion-quiz/"><div class="navbar__logo"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Project Auto Suggestion Quiz</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/project-auto-suggestion-quiz/docs/intro">Documentation</a><a class="navbar__item navbar__link" href="/project-auto-suggestion-quiz/tutorial/Intro">Docusaurus Tutorial</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/Capstone-Projects-2026-spring/project-auto-suggestion-quiz" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/project-auto-suggestion-quiz/docs/intro"><span title="Introduction" class="linkLabel_WmDU">Introduction</span></a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/project-auto-suggestion-quiz/docs/category/requirements-specification"><span title="Requirements Specification" class="categoryLinkLabel_W154">Requirements Specification</span></a><button aria-label="Expand sidebar category &#x27;Requirements Specification&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/project-auto-suggestion-quiz/docs/category/system-architecture"><span title="System Architecture" class="categoryLinkLabel_W154">System Architecture</span></a><button aria-label="Expand sidebar category &#x27;System Architecture&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/project-auto-suggestion-quiz/docs/category/api-specification"><span title="API Specification" class="categoryLinkLabel_W154">API Specification</span></a><button aria-label="Expand sidebar category &#x27;API Specification&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--active" href="/project-auto-suggestion-quiz/docs/category/test-procedures"><span title="Test Procedures" class="categoryLinkLabel_W154">Test Procedures</span></a><button aria-label="Collapse sidebar category &#x27;Test Procedures&#x27;" aria-expanded="true" type="button" class="clean-btn menu__caret"></button></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/project-auto-suggestion-quiz/docs/testing/integration-testing"><span title="Integration tests" class="linkLabel_WmDU">Integration tests</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/project-auto-suggestion-quiz/docs/testing/acceptence-testing"><span title="Acceptance test" class="linkLabel_WmDU">Acceptance test</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/project-auto-suggestion-quiz/docs/testing/BackEnd Unit Testing"><span title="Backend Unit Testing" class="linkLabel_WmDU">Backend Unit Testing</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/project-auto-suggestion-quiz/docs/testing/FrontEnd Unit Testing"><span title="Frontend Unit Testing" class="linkLabel_WmDU">Frontend Unit Testing</span></a></li></ul></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/project-auto-suggestion-quiz/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><a class="breadcrumbs__link" href="/project-auto-suggestion-quiz/docs/category/test-procedures"><span>Test Procedures</span></a></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">Integration tests</span></li></ul></nav><div class="theme-doc-markdown markdown"><header><h1>Integration tests</h1></header>
-<p>Tests to demonstrate each use-case based on the use-case descriptions and the sequence diagrams. External input should be provided via mock objects and results verified via mock objects. Integration tests should not require manual entry of data nor require manual interpretation of results.</p>
-<p>Integration Tests</p>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||"light"),document.documentElement.setAttribute("data-theme-choice",t||"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/project-auto-suggestion-quiz/"><div class="navbar__logo"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Project Auto Suggestion Quiz</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/project-auto-suggestion-quiz/docs/intro">Documentation</a><a class="navbar__item navbar__link" href="/project-auto-suggestion-quiz/tutorial/Intro">Docusaurus Tutorial</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/Capstone-Projects-2026-spring/project-auto-suggestion-quiz" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/project-auto-suggestion-quiz/docs/intro"><span title="Introduction" class="linkLabel_WmDU">Introduction</span></a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/project-auto-suggestion-quiz/docs/category/requirements-specification"><span title="Requirements Specification" class="categoryLinkLabel_W154">Requirements Specification</span></a><button aria-label="Expand sidebar category &#x27;Requirements Specification&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/project-auto-suggestion-quiz/docs/category/system-architecture"><span title="System Architecture" class="categoryLinkLabel_W154">System Architecture</span></a><button aria-label="Expand sidebar category &#x27;System Architecture&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist" href="/project-auto-suggestion-quiz/docs/category/api-specification"><span title="API Specification" class="categoryLinkLabel_W154">API Specification</span></a><button aria-label="Expand sidebar category &#x27;API Specification&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--active" href="/project-auto-suggestion-quiz/docs/category/test-procedures"><span title="Test Procedures" class="categoryLinkLabel_W154">Test Procedures</span></a><button aria-label="Collapse sidebar category &#x27;Test Procedures&#x27;" aria-expanded="true" type="button" class="clean-btn menu__caret"></button></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/project-auto-suggestion-quiz/docs/testing/integration-testing"><span title="**Integration Tests**" class="linkLabel_WmDU">**Integration Tests**</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/project-auto-suggestion-quiz/docs/testing/acceptence-testing"><span title="Acceptance test" class="linkLabel_WmDU">Acceptance test</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/project-auto-suggestion-quiz/docs/testing/BackEnd Unit Testing"><span title="Backend Unit Testing" class="linkLabel_WmDU">Backend Unit Testing</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/project-auto-suggestion-quiz/docs/testing/FrontEnd Unit Testing"><span title="Frontend Unit Testing" class="linkLabel_WmDU">Frontend Unit Testing</span></a></li></ul></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/project-auto-suggestion-quiz/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><a class="breadcrumbs__link" href="/project-auto-suggestion-quiz/docs/category/test-procedures"><span>Test Procedures</span></a></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">**Integration Tests**</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1><strong>Integration Tests</strong></h1></header>
 <p>We will be using Pytest for backend and React Testing Library for the frontend. Integration tests will be based on the use cases description for the teacher and student.</p>
-<p>Teacher User:</p>
-<p>Use Case 1: Account creation
-This is done using RTL and rendering the full application
-verify that the account creation form is displayed when the application loads.
-simulate the user entering a valid email address and university name.
-simulate clicking the “Create Account” button.
-confirm that the mocked OTP API was called with the correct parameters.
-verify that the OTP input field appears after the OTP is successfully “sent”.
-simulate entering a valid OTP.
-simulate clicking the verification button.
-verify that the OTP verification mock was called with the correct data.
-After successful OTP verification, assert that
-A success message is displayed
-The user is redirected to the dashboard page (verified by checking that dashboard content is rendered or that the route changes)
-Use Case 2: Signing in
-Frontend Testing (RTL)
-Verify that when the application loads, the account creation/sign-in page is displayed.
-Simulate the user clicking the “Login” button.
-Verify that the sign-in page is displayed.
-Simulate the user entering a valid email and password into the appropriate input fields.
-Simulate clicking the “Sign In” button.
-Verify that the mocked authentication API is called with the correct email and password.
-If credentials are correct
-Mock a successful authentication response.
-Assert that the user is redirected to the dashboard page by verifying that dashboard content is rendered or that the route changes.
-If not,
-Mock a successful authentication response.
-Assert that the user is redirected to the dashboard page by verifying that dashboard content is rendered or that the route changes.
-Pytest, should be tested independently from frontend
-Successful Login
-Send a POST request to the login endpoint with valid credentials.
-Verify that:
-The response status code indicates success
-A valid authentication token or session identifier is returned.
-The correct user data is included in the response.
-Invalid Credentials
-Send a POST request with
-Incorrect password
-Non-existent email
-Verify that
-The response status code indicates failure
-A error message is returned
-No authentication token is issued
-Edge Case
-Missing email field
-Missing password field
-Empty inputs
-Malformed email format
-Use case 3: Uploading Leetcode Problems
-Frontend Test
-Verify that the dashboard page is displayed after login.
-Simulate the user clicking the “Upload Problem Set” button.
-Verify that the application redirects to the Upload Problem page.
-Confirm that input fields for:
-Question
-Multiple-choice answers
-Code boilerplate
-are displayed.
-Simulate the user entering:
-A valid problem question
-Multiple possible answers
-A valid code boilerplate
-Simulate toggling quiz restriction settings such as:
-Show correct answer</p>
-<p>Allow multiple attempts
-Any other restriction options provided
-Simulate clicking the “Submit” or “Upload” button.
-Verify that the mocked backend API responsible for saving the problem set is called with:
-The question text
-The answer options
-The code boilerplate
-The selected restriction settings
-Mock a successful API response and assert that:
-A success message is displayed
-The user is redirected back to the dashboard
-OR
-The newly uploaded problem appears in a list of available quizzes
-Backend Testing (pytest)
-Successful Problem Upload
-Send a POST request to the problem upload endpoint containing:
-Question text
-Multiple-choice answers
-Code boilerplate
-Restriction settings
-Verify that:
-The response status code indicates success (e.g., 201 Created).
-The problem is correctly stored in the test database.
-The restriction settings are saved correctly.
-The returned response contains the correct problem data.
-Validation
-Test invalid submissions
-Missing question test
-No answer options provided
-Missing code boilerplate
-Invalid restriction configuration
-Verify that
-The response status code indicates failure
-An appropriate validation error message is returned
-No problem is stored in the database
-Use Case 4: Publishing Problems
-Frontend Test (RTL)
-Scenario 1 : successful publish
-Render the application and navigate to a completed quiz editing page.
-Verify that the “Publish” button is displayed at the bottom of the page.
-Simulate clicking the “Publish” button.
-Confirm that the mocked backend publish API is called with the correct quiz identifier.
-Mock a successful backend response that includes a generated access key.
-Assert that:
-A pop-up or modal appears indicating that the quiz has been successfully published.
-The generated access key is displayed in the pop-up.
-The success message matches the expected output.
-Scenario 2 : Incomplete Quiz
-Render the application with a quiz that is missing required fields (e.g., no questions, missing answers, or missing restrictions).
-Simulate clicking the “Publish” button.
-Mock a backend validation failure response indicating that the quiz is incomplete.
-Assert that:
-An error notification is displayed.
-The pop-up success modal does not appear.
-No access key is shown.
-Backend Test
-Scenario 1 : Successful Publish
-Create a valid, fully completed quiz in the test database.
-Send a POST request to the publish endpoint with the quiz ID.
-Verify that:
-The response status code indicates success (e.g., 200 OK).
-A unique access key is generated and returned.
-The quiz’s status in the database changes to “published”.
-The access key is stored in the database and linked to the quiz.
-Scenario 2 : Incomplete Quiz
-Create an incomplete quiz in the test database.
-Send a POST request to the publish endpoint.
-Verify that:
-The response status code indicates failure (e.g., 400 Bad Request).
-An appropriate validation error message is returned.
-No access key is generated.
-The quiz remains unpublished in the database.
-Use case 5: Navigating Dashboard
-Scenario 1 : viewing student progress
-Render the application in an authenticated state so that the dashboard is displayed.
-Verify that the dashboard contains buttons for:
-Uploading quizzes
-Viewing existing quizzes
-Viewing student progress and grades
-Simulate clicking the “View Student Progress and Grades” button.
-Verify that the application redirects to the student progress page.
-Confirm that:
-A list of students or progress summaries is displayed.
-A search input field is visible.
-Simulate entering a student’s name in the search field.
-Verify that the list updates to show matching results.
-Simulate clicking on a specific student’s progress.
-Assert that a modal or new window opens displaying:
-The student’s progress
-Their submitted answers
-Scenario 2 : Grading and publishing (success)
-With the student progress window open, verify that:
-A grade input field is displayed.
-A notes input field is available.
-A “Save and Publish” button is visible.
-Simulate entering a valid grade.
-Simulate entering optional notes.
-Simulate clicking “Save and Publish”.
-Confirm that the mocked grading API is called with:
-The correct student identifier
-The entered grade
-The notes (if provided)
-Mock a successful backend response.
-Assert that:
-A success notification appears stating that the grade has been published.
-The modal closes or updates to reflect the published status.
-Scenario 3 : Incomplete Input Validation
-Leave the grade field empty
-Simulate clicking “Save and Publish”.
-Assert that:</p>
-<p>An error message appears prompting the user to complete required fields.
-The mocked API is not called.
-No success notification appears.
-Backend Testing (pytest)
-Scenario 1 Retrieving Student Progress
-Insert sample student data and quiz submissions into the test database.
-Send a GET request to the student progress endpoint.
-Verify that:
-The response status code indicates success.
-The returned data includes correct student progress information.
-Submitted answers are correctly returned.
-Scenario 2 Saving and Publishing Grades (Successful Case)
-Send a POST or PUT request to the grading endpoint with:
-Student ID
-Grade value
-Notes (if applicable)
-Verify that:
-The response status code indicates success.
-The grade is correctly stored in the database.
-The grade status is updated to “published”.
-The correct confirmation response is returned.
-Scenario 3 Incomplete Input Validation
-Attempt to submit a grade without a required field (for example, missing grade value).
-Verify that:
-The response status code indicates failure (for example, 400 Bad Request).
-A validation error message is returned.
-No grade is stored or published
-Use case 7 - deleting a question from a quiz
-Frontend (RTL)
-Scenario 1 – Successful Question Deletion
-Render the application in an authenticated state so that the dashboard is displayed.
-Simulate clicking the “View Existing Quizzes” button.
-Verify that the application redirects to the existing quizzes page.
-Confirm that a list of quizzes is displayed.
-Simulate selecting a specific quiz that contains multiple questions.</p>
-<p>Verify that the quiz editing page is displayed and that each question has an associated “Delete” button.
-Simulate clicking the “Delete” button next to a specific question.
-Verify that a confirmation pop-up appears asking the user to confirm the deletion.
-Simulate confirming the deletion.
-Confirm that the mocked delete API is called with the correct quiz ID and question ID.
-Mock a successful backend response.
-Assert that:
-The question is no longer displayed in the list of quiz questions.
-A success notification appears indicating that the question was deleted successfully.
-Scenario 2 – Deletion Cancelled
-Navigate to the quiz editing page as described above.
-Simulate clicking the “Delete” button for a question.
-When the confirmation pop-up appears, simulate cancelling the action.</p>
-<p>Assert that:
-The delete API is not called.
-The question remains visible in the quiz.
-No success notification appears.
-Backend (Pytest)
-Scenario 1. Successful Question Deletion
-Insert a quiz with multiple questions into the test database.
-Send a DELETE request to the question deletion endpoint with the quiz ID and question ID.
-Verify that:
-The response status code indicates success (for example, 200 OK).
-The specified question is removed from the database.
-The quiz no longer contains the deleted question.
-Scenario 2. Attempting to Delete a Non-Existent Question
-Send a DELETE request using an invalid or non-existent question ID.
-Verify that:
-The response status code indicates failure (for example, 404 Not Found).
-No other questions are affected.</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/Capstone-Projects-2026-spring/project-auto-suggestion-quiz/edit/main/documentation/docs/testing/integration-testing.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"><details><summary>Revision History</summary><table><thead><tr><th scope="row">Author</th><th scope="row">Revision</th><th scope="row">Date</th></tr></thead><tbody><tr><td colspan="3" style="text-align:center;font-style:italic;color:#666">Loading...</td></tr></tbody></table></details><span class="theme-last-updated">Last updated<!-- --> by <b>tup80767</b></span></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/project-auto-suggestion-quiz/docs/category/test-procedures"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Test Procedures</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/project-auto-suggestion-quiz/docs/testing/acceptence-testing"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Acceptance test</div></a></nav></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/project-auto-suggestion-quiz/docs/intro">Documentation</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/Capstone-Projects-2026-spring/project-auto-suggestion-quiz" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a class="footer__link-item" href="/project-auto-suggestion-quiz/tutorial/open-source-usage">Template Contributors</a></li></ul></div></div><div class="footer__bottom text--center"><div class="margin-bottom--sm"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="footer__logo themedComponent_mlkZ themedComponent--light_NVdE"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="footer__logo themedComponent_mlkZ themedComponent--dark_xIcU"></div><div class="footer__copyright">Copyright © 2026 Project Auto Suggestion Quiz, Inc. Built with Docusaurus.</div></div></div></footer></div>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="teacher-user"><strong>Teacher User</strong><a href="#teacher-user" class="hash-link" aria-label="Direct link to teacher-user" title="Direct link to teacher-user" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="use-case-1---account-creation"><strong>Use Case 1 - Account creation</strong><a href="#use-case-1---account-creation" class="hash-link" aria-label="Direct link to use-case-1---account-creation" title="Direct link to use-case-1---account-creation" translate="no">​</a></h3>
+<ol>
+<li class="">This is done using RTL and rendering the full application</li>
+<li class="">verify that the account creation form is displayed when the application loads.</li>
+<li class="">simulate the user entering a valid email address and university name.</li>
+<li class="">simulate clicking the “Create Account” button.</li>
+<li class="">confirm that the mocked OTP API was called with the correct parameters.</li>
+<li class="">verify that the OTP input field appears after the OTP is successfully “sent”.</li>
+<li class="">simulate entering a valid OTP.</li>
+<li class="">simulate clicking the verification button.</li>
+<li class="">verify that the OTP verification mock was called with the correct data.</li>
+<li class="">After successful OTP verification, assert that</li>
+<li class="">A success message is displayed</li>
+<li class="">The user is redirected to the dashboard page (verified by checking that dashboard content is rendered or that the route changes)</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="use-case-2---signing-in"><strong>Use Case 2 - Signing in</strong><a href="#use-case-2---signing-in" class="hash-link" aria-label="Direct link to use-case-2---signing-in" title="Direct link to use-case-2---signing-in" translate="no">​</a></h3>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="frontend-rtl"><strong>Frontend (RTL)</strong><a href="#frontend-rtl" class="hash-link" aria-label="Direct link to frontend-rtl" title="Direct link to frontend-rtl" translate="no">​</a></h4>
+<ol>
+<li class="">Verify that when the application loads, the account creation/sign-in page is displayed.</li>
+<li class="">Simulate the user clicking the “Login” button.</li>
+<li class="">Verify that the sign-in page is displayed.</li>
+<li class="">Simulate the user entering a valid email and password into the appropriate input fields.</li>
+<li class="">Simulate clicking the “Sign In” button.</li>
+<li class="">Verify that the mocked authentication API is called with the correct email and password.</li>
+<li class="">If credentials are correct</li>
+<li class="">Mock a successful authentication response.</li>
+<li class="">Assert that the user is redirected to the dashboard page by verifying that dashboard content is rendered or that the route changes.</li>
+<li class="">If not,</li>
+<li class="">Mock a successful authentication response.</li>
+<li class="">Assert that the user is redirected to the dashboard page by verifying that dashboard content is rendered or that the route changes.</li>
+</ol>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="backend-pytest"><strong>Backend (Pytest)</strong><a href="#backend-pytest" class="hash-link" aria-label="Direct link to backend-pytest" title="Direct link to backend-pytest" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="successful-login"><strong>Successful Login</strong><a href="#successful-login" class="hash-link" aria-label="Direct link to successful-login" title="Direct link to successful-login" translate="no">​</a></h5>
+<ol>
+<li class="">Send a POST request to the login endpoint with valid credentials.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success</li>
+<li class="">A valid authentication token or session identifier is returned.</li>
+<li class="">The correct user data is included in the response.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="invalid-credentials"><strong>Invalid Credentials</strong><a href="#invalid-credentials" class="hash-link" aria-label="Direct link to invalid-credentials" title="Direct link to invalid-credentials" translate="no">​</a></h5>
+<ol>
+<li class="">Send a POST request with</li>
+<li class="">Incorrect password</li>
+<li class="">Non-existent email</li>
+<li class="">Verify that<!-- -->
+<ol>
+<li class="">The response status code indicates failure</li>
+<li class="">A error message is returned</li>
+<li class="">No authentication token is issued</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="edge-case"><strong>Edge Case</strong><a href="#edge-case" class="hash-link" aria-label="Direct link to edge-case" title="Direct link to edge-case" translate="no">​</a></h5>
+<ol>
+<li class="">Missing email field</li>
+<li class="">Missing password field</li>
+<li class="">Empty inputs</li>
+<li class="">Malformed email format</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="use-case-3---uploading-leetcode-problems"><strong>Use Case 3 - Uploading Leetcode Problems</strong><a href="#use-case-3---uploading-leetcode-problems" class="hash-link" aria-label="Direct link to use-case-3---uploading-leetcode-problems" title="Direct link to use-case-3---uploading-leetcode-problems" translate="no">​</a></h3>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="frontend-rtl-1"><strong>Frontend (RTL)</strong><a href="#frontend-rtl-1" class="hash-link" aria-label="Direct link to frontend-rtl-1" title="Direct link to frontend-rtl-1" translate="no">​</a></h4>
+<ol>
+<li class="">Verify that the dashboard page is displayed after login.</li>
+<li class="">Simulate the user clicking the “Upload Problem Set” button.</li>
+<li class="">Verify that the application redirects to the Upload Problem page.</li>
+<li class="">Confirm that input fields for:<!-- -->
+<ol>
+<li class="">Question</li>
+<li class="">Multiple-choice answers</li>
+<li class="">Code boilerplate</li>
+<li class="">are displayed.</li>
+</ol>
+</li>
+<li class="">Simulate the user entering:<!-- -->
+<ol>
+<li class="">A valid problem question</li>
+<li class="">Multiple possible answers</li>
+<li class="">A valid code boilerplate</li>
+</ol>
+</li>
+<li class="">Simulate toggling quiz restriction settings such as:<!-- -->
+<ol>
+<li class="">Show correct answer</li>
+<li class="">Allow multiple attempts</li>
+<li class="">Any other restriction options provided</li>
+</ol>
+</li>
+<li class="">Simulate clicking the “Submit” or “Upload” button.</li>
+<li class="">Verify that the mocked backend API responsible for saving the problem set is called with:<!-- -->
+<ol>
+<li class="">The question text</li>
+<li class="">The answer options</li>
+<li class="">The code boilerplate</li>
+<li class="">The selected restriction settings</li>
+</ol>
+</li>
+<li class="">Mock a successful API response and assert that:<!-- -->
+<ol>
+<li class="">A success message is displayed</li>
+<li class="">The user is redirected back to the dashboard</li>
+<li class="">OR</li>
+<li class="">The newly uploaded problem appears in a list of available quizzes</li>
+</ol>
+</li>
+</ol>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="backend-pytest-1"><strong>Backend (Pytest)</strong><a href="#backend-pytest-1" class="hash-link" aria-label="Direct link to backend-pytest-1" title="Direct link to backend-pytest-1" translate="no">​</a></h4>
+<ol>
+<li class="">Successful Problem Upload</li>
+<li class="">Send a POST request to the problem upload endpoint containing:<!-- -->
+<ol>
+<li class="">Question text</li>
+<li class="">Multiple-choice answers</li>
+<li class="">Code boilerplate</li>
+<li class="">Restriction settings</li>
+<li class="">Verify that:</li>
+<li class="">The response status code indicates success (e.g., 201 Created).</li>
+<li class="">The problem is correctly stored in the test database.</li>
+<li class="">The restriction settings are saved correctly.</li>
+<li class="">The returned response contains the correct problem data.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="validation"><strong>Validation</strong><a href="#validation" class="hash-link" aria-label="Direct link to validation" title="Direct link to validation" translate="no">​</a></h5>
+<ol>
+<li class="">Test invalid submissions</li>
+<li class="">Missing question test</li>
+<li class="">No answer options provided</li>
+<li class="">Missing code boilerplate</li>
+<li class="">Invalid restriction configuration</li>
+<li class="">Verify that<!-- -->
+<ol>
+<li class="">The response status code indicates failure</li>
+<li class="">An appropriate validation error message is returned</li>
+<li class="">No problem is stored in the database</li>
+</ol>
+</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="use-case-4---publishing-problems"><strong>Use Case 4 - Publishing Problems</strong><a href="#use-case-4---publishing-problems" class="hash-link" aria-label="Direct link to use-case-4---publishing-problems" title="Direct link to use-case-4---publishing-problems" translate="no">​</a></h3>
+<ol>
+<li class="">Frontend Test (RTL)</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--successful-publish"><strong>Scenario 1 : successful publish</strong><a href="#scenario-1--successful-publish" class="hash-link" aria-label="Direct link to scenario-1--successful-publish" title="Direct link to scenario-1--successful-publish" translate="no">​</a></h5>
+<ol>
+<li class="">Render the application and navigate to a completed quiz editing page.</li>
+<li class="">Verify that the “Publish” button is displayed at the bottom of the page.</li>
+<li class="">Simulate clicking the “Publish” button.</li>
+<li class="">Confirm that the mocked backend publish API is called with the correct quiz identifier.</li>
+<li class="">Mock a successful backend response that includes a generated access key.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">A pop-up or modal appears indicating that the quiz has been successfully published.</li>
+<li class="">The generated access key is displayed in the pop-up.</li>
+<li class="">The success message matches the expected output.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--incomplete-quiz"><strong>Scenario 2 : Incomplete Quiz</strong><a href="#scenario-2--incomplete-quiz" class="hash-link" aria-label="Direct link to scenario-2--incomplete-quiz" title="Direct link to scenario-2--incomplete-quiz" translate="no">​</a></h5>
+<ol>
+<li class="">Render the application with a quiz that is missing required fields (e.g., no questions, missing answers, or missing restrictions).</li>
+<li class="">Simulate clicking the “Publish” button.</li>
+<li class="">Mock a backend validation failure response indicating that the quiz is incomplete.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">An error notification is displayed.</li>
+<li class="">The pop-up success modal does not appear.</li>
+<li class="">No access key is shown.</li>
+</ol>
+</li>
+</ol>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="backend-pytest-2"><strong>Backend (Pytest)</strong><a href="#backend-pytest-2" class="hash-link" aria-label="Direct link to backend-pytest-2" title="Direct link to backend-pytest-2" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--successful-publish-1"><strong>Scenario 1 : Successful Publish</strong><a href="#scenario-1--successful-publish-1" class="hash-link" aria-label="Direct link to scenario-1--successful-publish-1" title="Direct link to scenario-1--successful-publish-1" translate="no">​</a></h5>
+<ol>
+<li class="">Create a valid, fully completed quiz in the test database.</li>
+<li class="">Send a POST request to the publish endpoint with the quiz ID.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success (e.g., 200 OK).</li>
+<li class="">A unique access key is generated and returned.</li>
+<li class="">The quiz’s status in the database changes to “published”.</li>
+<li class="">The access key is stored in the database and linked to the quiz.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--incomplete-quiz-1"><strong>Scenario 2 : Incomplete Quiz</strong><a href="#scenario-2--incomplete-quiz-1" class="hash-link" aria-label="Direct link to scenario-2--incomplete-quiz-1" title="Direct link to scenario-2--incomplete-quiz-1" translate="no">​</a></h5>
+<ol>
+<li class="">Create an incomplete quiz in the test database.</li>
+<li class="">Send a POST request to the publish endpoint.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates failure (e.g., 400 Bad Request).</li>
+<li class="">An appropriate validation error message is returned.</li>
+<li class="">No access key is generated.</li>
+<li class="">The quiz remains unpublished in the database.</li>
+</ol>
+</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="use-case-5---navigating-dashboard"><strong>Use Case 5 - Navigating Dashboard</strong><a href="#use-case-5---navigating-dashboard" class="hash-link" aria-label="Direct link to use-case-5---navigating-dashboard" title="Direct link to use-case-5---navigating-dashboard" translate="no">​</a></h3>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--viewing-student-progress"><strong>Scenario 1 : viewing student progress</strong><a href="#scenario-1--viewing-student-progress" class="hash-link" aria-label="Direct link to scenario-1--viewing-student-progress" title="Direct link to scenario-1--viewing-student-progress" translate="no">​</a></h5>
+<ol>
+<li class="">Render the application in an authenticated state so that the dashboard is displayed.</li>
+<li class="">Verify that the dashboard contains buttons for:<!-- -->
+<ol>
+<li class="">Uploading quizzes</li>
+<li class="">Viewing existing quizzes</li>
+<li class="">Viewing student progress and grades</li>
+</ol>
+</li>
+<li class="">Simulate clicking the “View Student Progress and Grades” button.</li>
+<li class="">Verify that the application redirects to the student progress page.</li>
+<li class="">Confirm that:<!-- -->
+<ol>
+<li class="">A list of students or progress summaries is displayed.</li>
+<li class="">A search input field is visible.</li>
+</ol>
+</li>
+<li class="">Simulate entering a student’s name in the search field.</li>
+<li class="">Verify that the list updates to show matching results.</li>
+<li class="">Simulate clicking on a specific student’s progress.</li>
+<li class="">Assert that a modal or new window opens displaying:<!-- -->
+<ol>
+<li class="">The student’s progress</li>
+<li class="">Their submitted answers</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--grading-and-publishing-success"><strong>Scenario 2 : Grading and publishing (success)</strong><a href="#scenario-2--grading-and-publishing-success" class="hash-link" aria-label="Direct link to scenario-2--grading-and-publishing-success" title="Direct link to scenario-2--grading-and-publishing-success" translate="no">​</a></h5>
+<ol>
+<li class="">With the student progress window open, verify that:<!-- -->
+<ol>
+<li class="">A grade input field is displayed.</li>
+<li class="">A notes input field is available.</li>
+<li class="">A “Save and Publish” button is visible.</li>
+</ol>
+</li>
+<li class="">Simulate entering a valid grade.</li>
+<li class="">Simulate entering optional notes.</li>
+<li class="">Simulate clicking “Save and Publish”.</li>
+<li class="">Confirm that the mocked grading API is called with:<!-- -->
+<ol>
+<li class="">The correct student identifier</li>
+<li class="">The entered grade</li>
+<li class="">The notes (if provided)</li>
+</ol>
+</li>
+<li class="">Mock a successful backend response.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">A success notification appears stating that the grade has been published.</li>
+<li class="">The modal closes or updates to reflect the published status.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3--incomplete-input-validation"><strong>Scenario 3 : Incomplete Input Validation</strong><a href="#scenario-3--incomplete-input-validation" class="hash-link" aria-label="Direct link to scenario-3--incomplete-input-validation" title="Direct link to scenario-3--incomplete-input-validation" translate="no">​</a></h5>
+<ol>
+<li class="">Leave the grade field empty</li>
+<li class="">Simulate clicking “Save and Publish”.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">An error message appears prompting the user to complete required fields.</li>
+<li class="">The mocked API is not called.</li>
+<li class="">No success notification appears.</li>
+</ol>
+</li>
+</ol>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="backend-pytest-3"><strong>Backend (Pytest)</strong><a href="#backend-pytest-3" class="hash-link" aria-label="Direct link to backend-pytest-3" title="Direct link to backend-pytest-3" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1-retrieving-student-progress"><strong>Scenario 1 Retrieving Student Progress</strong><a href="#scenario-1-retrieving-student-progress" class="hash-link" aria-label="Direct link to scenario-1-retrieving-student-progress" title="Direct link to scenario-1-retrieving-student-progress" translate="no">​</a></h5>
+<ol>
+<li class="">Insert sample student data and quiz submissions into the test database.</li>
+<li class="">Send a GET request to the student progress endpoint.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success.</li>
+<li class="">The returned data includes correct student progress information.</li>
+<li class="">Submitted answers are correctly returned.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2-saving-and-publishing-grades-successful-case"><strong>Scenario 2 Saving and Publishing Grades (Successful Case)</strong><a href="#scenario-2-saving-and-publishing-grades-successful-case" class="hash-link" aria-label="Direct link to scenario-2-saving-and-publishing-grades-successful-case" title="Direct link to scenario-2-saving-and-publishing-grades-successful-case" translate="no">​</a></h5>
+<ol>
+<li class="">Send a POST or PUT request to the grading endpoint with:<!-- -->
+<ol>
+<li class="">Student ID</li>
+<li class="">Grade value</li>
+<li class="">Notes (if applicable)</li>
+<li class="">Verify that:</li>
+<li class="">The response status code indicates success.</li>
+<li class="">The grade is correctly stored in the database.</li>
+<li class="">The grade status is updated to “published”.</li>
+<li class="">The correct confirmation response is returned.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3-incomplete-input-validation"><strong>Scenario 3 Incomplete Input Validation</strong><a href="#scenario-3-incomplete-input-validation" class="hash-link" aria-label="Direct link to scenario-3-incomplete-input-validation" title="Direct link to scenario-3-incomplete-input-validation" translate="no">​</a></h5>
+<ol>
+<li class="">Attempt to submit a grade without a required field (for example, missing grade value).</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates failure (for example, 400 Bad Request).</li>
+<li class="">A validation error message is returned.</li>
+<li class="">No grade is stored or published</li>
+</ol>
+</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="use-case-6---deleting-a-question-from-a-quiz"><strong>Use Case 6 - deleting a question from a quiz</strong><a href="#use-case-6---deleting-a-question-from-a-quiz" class="hash-link" aria-label="Direct link to use-case-6---deleting-a-question-from-a-quiz" title="Direct link to use-case-6---deleting-a-question-from-a-quiz" translate="no">​</a></h3>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="frontend-rtl-2"><strong>Frontend (RTL)</strong><a href="#frontend-rtl-2" class="hash-link" aria-label="Direct link to frontend-rtl-2" title="Direct link to frontend-rtl-2" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--successful-question-deletion"><strong>Scenario 1 – Successful Question Deletion</strong><a href="#scenario-1--successful-question-deletion" class="hash-link" aria-label="Direct link to scenario-1--successful-question-deletion" title="Direct link to scenario-1--successful-question-deletion" translate="no">​</a></h5>
+<ol>
+<li class="">Render the application in an authenticated state so that the dashboard is displayed.</li>
+<li class="">Simulate clicking the “View Existing Quizzes” button.</li>
+<li class="">Verify that the application redirects to the existing quizzes page.</li>
+<li class="">Confirm that a list of quizzes is displayed.</li>
+<li class="">Simulate selecting a specific quiz that contains multiple questions.</li>
+<li class="">Verify that the quiz editing page is displayed and that each question has an associated “Delete” button.</li>
+<li class="">Simulate clicking the “Delete” button next to a specific question.</li>
+<li class="">Verify that a confirmation pop-up appears asking the user to confirm the deletion.</li>
+<li class="">Simulate confirming the deletion.</li>
+<li class="">Confirm that the mocked delete API is called with the correct quiz ID and question ID.</li>
+<li class="">Mock a successful backend response.</li>
+<li class="">Assert that:</li>
+<li class="">The question is no longer displayed in the list of quiz questions.</li>
+<li class="">A success notification appears indicating that the question was deleted successfully.</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--deletion-cancelled"><strong>Scenario 2 – Deletion Cancelled</strong><a href="#scenario-2--deletion-cancelled" class="hash-link" aria-label="Direct link to scenario-2--deletion-cancelled" title="Direct link to scenario-2--deletion-cancelled" translate="no">​</a></h5>
+<ol>
+<li class="">Navigate to the quiz editing page as described above.</li>
+<li class="">Simulate clicking the “Delete” button for a question.</li>
+<li class="">When the confirmation pop-up appears, simulate cancelling the action.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">The delete API is not called.</li>
+<li class="">The question remains visible in the quiz.</li>
+<li class="">No success notification appears.</li>
+</ol>
+</li>
+</ol>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="backend-pytest-4"><strong>Backend (Pytest)</strong><a href="#backend-pytest-4" class="hash-link" aria-label="Direct link to backend-pytest-4" title="Direct link to backend-pytest-4" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1-successful-question-deletion"><strong>Scenario 1. Successful Question Deletion</strong><a href="#scenario-1-successful-question-deletion" class="hash-link" aria-label="Direct link to scenario-1-successful-question-deletion" title="Direct link to scenario-1-successful-question-deletion" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a quiz with multiple questions into the test database.</li>
+<li class="">Send a DELETE request to the question deletion endpoint with the quiz ID and question ID.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success (for example, 200 OK).</li>
+<li class="">The specified question is removed from the database.</li>
+<li class="">The quiz no longer contains the deleted question.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2-attempting-to-delete-a-non-existent-question"><strong>Scenario 2. Attempting to Delete a Non-Existent Question</strong><a href="#scenario-2-attempting-to-delete-a-non-existent-question" class="hash-link" aria-label="Direct link to scenario-2-attempting-to-delete-a-non-existent-question" title="Direct link to scenario-2-attempting-to-delete-a-non-existent-question" translate="no">​</a></h5>
+<ol>
+<li class="">Send a DELETE request using an invalid or non-existent question ID.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates failure (for example, 404 Not Found).</li>
+<li class="">No other questions are affected.</li>
+</ol>
+</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="use-case-7---changing-a-grade-for-a-student"><strong>Use Case 7 - Changing a Grade for a Student</strong><a href="#use-case-7---changing-a-grade-for-a-student" class="hash-link" aria-label="Direct link to use-case-7---changing-a-grade-for-a-student" title="Direct link to use-case-7---changing-a-grade-for-a-student" translate="no">​</a></h3>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="frontend-rtl-3"><strong>Frontend (RTL)</strong><a href="#frontend-rtl-3" class="hash-link" aria-label="Direct link to frontend-rtl-3" title="Direct link to frontend-rtl-3" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--successful-grade-update"><strong>Scenario 1 – Successful Grade Update</strong><a href="#scenario-1--successful-grade-update" class="hash-link" aria-label="Direct link to scenario-1--successful-grade-update" title="Direct link to scenario-1--successful-grade-update" translate="no">​</a></h5>
+<ol>
+<li class="">Render the application in an authenticated state so that the dashboard is displayed.</li>
+<li class="">Simulate clicking the “View Student Progress and Grades” button.</li>
+<li class="">Verify that the application redirects to the student progress and grades page.</li>
+<li class="">Confirm that a student search input is displayed.</li>
+<li class="">Simulate entering the name or ID of a student whose grade has already been entered.</li>
+<li class="">Mock a successful student search response.</li>
+<li class="">Verify that the matching student is displayed in the search results.</li>
+<li class="">Simulate selecting the student.</li>
+<li class="">Verify that the student grade page is displayed.</li>
+<li class="">Confirm that the student’s existing grades are shown.</li>
+<li class="">Verify that the grade field contains the previously entered grade.</li>
+<li class="">Simulate editing the grade input field with a new valid grade.</li>
+<li class="">If notes are present or required, simulate updating the notes field.</li>
+<li class="">Simulate clicking the “Save and Publish” button.</li>
+<li class="">Confirm that the mocked update grade API is called with the correct student ID, grade ID, updated grade value, and notes.</li>
+<li class="">Mock a successful backend response.</li>
+<li class="">Assert that:</li>
+<li class="">The updated grade is displayed on the student’s grade page.</li>
+<li class="">A success notification appears indicating that the grade was updated successfully.</li>
+<li class="">The mocked notification API or notification handler is called to notify the student.</li>
+<li class="">No validation error message is displayed.</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--required-fields-incomplete"><strong>Scenario 2 – Required Fields Incomplete</strong><a href="#scenario-2--required-fields-incomplete" class="hash-link" aria-label="Direct link to scenario-2--required-fields-incomplete" title="Direct link to scenario-2--required-fields-incomplete" translate="no">​</a></h5>
+<ol>
+<li class="">Navigate to the student grade page as described above.</li>
+<li class="">Verify that the student’s existing grade details are displayed.</li>
+<li class="">Simulate clearing a required field, such as the grade input field.</li>
+<li class="">Simulate clicking the “Save and Publish” button.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">A validation message appears prompting the user to complete all required fields.</li>
+<li class="">The update grade API is not called.</li>
+<li class="">The student notification API or notification handler is not called.</li>
+<li class="">The previous grade remains displayed or unchanged.</li>
+<li class="">No success notification appears.</li>
+</ol>
+</li>
+</ol>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="backend-pytest-5"><strong>Backend (Pytest)</strong><a href="#backend-pytest-5" class="hash-link" aria-label="Direct link to backend-pytest-5" title="Direct link to backend-pytest-5" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--successful-grade-update-1"><strong>Scenario 1 – Successful Grade Update</strong><a href="#scenario-1--successful-grade-update-1" class="hash-link" aria-label="Direct link to scenario-1--successful-grade-update-1" title="Direct link to scenario-1--successful-grade-update-1" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student into the test database.</li>
+<li class="">Insert an existing grade record for that student.</li>
+<li class="">Send a PUT or PATCH request to the grade update endpoint with the student ID, grade ID, updated grade value, and notes.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success, for example, 200 OK.</li>
+<li class="">The response contains the updated grade details.</li>
+<li class="">The grade record in the database is updated with the new grade value.</li>
+<li class="">The notes are updated if notes were provided.</li>
+<li class="">The student ID associated with the grade remains unchanged.</li>
+<li class="">A student notification is created, sent, or queued using a mocked notification service.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--missing-required-fields"><strong>Scenario 2 – Missing Required Fields</strong><a href="#scenario-2--missing-required-fields" class="hash-link" aria-label="Direct link to scenario-2--missing-required-fields" title="Direct link to scenario-2--missing-required-fields" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student and an existing grade record into the test database.</li>
+<li class="">Send a PUT or PATCH request to the grade update endpoint with one or more required fields missing, such as an empty grade value.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates failure, for example, 400 Bad Request.</li>
+<li class="">The response contains an error message prompting completion of required fields.</li>
+<li class="">The grade record in the database is not updated.</li>
+<li class="">No student notification is created, sent, or queued.</li>
+</ol>
+</li>
+</ol>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="student-user-integration-tests"><strong>Student User Integration Tests</strong><a href="#student-user-integration-tests" class="hash-link" aria-label="Direct link to student-user-integration-tests" title="Direct link to student-user-integration-tests" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="use-case-1---student-creates-an-account"><strong>Use Case 1 - Student Creates an Account</strong><a href="#use-case-1---student-creates-an-account" class="hash-link" aria-label="Direct link to use-case-1---student-creates-an-account" title="Direct link to use-case-1---student-creates-an-account" translate="no">​</a></h3>
+<p>A student registers for a new account to access the platform.</p>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="frontend-rtl-4"><strong>Frontend (RTL)</strong><a href="#frontend-rtl-4" class="hash-link" aria-label="Direct link to frontend-rtl-4" title="Direct link to frontend-rtl-4" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--successful-account-creation"><strong>Scenario 1 – Successful Account Creation</strong><a href="#scenario-1--successful-account-creation" class="hash-link" aria-label="Direct link to scenario-1--successful-account-creation" title="Direct link to scenario-1--successful-account-creation" translate="no">​</a></h5>
+<ol>
+<li class="">Render the application at the Sign Up page.</li>
+<li class="">Confirm that the sign up form is displayed.</li>
+<li class="">Verify that the form contains fields for name, email, and password.</li>
+<li class="">Simulate entering valid student information into all required fields.</li>
+<li class="">Simulate clicking the “Create Account” button.</li>
+<li class="">Confirm that the mocked account creation API is called with the correct name, email, and password.</li>
+<li class="">Mock a successful backend response.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">The student account is created successfully.</li>
+<li class="">A success message appears, if applicable.</li>
+<li class="">The student is redirected to the Login Page.</li>
+<li class="">No validation error messages are displayed.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--missing-required-information"><strong>Scenario 2 – Missing Required Information</strong><a href="#scenario-2--missing-required-information" class="hash-link" aria-label="Direct link to scenario-2--missing-required-information" title="Direct link to scenario-2--missing-required-information" translate="no">​</a></h5>
+<ol>
+<li class="">Render the application at the Sign Up page.</li>
+<li class="">Leave one or more required fields empty, such as email or password.</li>
+<li class="">Simulate clicking the “Create Account” button.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">A validation message is displayed prompting the student to complete all required fields.</li>
+<li class="">The account creation API is not called.</li>
+<li class="">The student remains on the Sign Up page.</li>
+<li class="">No account is created.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3--account-creation-fails"><strong>Scenario 3 – Account Creation Fails</strong><a href="#scenario-3--account-creation-fails" class="hash-link" aria-label="Direct link to scenario-3--account-creation-fails" title="Direct link to scenario-3--account-creation-fails" translate="no">​</a></h5>
+<ol>
+<li class="">Render the application at the Sign Up page.</li>
+<li class="">Enter valid student information.</li>
+<li class="">Simulate clicking the “Create Account” button.</li>
+<li class="">Mock a failed backend response, such as an email already being used.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">An error message is displayed to the student.</li>
+<li class="">The student remains on the Sign Up page.</li>
+<li class="">The student is not redirected to the Login Page.</li>
+</ol>
+</li>
+</ol>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="backend-pytest-6"><strong>Backend (Pytest)</strong><a href="#backend-pytest-6" class="hash-link" aria-label="Direct link to backend-pytest-6" title="Direct link to backend-pytest-6" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--successful-account-creation-1"><strong>Scenario 1 – Successful Account Creation</strong><a href="#scenario-1--successful-account-creation-1" class="hash-link" aria-label="Direct link to scenario-1--successful-account-creation-1" title="Direct link to scenario-1--successful-account-creation-1" translate="no">​</a></h5>
+<ol>
+<li class="">Send a POST request to the student registration endpoint with valid name, email, and password.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success, for example, 201 Created.</li>
+<li class="">A new student account is created in the database.</li>
+<li class="">The stored email matches the provided email.</li>
+<li class="">The password is stored securely as a hashed password.</li>
+<li class="">The response does not expose the raw password.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--missing-required-fields-1"><strong>Scenario 2 – Missing Required Fields</strong><a href="#scenario-2--missing-required-fields-1" class="hash-link" aria-label="Direct link to scenario-2--missing-required-fields-1" title="Direct link to scenario-2--missing-required-fields-1" translate="no">​</a></h5>
+<ol>
+<li class="">Send a POST request to the registration endpoint with one or more required fields missing.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates failure, for example, 400 Bad Request.</li>
+<li class="">The response contains a validation error message.</li>
+<li class="">No student account is created in the database.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3--duplicate-email"><strong>Scenario 3 – Duplicate Email</strong><a href="#scenario-3--duplicate-email" class="hash-link" aria-label="Direct link to scenario-3--duplicate-email" title="Direct link to scenario-3--duplicate-email" translate="no">​</a></h5>
+<ol>
+<li class="">Insert an existing student account into the test database.</li>
+<li class="">Send a POST request using the same email address.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates failure, for example, 409 Conflict.</li>
+<li class="">A duplicate email error message is returned.</li>
+<li class="">No additional student account is created.</li>
+</ol>
+</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="use-case-2---student-joins-a-class-using-an-access-code"><strong>Use Case 2 - Student Joins a Class Using an Access Code</strong><a href="#use-case-2---student-joins-a-class-using-an-access-code" class="hash-link" aria-label="Direct link to use-case-2---student-joins-a-class-using-an-access-code" title="Direct link to use-case-2---student-joins-a-class-using-an-access-code" translate="no">​</a></h3>
+<p>A student enrolls in a course using a class access code provided by the instructor.</p>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="frontend-rtl-5"><strong>Frontend (RTL)</strong><a href="#frontend-rtl-5" class="hash-link" aria-label="Direct link to frontend-rtl-5" title="Direct link to frontend-rtl-5" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--successful-class-join"><strong>Scenario 1 – Successful Class Join</strong><a href="#scenario-1--successful-class-join" class="hash-link" aria-label="Direct link to scenario-1--successful-class-join" title="Direct link to scenario-1--successful-class-join" translate="no">​</a></h5>
+<ol>
+<li class="">Render the application in an authenticated student state.</li>
+<li class="">Navigate to the Join Class page.</li>
+<li class="">Verify that the access code input field is displayed.</li>
+<li class="">Simulate entering a valid class access code.</li>
+<li class="">Simulate clicking the “Join Class” button.</li>
+<li class="">Confirm that the mocked join class API is called with the correct student ID and access code.</li>
+<li class="">Mock a successful backend response.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">The student is added to the class.</li>
+<li class="">A success notification appears.</li>
+<li class="">The student is redirected to the Student Dashboard.</li>
+<li class="">The joined class is available from the dashboard, if displayed there.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--invalid-access-code"><strong>Scenario 2 – Invalid Access Code</strong><a href="#scenario-2--invalid-access-code" class="hash-link" aria-label="Direct link to scenario-2--invalid-access-code" title="Direct link to scenario-2--invalid-access-code" translate="no">​</a></h5>
+<ol>
+<li class="">Render the application in an authenticated student state.</li>
+<li class="">Navigate to the Join Class page.</li>
+<li class="">Enter an invalid access code.</li>
+<li class="">Simulate clicking the “Join Class” button.</li>
+<li class="">Mock a failed backend response.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">An error message is displayed indicating that the access code is invalid.</li>
+<li class="">The student is not redirected to the Student Dashboard.</li>
+<li class="">The student is not added to any class.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3--empty-access-code"><strong>Scenario 3 – Empty Access Code</strong><a href="#scenario-3--empty-access-code" class="hash-link" aria-label="Direct link to scenario-3--empty-access-code" title="Direct link to scenario-3--empty-access-code" translate="no">​</a></h5>
+<ol>
+<li class="">Render the application in an authenticated student state.</li>
+<li class="">Navigate to the Join Class page.</li>
+<li class="">Leave the access code field empty.</li>
+<li class="">Simulate clicking the “Join Class” button.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">A validation message prompts the student to enter an access code.</li>
+<li class="">The join class API is not called.</li>
+<li class="">The student remains on the Join Class page.</li>
+</ol>
+</li>
+</ol>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="backend-pytest-7"><strong>Backend (Pytest)</strong><a href="#backend-pytest-7" class="hash-link" aria-label="Direct link to backend-pytest-7" title="Direct link to backend-pytest-7" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--successful-class-enrollment"><strong>Scenario 1 – Successful Class Enrollment</strong><a href="#scenario-1--successful-class-enrollment" class="hash-link" aria-label="Direct link to scenario-1--successful-class-enrollment" title="Direct link to scenario-1--successful-class-enrollment" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student into the test database.</li>
+<li class="">Insert a class with a valid access code into the test database.</li>
+<li class="">Send a POST request to the join class endpoint with the student ID and access code.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success, for example, 200 OK.</li>
+<li class="">The student is added to the class enrollment table or class roster.</li>
+<li class="">The response contains the class information.</li>
+<li class="">No duplicate enrollment is created.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--invalid-access-code-1"><strong>Scenario 2 – Invalid Access Code</strong><a href="#scenario-2--invalid-access-code-1" class="hash-link" aria-label="Direct link to scenario-2--invalid-access-code-1" title="Direct link to scenario-2--invalid-access-code-1" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student into the test database.</li>
+<li class="">Send a POST request using an invalid access code.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates failure, for example, 404 Not Found.</li>
+<li class="">The response contains an error message.</li>
+<li class="">The student is not added to any class.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3--student-already-enrolled"><strong>Scenario 3 – Student Already Enrolled</strong><a href="#scenario-3--student-already-enrolled" class="hash-link" aria-label="Direct link to scenario-3--student-already-enrolled" title="Direct link to scenario-3--student-already-enrolled" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student and class into the test database.</li>
+<li class="">Enroll the student in the class.</li>
+<li class="">Send another POST request using the same access code.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates failure or a handled response, for example, 409 Conflict.</li>
+<li class="">No duplicate enrollment is created.</li>
+<li class="">The existing enrollment remains unchanged.</li>
+</ol>
+</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="use-case-3---student-views-dashboard"><strong>Use Case 3 - Student Views Dashboard</strong><a href="#use-case-3---student-views-dashboard" class="hash-link" aria-label="Direct link to use-case-3---student-views-dashboard" title="Direct link to use-case-3---student-views-dashboard" translate="no">​</a></h3>
+<p>A student views available assignments, completed work, and grades.</p>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="frontend-rtl-6"><strong>Frontend (RTL)</strong><a href="#frontend-rtl-6" class="hash-link" aria-label="Direct link to frontend-rtl-6" title="Direct link to frontend-rtl-6" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--dashboard-loads-successfully"><strong>Scenario 1 – Dashboard Loads Successfully</strong><a href="#scenario-1--dashboard-loads-successfully" class="hash-link" aria-label="Direct link to scenario-1--dashboard-loads-successfully" title="Direct link to scenario-1--dashboard-loads-successfully" translate="no">​</a></h5>
+<ol>
+<li class="">Render the application in an authenticated student state.</li>
+<li class="">Navigate to the Student Dashboard.</li>
+<li class="">Mock a successful dashboard data response.</li>
+<li class="">Verify that the dashboard page is displayed.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">Available problems are displayed.</li>
+<li class="">Previously completed problems are displayed.</li>
+<li class="">Grades are displayed where available.</li>
+<li class="">Submission statuses are displayed.</li>
+<li class="">No error message appears.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--student-selects-a-problem"><strong>Scenario 2 – Student Selects a Problem</strong><a href="#scenario-2--student-selects-a-problem" class="hash-link" aria-label="Direct link to scenario-2--student-selects-a-problem" title="Direct link to scenario-2--student-selects-a-problem" translate="no">​</a></h5>
+<ol>
+<li class="">Render the Student Dashboard with mocked available problems.</li>
+<li class="">Confirm that at least one available problem is displayed.</li>
+<li class="">Simulate clicking a problem.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">The selected problem ID is used for navigation.</li>
+<li class="">The student is redirected to the Problem Page.</li>
+<li class="">The problem loading API is called with the correct problem ID.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3--dashboard-data-fails-to-load"><strong>Scenario 3 – Dashboard Data Fails to Load</strong><a href="#scenario-3--dashboard-data-fails-to-load" class="hash-link" aria-label="Direct link to scenario-3--dashboard-data-fails-to-load" title="Direct link to scenario-3--dashboard-data-fails-to-load" translate="no">​</a></h5>
+<ol>
+<li class="">Render the application in an authenticated student state.</li>
+<li class="">Navigate to the Student Dashboard.</li>
+<li class="">Mock a failed dashboard API response.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">An error message is displayed.</li>
+<li class="">No incorrect problem or grade data is displayed.</li>
+<li class="">A retry option is displayed, if supported.</li>
+</ol>
+</li>
+</ol>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="backend-pytest-8"><strong>Backend (Pytest)</strong><a href="#backend-pytest-8" class="hash-link" aria-label="Direct link to backend-pytest-8" title="Direct link to backend-pytest-8" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--retrieve-dashboard-data-successfully"><strong>Scenario 1 – Retrieve Dashboard Data Successfully</strong><a href="#scenario-1--retrieve-dashboard-data-successfully" class="hash-link" aria-label="Direct link to scenario-1--retrieve-dashboard-data-successfully" title="Direct link to scenario-1--retrieve-dashboard-data-successfully" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student into the test database.</li>
+<li class="">Insert available problems for the student’s class.</li>
+<li class="">Insert completed submissions and grades for the student.</li>
+<li class="">Send a GET request to the student dashboard endpoint.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success, for example, 200 OK.</li>
+<li class="">Available problems are returned.</li>
+<li class="">Completed problems are returned.</li>
+<li class="">Grades are returned.</li>
+<li class="">Submission statuses are returned.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--student-has-no-assignments"><strong>Scenario 2 – Student Has No Assignments</strong><a href="#scenario-2--student-has-no-assignments" class="hash-link" aria-label="Direct link to scenario-2--student-has-no-assignments" title="Direct link to scenario-2--student-has-no-assignments" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student into the test database with no assigned problems.</li>
+<li class="">Send a GET request to the student dashboard endpoint.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success.</li>
+</ol>
+</li>
+<li class="">Empty lists are returned for available and completed problems.</li>
+<li class="">No error occurs.</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3--unauthorized-dashboard-access"><strong>Scenario 3 – Unauthorized Dashboard Access</strong><a href="#scenario-3--unauthorized-dashboard-access" class="hash-link" aria-label="Direct link to scenario-3--unauthorized-dashboard-access" title="Direct link to scenario-3--unauthorized-dashboard-access" translate="no">​</a></h5>
+<ol>
+<li class="">Send a GET request to the dashboard endpoint without valid authentication.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates failure, for example, 401 Unauthorized.</li>
+<li class="">No dashboard data is returned.</li>
+</ol>
+</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="use-case-4---student-begins-a-coding-problem"><strong>Use Case 4 - Student Begins a Coding Problem</strong><a href="#use-case-4---student-begins-a-coding-problem" class="hash-link" aria-label="Direct link to use-case-4---student-begins-a-coding-problem" title="Direct link to use-case-4---student-begins-a-coding-problem" translate="no">​</a></h3>
+<p>A student opens a coding problem and starts working on it.</p>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="frontend-rtl-7"><strong>Frontend (RTL)</strong><a href="#frontend-rtl-7" class="hash-link" aria-label="Direct link to frontend-rtl-7" title="Direct link to frontend-rtl-7" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--problem-page-loads-successfully"><strong>Scenario 1 – Problem Page Loads Successfully</strong><a href="#scenario-1--problem-page-loads-successfully" class="hash-link" aria-label="Direct link to scenario-1--problem-page-loads-successfully" title="Direct link to scenario-1--problem-page-loads-successfully" translate="no">​</a></h5>
+<ol>
+<li class="">Render the Student Dashboard with mocked available problems.</li>
+<li class="">Simulate selecting a problem.</li>
+<li class="">Mock a successful problem details response.</li>
+<li class="">Verify that the Problem Page is displayed.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">The problem description is displayed.</li>
+<li class="">The instructions are displayed.</li>
+<li class="">The code editor is displayed.</li>
+<li class="">Starter code is displayed if available.</li>
+<li class="">No error message appears.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--student-types-code"><strong>Scenario 2 – Student Types Code</strong><a href="#scenario-2--student-types-code" class="hash-link" aria-label="Direct link to scenario-2--student-types-code" title="Direct link to scenario-2--student-types-code" translate="no">​</a></h5>
+<ol>
+<li class="">Render the Problem Page with mocked problem data.</li>
+<li class="">Confirm that the code editor is displayed.</li>
+<li class="">Simulate typing code into the editor.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">The editor value updates correctly.</li>
+<li class="">The typed code remains visible.</li>
+<li class="">No submission or run API is called yet.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3--problem-fails-to-load"><strong>Scenario 3 – Problem Fails to Load</strong><a href="#scenario-3--problem-fails-to-load" class="hash-link" aria-label="Direct link to scenario-3--problem-fails-to-load" title="Direct link to scenario-3--problem-fails-to-load" translate="no">​</a></h5>
+<ol>
+<li class="">Simulate selecting a problem from the Student Dashboard.</li>
+<li class="">Mock a failed problem details response.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">An error message is displayed.</li>
+<li class="">The problem description is not displayed.</li>
+<li class="">The code editor is not incorrectly populated.</li>
+<li class="">The student remains able to return to the dashboard, if supported.</li>
+</ol>
+</li>
+</ol>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="backend-pytest-9"><strong>Backend (Pytest)</strong><a href="#backend-pytest-9" class="hash-link" aria-label="Direct link to backend-pytest-9" title="Direct link to backend-pytest-9" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--retrieve-problem-details-successfully"><strong>Scenario 1 – Retrieve Problem Details Successfully</strong><a href="#scenario-1--retrieve-problem-details-successfully" class="hash-link" aria-label="Direct link to scenario-1--retrieve-problem-details-successfully" title="Direct link to scenario-1--retrieve-problem-details-successfully" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student into the test database.</li>
+<li class="">Insert a coding problem assigned to the student.</li>
+<li class="">Send a GET request to the problem details endpoint using the problem ID.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success, for example, 200 OK.</li>
+<li class="">The response contains the problem description.</li>
+<li class="">The response contains instructions.</li>
+<li class="">The response contains starter code if applicable.</li>
+<li class="">The returned problem belongs to a class the student is enrolled in.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--problem-not-found"><strong>Scenario 2 – Problem Not Found</strong><a href="#scenario-2--problem-not-found" class="hash-link" aria-label="Direct link to scenario-2--problem-not-found" title="Direct link to scenario-2--problem-not-found" translate="no">​</a></h5>
+<ol>
+<li class="">Send a GET request using an invalid or non-existent problem ID.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates failure, for example, 404 Not Found.</li>
+<li class="">No problem data is returned.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3--student-not-authorized-for-problem"><strong>Scenario 3 – Student Not Authorized for Problem</strong><a href="#scenario-3--student-not-authorized-for-problem" class="hash-link" aria-label="Direct link to scenario-3--student-not-authorized-for-problem" title="Direct link to scenario-3--student-not-authorized-for-problem" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student into the test database.</li>
+<li class="">Insert a problem assigned to a different class.</li>
+<li class="">Send a GET request for that problem as the student.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates failure, for example, 403 Forbidden.</li>
+<li class="">The problem data is not returned.</li>
+</ol>
+</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="use-case-5---student-receives-and-selects-auto-code-suggestions"><strong>Use Case 5 - Student Receives and Selects Auto Code Suggestions</strong><a href="#use-case-5---student-receives-and-selects-auto-code-suggestions" class="hash-link" aria-label="Direct link to use-case-5---student-receives-and-selects-auto-code-suggestions" title="Direct link to use-case-5---student-receives-and-selects-auto-code-suggestions" translate="no">​</a></h3>
+<p>A student is presented with multiple code suggestions and must choose one.</p>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="frontend-rtl-8"><strong>Frontend (RTL)</strong><a href="#frontend-rtl-8" class="hash-link" aria-label="Direct link to frontend-rtl-8" title="Direct link to frontend-rtl-8" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--correct-suggestion-selected"><strong>Scenario 1 – Correct Suggestion Selected</strong><a href="#scenario-1--correct-suggestion-selected" class="hash-link" aria-label="Direct link to scenario-1--correct-suggestion-selected" title="Direct link to scenario-1--correct-suggestion-selected" translate="no">​</a></h5>
+<ol>
+<li class="">Render the Problem Page with the code editor displayed.</li>
+<li class="">Simulate the student typing code into the editor.</li>
+<li class="">Mock the suggestion API returning multiple code suggestions.</li>
+<li class="">Verify that multiple suggestions are displayed.</li>
+<li class="">Simulate selecting the correct suggestion.</li>
+<li class="">Confirm that the mocked suggestion selection API is called with the correct problem ID, student ID, and selected suggestion ID.</li>
+<li class="">Mock a successful response identifying the selected suggestion as correct.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">The correct suggestion is highlighted, or an explanation is displayed.</li>
+<li class="">The selected code suggestion is inserted into the editor.</li>
+<li class="">The student can continue editing the code.</li>
+<li class="">No error message appears.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--incorrect-suggestion-selected"><strong>Scenario 2 – Incorrect Suggestion Selected</strong><a href="#scenario-2--incorrect-suggestion-selected" class="hash-link" aria-label="Direct link to scenario-2--incorrect-suggestion-selected" title="Direct link to scenario-2--incorrect-suggestion-selected" translate="no">​</a></h5>
+<ol>
+<li class="">Render the Problem Page with the code editor displayed.</li>
+<li class="">Simulate the student typing code.</li>
+<li class="">Mock the suggestion API returning multiple suggestions.</li>
+<li class="">Simulate selecting an incorrect suggestion.</li>
+<li class="">Mock a response identifying the selection as incorrect.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">The selected suggestion is not marked as correct.</li>
+<li class="">Feedback or explanation is displayed, if supported.</li>
+<li class="">The system does not incorrectly insert the wrong code unless the design allows it.</li>
+<li class="">The student remains on the Problem Page.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3--suggestions-fail-to-load"><strong>Scenario 3 – Suggestions Fail to Load</strong><a href="#scenario-3--suggestions-fail-to-load" class="hash-link" aria-label="Direct link to scenario-3--suggestions-fail-to-load" title="Direct link to scenario-3--suggestions-fail-to-load" translate="no">​</a></h5>
+<ol>
+<li class="">Render the Problem Page with the code editor displayed.</li>
+<li class="">Simulate typing code at a point where suggestions should be available.</li>
+<li class="">Mock a failed suggestion API response.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">An error message or fallback message is displayed.</li>
+<li class="">No suggestions are incorrectly displayed.</li>
+<li class="">The student can continue typing code manually.</li>
+</ol>
+</li>
+</ol>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="backend-pytest-10"><strong>Backend (Pytest)</strong><a href="#backend-pytest-10" class="hash-link" aria-label="Direct link to backend-pytest-10" title="Direct link to backend-pytest-10" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--retrieve-code-suggestions-successfully"><strong>Scenario 1 – Retrieve Code Suggestions Successfully</strong><a href="#scenario-1--retrieve-code-suggestions-successfully" class="hash-link" aria-label="Direct link to scenario-1--retrieve-code-suggestions-successfully" title="Direct link to scenario-1--retrieve-code-suggestions-successfully" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student and assigned coding problem into the test database.</li>
+<li class="">Send a POST request to the code suggestion endpoint with the current code state.</li>
+<li class="">Mock the suggestion generation service.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success, for example, 200 OK.</li>
+<li class="">Multiple code suggestions are returned.</li>
+<li class="">Each suggestion includes an ID and suggested code.</li>
+<li class="">The mocked suggestion service is called with the correct code context.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--correct-suggestion-selection"><strong>Scenario 2 – Correct Suggestion Selection</strong><a href="#scenario-2--correct-suggestion-selection" class="hash-link" aria-label="Direct link to scenario-2--correct-suggestion-selection" title="Direct link to scenario-2--correct-suggestion-selection" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student, problem, and generated suggestions into the test database.</li>
+<li class="">Send a POST request to the suggestion selection endpoint with the selected suggestion ID.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success.</li>
+<li class="">The selected suggestion is marked as correct.</li>
+<li class="">The response contains an explanation or correctness result.</li>
+<li class="">The selection is recorded for the student.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3--invalid-suggestion-selection"><strong>Scenario 3 – Invalid Suggestion Selection</strong><a href="#scenario-3--invalid-suggestion-selection" class="hash-link" aria-label="Direct link to scenario-3--invalid-suggestion-selection" title="Direct link to scenario-3--invalid-suggestion-selection" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student and problem into the test database.</li>
+<li class="">Send a POST request using an invalid or non-existent suggestion ID.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates failure, for example, 404 Not Found.</li>
+<li class="">No suggestion selection is recorded.</li>
+<li class="">No code is inserted or returned as accepted.</li>
+</ol>
+</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="use-case-6---student-runs-code-to-view-output"><strong>Use Case 6 - Student Runs Code to View Output</strong><a href="#use-case-6---student-runs-code-to-view-output" class="hash-link" aria-label="Direct link to use-case-6---student-runs-code-to-view-output" title="Direct link to use-case-6---student-runs-code-to-view-output" translate="no">​</a></h3>
+<p>A student executes their code to check its output.</p>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="frontend-rtl-9"><strong>Frontend (RTL)</strong><a href="#frontend-rtl-9" class="hash-link" aria-label="Direct link to frontend-rtl-9" title="Direct link to frontend-rtl-9" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--code-runs-successfully"><strong>Scenario 1 – Code Runs Successfully</strong><a href="#scenario-1--code-runs-successfully" class="hash-link" aria-label="Direct link to scenario-1--code-runs-successfully" title="Direct link to scenario-1--code-runs-successfully" translate="no">​</a></h5>
+<ol>
+<li class="">Render the Problem Page with the code editor displayed.</li>
+<li class="">Simulate entering valid code into the editor.</li>
+<li class="">Simulate clicking the “Run Code” button.</li>
+<li class="">Confirm that the mocked run code API is called with the correct problem ID and code content.</li>
+<li class="">Mock a successful backend response containing program output.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">The output is displayed to the student.</li>
+<li class="">No error message is displayed.</li>
+<li class="">The student remains on the Problem Page.</li>
+<li class="">The code remains visible in the editor.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--code-produces-an-error"><strong>Scenario 2 – Code Produces an Error</strong><a href="#scenario-2--code-produces-an-error" class="hash-link" aria-label="Direct link to scenario-2--code-produces-an-error" title="Direct link to scenario-2--code-produces-an-error" translate="no">​</a></h5>
+<ol>
+<li class="">Render the Problem Page with the code editor displayed.</li>
+<li class="">Simulate entering code with an error.</li>
+<li class="">Simulate clicking the “Run Code” button.</li>
+<li class="">Mock a backend response containing an error message.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">The error message is displayed to the student.</li>
+<li class="">The editor still contains the student’s code.</li>
+<li class="">The student remains able to edit and run the code again.</li>
+<li class="">The problem is not marked as submitted.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3--run-code-with-empty-editor"><strong>Scenario 3 – Run Code with Empty Editor</strong><a href="#scenario-3--run-code-with-empty-editor" class="hash-link" aria-label="Direct link to scenario-3--run-code-with-empty-editor" title="Direct link to scenario-3--run-code-with-empty-editor" translate="no">​</a></h5>
+<ol>
+<li class="">Render the Problem Page with an empty code editor.</li>
+<li class="">Simulate clicking the “Run Code” button.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">A validation message is displayed, if empty code is not allowed.</li>
+<li class="">The run code API is not called.</li>
+<li class="">No output is displayed.</li>
+</ol>
+</li>
+</ol>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="backend-pytest-11"><strong>Backend (Pytest)</strong><a href="#backend-pytest-11" class="hash-link" aria-label="Direct link to backend-pytest-11" title="Direct link to backend-pytest-11" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--run-code-successfully"><strong>Scenario 1 – Run Code Successfully</strong><a href="#scenario-1--run-code-successfully" class="hash-link" aria-label="Direct link to scenario-1--run-code-successfully" title="Direct link to scenario-1--run-code-successfully" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student and assigned coding problem into the test database.</li>
+<li class="">Send a POST request to the run code endpoint with valid code.</li>
+<li class="">Mock the compile and execution service.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success, for example, 200 OK.</li>
+<li class="">The mocked execution service is called with the submitted code.</li>
+<li class="">The response contains the expected output.</li>
+<li class="">The submission is not marked as final.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--code-execution-error"><strong>Scenario 2 – Code Execution Error</strong><a href="#scenario-2--code-execution-error" class="hash-link" aria-label="Direct link to scenario-2--code-execution-error" title="Direct link to scenario-2--code-execution-error" translate="no">​</a></h5>
+<ol>
+<li class="">Send a POST request to the run code endpoint with code that produces an error.</li>
+<li class="">Mock the execution service returning an error.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success with runtime feedback, or failure depending on system design.</li>
+<li class="">The response contains the error message.</li>
+<li class="">The problem status is not changed to submitted.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3--missing-code-content"><strong>Scenario 3 – Missing Code Content</strong><a href="#scenario-3--missing-code-content" class="hash-link" aria-label="Direct link to scenario-3--missing-code-content" title="Direct link to scenario-3--missing-code-content" translate="no">​</a></h5>
+<ol>
+<li class="">Send a POST request to the run code endpoint with missing or empty code.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates failure, for example, 400 Bad Request.</li>
+<li class="">The response contains a validation error.</li>
+<li class="">The execution service is not called.</li>
+</ol>
+</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="use-case-7---student-submits-completed-work"><strong>Use Case 7 - Student Submits Completed Work</strong><a href="#use-case-7---student-submits-completed-work" class="hash-link" aria-label="Direct link to use-case-7---student-submits-completed-work" title="Direct link to use-case-7---student-submits-completed-work" translate="no">​</a></h3>
+<p>A student submits their solution for grading.</p>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="frontend-rtl-10"><strong>Frontend (RTL)</strong><a href="#frontend-rtl-10" class="hash-link" aria-label="Direct link to frontend-rtl-10" title="Direct link to frontend-rtl-10" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--successful-submission"><strong>Scenario 1 – Successful Submission</strong><a href="#scenario-1--successful-submission" class="hash-link" aria-label="Direct link to scenario-1--successful-submission" title="Direct link to scenario-1--successful-submission" translate="no">​</a></h5>
+<ol>
+<li class="">Render the Problem Page with the code editor displayed.</li>
+<li class="">Simulate entering completed code into the editor.</li>
+<li class="">Simulate clicking the “Submit” button.</li>
+<li class="">Confirm that the mocked submit API is called with the correct problem ID, student ID, and final code.</li>
+<li class="">Mock a successful backend response.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">The final code is submitted successfully.</li>
+<li class="">A success notification appears.</li>
+<li class="">The problem status is updated to submitted.</li>
+<li class="">The student is redirected to the Student Dashboard.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--submission-validation-fails"><strong>Scenario 2 – Submission Validation Fails</strong><a href="#scenario-2--submission-validation-fails" class="hash-link" aria-label="Direct link to scenario-2--submission-validation-fails" title="Direct link to scenario-2--submission-validation-fails" translate="no">​</a></h5>
+<ol>
+<li class="">Render the Problem Page with the code editor displayed.</li>
+<li class="">Leave the code editor empty or provide invalid incomplete code.</li>
+<li class="">Simulate clicking the “Submit” button.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">A validation message is displayed.</li>
+<li class="">The submit API is not called, or a failed response is handled correctly.</li>
+<li class="">The student remains on the Problem Page.</li>
+<li class="">The problem status is not updated to submitted.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3--submission-api-fails"><strong>Scenario 3 – Submission API Fails</strong><a href="#scenario-3--submission-api-fails" class="hash-link" aria-label="Direct link to scenario-3--submission-api-fails" title="Direct link to scenario-3--submission-api-fails" translate="no">​</a></h5>
+<ol>
+<li class="">Render the Problem Page with completed code in the editor.</li>
+<li class="">Simulate clicking the “Submit” button.</li>
+<li class="">Mock a failed backend response.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">An error message is displayed.</li>
+<li class="">The student remains on the Problem Page.</li>
+<li class="">The problem status is not changed to submitted.</li>
+<li class="">The code remains visible in the editor.</li>
+</ol>
+</li>
+</ol>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="backend-pytest-12"><strong>Backend (Pytest)</strong><a href="#backend-pytest-12" class="hash-link" aria-label="Direct link to backend-pytest-12" title="Direct link to backend-pytest-12" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--successful-work-submission"><strong>Scenario 1 – Successful Work Submission</strong><a href="#scenario-1--successful-work-submission" class="hash-link" aria-label="Direct link to scenario-1--successful-work-submission" title="Direct link to scenario-1--successful-work-submission" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student and assigned coding problem into the test database.</li>
+<li class="">Send a POST request to the submission endpoint with final code.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success, for example, 201 Created.</li>
+<li class="">The final code is recorded in the database.</li>
+<li class="">The submission time is recorded.</li>
+<li class="">The problem status is updated to submitted.</li>
+<li class="">The submission is associated with the correct student and problem.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--missing-final-code"><strong>Scenario 2 – Missing Final Code</strong><a href="#scenario-2--missing-final-code" class="hash-link" aria-label="Direct link to scenario-2--missing-final-code" title="Direct link to scenario-2--missing-final-code" translate="no">​</a></h5>
+<ol>
+<li class="">Send a POST request to the submission endpoint with missing or empty code.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates failure, for example, 400 Bad Request.</li>
+<li class="">The response contains a validation error.</li>
+<li class="">No final submission is created.</li>
+<li class="">The problem status is not updated to submitted.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3--submitting-a-non-existent-problem"><strong>Scenario 3 – Submitting a Non-Existent Problem</strong><a href="#scenario-3--submitting-a-non-existent-problem" class="hash-link" aria-label="Direct link to scenario-3--submitting-a-non-existent-problem" title="Direct link to scenario-3--submitting-a-non-existent-problem" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student into the test database.</li>
+<li class="">Send a POST request using an invalid or non-existent problem ID.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates failure, for example, 404 Not Found.</li>
+<li class="">No submission is created.</li>
+<li class="">No problem status is updated.</li>
+</ol>
+</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="use-case-8---student-saves-progress-and-returns-later"><strong>Use Case 8 - Student Saves Progress and Returns Later</strong><a href="#use-case-8---student-saves-progress-and-returns-later" class="hash-link" aria-label="Direct link to use-case-8---student-saves-progress-and-returns-later" title="Direct link to use-case-8---student-saves-progress-and-returns-later" translate="no">​</a></h3>
+<p>A student pauses work and resumes it at a later time.</p>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="frontend-rtl-11"><strong>Frontend (RTL)</strong><a href="#frontend-rtl-11" class="hash-link" aria-label="Direct link to frontend-rtl-11" title="Direct link to frontend-rtl-11" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--progress-auto-saves-successfully"><strong>Scenario 1 – Progress Auto-Saves Successfully</strong><a href="#scenario-1--progress-auto-saves-successfully" class="hash-link" aria-label="Direct link to scenario-1--progress-auto-saves-successfully" title="Direct link to scenario-1--progress-auto-saves-successfully" translate="no">​</a></h5>
+<ol>
+<li class="">Render the Problem Page with the code editor displayed.</li>
+<li class="">Simulate the student typing code into the editor.</li>
+<li class="">Simulate exiting the Problem Page without submitting.</li>
+<li class="">Confirm that the mocked auto-save API is called with the correct student ID, problem ID, and current code.</li>
+<li class="">Mock a successful auto-save response.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">The current progress is saved.</li>
+<li class="">No submission is created.</li>
+<li class="">The problem remains marked as in progress.</li>
+<li class="">No manual data entry is required after leaving the page.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--student-returns-to-saved-problem"><strong>Scenario 2 – Student Returns to Saved Problem</strong><a href="#scenario-2--student-returns-to-saved-problem" class="hash-link" aria-label="Direct link to scenario-2--student-returns-to-saved-problem" title="Direct link to scenario-2--student-returns-to-saved-problem" translate="no">​</a></h5>
+<ol>
+<li class="">Render the application in an authenticated student state.</li>
+<li class="">Navigate to the Student Dashboard.</li>
+<li class="">Mock dashboard data showing an in-progress problem.</li>
+<li class="">Simulate selecting the in-progress problem.</li>
+<li class="">Mock a successful saved progress response.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">The Problem Page is displayed.</li>
+<li class="">The saved code state is restored in the editor.</li>
+<li class="">The problem is still marked as in progress.</li>
+<li class="">The student can continue editing.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3--auto-save-fails"><strong>Scenario 3 – Auto-Save Fails</strong><a href="#scenario-3--auto-save-fails" class="hash-link" aria-label="Direct link to scenario-3--auto-save-fails" title="Direct link to scenario-3--auto-save-fails" translate="no">​</a></h5>
+<ol>
+<li class="">Render the Problem Page with the code editor displayed.</li>
+<li class="">Simulate typing code.</li>
+<li class="">Simulate leaving the Problem Page.</li>
+<li class="">Mock a failed auto-save response.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">An error or warning message is displayed, if supported.</li>
+<li class="">No final submission is created.</li>
+<li class="">The student’s local editor state is not cleared before the save failure is handled.</li>
+</ol>
+</li>
+</ol>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="backend-pytest-13"><strong>Backend (Pytest)</strong><a href="#backend-pytest-13" class="hash-link" aria-label="Direct link to backend-pytest-13" title="Direct link to backend-pytest-13" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--save-progress-successfully"><strong>Scenario 1 – Save Progress Successfully</strong><a href="#scenario-1--save-progress-successfully" class="hash-link" aria-label="Direct link to scenario-1--save-progress-successfully" title="Direct link to scenario-1--save-progress-successfully" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student and assigned coding problem into the test database.</li>
+<li class="">Send a POST or PUT request to the save progress endpoint with current code.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success, for example, 200 OK.</li>
+<li class="">The current code is saved in the database.</li>
+<li class="">The problem status is set to in progress.</li>
+<li class="">No final submission record is created.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--restore-saved-progress"><strong>Scenario 2 – Restore Saved Progress</strong><a href="#scenario-2--restore-saved-progress" class="hash-link" aria-label="Direct link to scenario-2--restore-saved-progress" title="Direct link to scenario-2--restore-saved-progress" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student, assigned problem, and saved progress record into the test database.</li>
+<li class="">Send a GET request to the saved progress endpoint.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success.</li>
+<li class="">The saved code is returned.</li>
+<li class="">The saved progress is associated with the correct student and problem.</li>
+<li class="">The problem status remains in progress.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3--save-progress-for-invalid-problem"><strong>Scenario 3 – Save Progress for Invalid Problem</strong><a href="#scenario-3--save-progress-for-invalid-problem" class="hash-link" aria-label="Direct link to scenario-3--save-progress-for-invalid-problem" title="Direct link to scenario-3--save-progress-for-invalid-problem" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student into the test database.</li>
+<li class="">Send a POST or PUT request using an invalid problem ID.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates failure, for example, 404 Not Found.</li>
+<li class="">No progress record is created.</li>
+<li class="">No existing progress records are changed.</li>
+</ol>
+</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="use-case-9---student-reviews-completed-problems-and-grades"><strong>Use Case 9 - Student Reviews Completed Problems and Grades</strong><a href="#use-case-9---student-reviews-completed-problems-and-grades" class="hash-link" aria-label="Direct link to use-case-9---student-reviews-completed-problems-and-grades" title="Direct link to use-case-9---student-reviews-completed-problems-and-grades" translate="no">​</a></h3>
+<p>A student reviews feedback and grades for completed assignments.</p>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="frontend-rtl-12"><strong>Frontend (RTL)</strong><a href="#frontend-rtl-12" class="hash-link" aria-label="Direct link to frontend-rtl-12" title="Direct link to frontend-rtl-12" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--completed-problem-review-loads-successfully"><strong>Scenario 1 – Completed Problem Review Loads Successfully</strong><a href="#scenario-1--completed-problem-review-loads-successfully" class="hash-link" aria-label="Direct link to scenario-1--completed-problem-review-loads-successfully" title="Direct link to scenario-1--completed-problem-review-loads-successfully" translate="no">​</a></h5>
+<ol>
+<li class="">Render the Student Dashboard in an authenticated student state.</li>
+<li class="">Mock dashboard data containing completed problems.</li>
+<li class="">Verify that completed problems are displayed.</li>
+<li class="">Simulate selecting a completed problem.</li>
+<li class="">Mock a successful completed problem details response.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">The final submission is displayed.</li>
+<li class="">The grade is displayed.</li>
+<li class="">Feedback is displayed if available.</li>
+<li class="">Explanations are displayed if available.</li>
+<li class="">No editing controls are shown unless the system allows resubmission.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--completed-problem-has-no-feedback-yet"><strong>Scenario 2 – Completed Problem Has No Feedback Yet</strong><a href="#scenario-2--completed-problem-has-no-feedback-yet" class="hash-link" aria-label="Direct link to scenario-2--completed-problem-has-no-feedback-yet" title="Direct link to scenario-2--completed-problem-has-no-feedback-yet" translate="no">​</a></h5>
+<ol>
+<li class="">Render the Student Dashboard with a completed problem.</li>
+<li class="">Simulate selecting the completed problem.</li>
+<li class="">Mock a response containing the final submission and grade but no feedback.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">The final submission is displayed.</li>
+<li class="">The grade is displayed.</li>
+<li class="">A message indicates that feedback is not available yet, if applicable.</li>
+<li class="">No incorrect feedback is displayed.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-3--completed-problem-details-fail-to-load"><strong>Scenario 3 – Completed Problem Details Fail to Load</strong><a href="#scenario-3--completed-problem-details-fail-to-load" class="hash-link" aria-label="Direct link to scenario-3--completed-problem-details-fail-to-load" title="Direct link to scenario-3--completed-problem-details-fail-to-load" translate="no">​</a></h5>
+<ol>
+<li class="">Render the Student Dashboard with completed problems.</li>
+<li class="">Simulate selecting a completed problem.</li>
+<li class="">Mock a failed completed problem details response.</li>
+<li class="">Assert that:<!-- -->
+<ol>
+<li class="">An error message is displayed.</li>
+<li class="">The final submission is not incorrectly displayed.</li>
+<li class="">The student remains able to return to the dashboard.</li>
+</ol>
+</li>
+</ol>
+<h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="backend-pytest-14"><strong>Backend (Pytest)</strong><a href="#backend-pytest-14" class="hash-link" aria-label="Direct link to backend-pytest-14" title="Direct link to backend-pytest-14" translate="no">​</a></h4>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-1--retrieve-completed-problem-and-grade-successfully"><strong>Scenario 1 – Retrieve Completed Problem and Grade Successfully</strong><a href="#scenario-1--retrieve-completed-problem-and-grade-successfully" class="hash-link" aria-label="Direct link to scenario-1--retrieve-completed-problem-and-grade-successfully" title="Direct link to scenario-1--retrieve-completed-problem-and-grade-successfully" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student into the test database.</li>
+<li class="">Insert a completed problem submission for that student.</li>
+<li class="">Insert a grade and feedback for the completed problem.</li>
+<li class="">Send a GET request to the completed problem details endpoint.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success, for example, 200 OK.</li>
+<li class="">The final submission is returned.</li>
+<li class="">The grade is returned.</li>
+<li class="">Feedback is returned if available.</li>
+<li class="">The returned data belongs to the correct student.</li>
+</ol>
+</li>
+</ol>
+<h5 class="anchor anchorTargetStickyNavbar_Vzrq" id="scenario-2--completed-problem-without-feedback"><strong>Scenario 2  – Completed Problem Without Feedback</strong><a href="#scenario-2--completed-problem-without-feedback" class="hash-link" aria-label="Direct link to scenario-2--completed-problem-without-feedback" title="Direct link to scenario-2--completed-problem-without-feedback" translate="no">​</a></h5>
+<ol>
+<li class="">Insert a student and completed problem submission into the test database.</li>
+<li class="">Insert a grade without feedback.</li>
+<li class="">Send a GET request to the completed problem details endpoint.</li>
+<li class="">Verify that:<!-- -->
+<ol>
+<li class="">The response status code indicates success.</li>
+<li class="">The final submission is returned.</li>
+<li class="">The grade is returned.</li>
+<li class="">The feedback field is empty, null, or contains an appropriate message.</li>
+</ol>
+</li>
+</ol></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/Capstone-Projects-2026-spring/project-auto-suggestion-quiz/edit/main/documentation/docs/testing/integration-testing.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"><details><summary>Revision History</summary><table><thead><tr><th scope="row">Author</th><th scope="row">Revision</th><th scope="row">Date</th></tr></thead><tbody><tr><td colspan="3" style="text-align:center;font-style:italic;color:#666">Loading...</td></tr></tbody></table></details><span class="theme-last-updated">Last updated<!-- --> by <b>tup80767</b></span></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/project-auto-suggestion-quiz/docs/category/test-procedures"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Test Procedures</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/project-auto-suggestion-quiz/docs/testing/acceptence-testing"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Acceptance test</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#teacher-user" class="table-of-contents__link toc-highlight"><strong>Teacher User</strong></a><ul><li><a href="#use-case-1---account-creation" class="table-of-contents__link toc-highlight"><strong>Use Case 1 - Account creation</strong></a></li><li><a href="#use-case-2---signing-in" class="table-of-contents__link toc-highlight"><strong>Use Case 2 - Signing in</strong></a></li><li><a href="#use-case-3---uploading-leetcode-problems" class="table-of-contents__link toc-highlight"><strong>Use Case 3 - Uploading Leetcode Problems</strong></a></li><li><a href="#use-case-4---publishing-problems" class="table-of-contents__link toc-highlight"><strong>Use Case 4 - Publishing Problems</strong></a></li><li><a href="#use-case-5---navigating-dashboard" class="table-of-contents__link toc-highlight"><strong>Use Case 5 - Navigating Dashboard</strong></a></li><li><a href="#use-case-6---deleting-a-question-from-a-quiz" class="table-of-contents__link toc-highlight"><strong>Use Case 6 - deleting a question from a quiz</strong></a></li><li><a href="#use-case-7---changing-a-grade-for-a-student" class="table-of-contents__link toc-highlight"><strong>Use Case 7 - Changing a Grade for a Student</strong></a></li></ul></li><li><a href="#student-user-integration-tests" class="table-of-contents__link toc-highlight"><strong>Student User Integration Tests</strong></a><ul><li><a href="#use-case-1---student-creates-an-account" class="table-of-contents__link toc-highlight"><strong>Use Case 1 - Student Creates an Account</strong></a></li><li><a href="#use-case-2---student-joins-a-class-using-an-access-code" class="table-of-contents__link toc-highlight"><strong>Use Case 2 - Student Joins a Class Using an Access Code</strong></a></li><li><a href="#use-case-3---student-views-dashboard" class="table-of-contents__link toc-highlight"><strong>Use Case 3 - Student Views Dashboard</strong></a></li><li><a href="#use-case-4---student-begins-a-coding-problem" class="table-of-contents__link toc-highlight"><strong>Use Case 4 - Student Begins a Coding Problem</strong></a></li><li><a href="#use-case-5---student-receives-and-selects-auto-code-suggestions" class="table-of-contents__link toc-highlight"><strong>Use Case 5 - Student Receives and Selects Auto Code Suggestions</strong></a></li><li><a href="#use-case-6---student-runs-code-to-view-output" class="table-of-contents__link toc-highlight"><strong>Use Case 6 - Student Runs Code to View Output</strong></a></li><li><a href="#use-case-7---student-submits-completed-work" class="table-of-contents__link toc-highlight"><strong>Use Case 7 - Student Submits Completed Work</strong></a></li><li><a href="#use-case-8---student-saves-progress-and-returns-later" class="table-of-contents__link toc-highlight"><strong>Use Case 8 - Student Saves Progress and Returns Later</strong></a></li><li><a href="#use-case-9---student-reviews-completed-problems-and-grades" class="table-of-contents__link toc-highlight"><strong>Use Case 9 - Student Reviews Completed Problems and Grades</strong></a></li></ul></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/project-auto-suggestion-quiz/docs/intro">Documentation</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/Capstone-Projects-2026-spring/project-auto-suggestion-quiz" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a class="footer__link-item" href="/project-auto-suggestion-quiz/tutorial/open-source-usage">Template Contributors</a></li></ul></div></div><div class="footer__bottom text--center"><div class="margin-bottom--sm"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="footer__logo themedComponent_mlkZ themedComponent--light_NVdE"><img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg" alt="My Site Logo" class="footer__logo themedComponent_mlkZ themedComponent--dark_xIcU"></div><div class="footer__copyright">Copyright © 2026 Project Auto Suggestion Quiz, Inc. Built with Docusaurus.</div></div></div></footer></div>
 </body>
 </html>
