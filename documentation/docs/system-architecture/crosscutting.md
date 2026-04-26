@@ -15,12 +15,12 @@ Security is enforced across all layers of the system.
 The following mechanisms are implemented:
 
 - **Role-Based Access Control (RBAC)**  
-  Users are assigned roles (Student, Teacher, Admin), and permissions are enforced accordingly.
+  Users are assigned roles (Student andTeacher), and permissions are enforced accordingly.
 
 - **Authentication for Protected Endpoints**  
   All protected API routes require a valid authentication token.
 
-- **Admin-Only Route Restrictions**  
+- **Teacher-Only Route Restrictions**  
   Administrative actions (e.g., deleting quizzes, deleting student data) are restricted via backend middleware checks.
 
 - **Secure Communication (HTTPS)**  
