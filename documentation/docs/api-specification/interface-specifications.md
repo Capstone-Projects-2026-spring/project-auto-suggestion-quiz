@@ -44,7 +44,7 @@ Parses pasted or raw problem text into structured problem JSON for the create-pr
 
 ### `POST /problems/`
 
-Create a problem (sections, suggestions, test cases, settings). Requires teacher/admin JWT.
+Create a problem (sections, suggestions, test cases, settings). Requires teacher JWT.
 
 ### `GET /problems/`
 
@@ -56,7 +56,7 @@ Public lookup by 6-digit access code for student entry.
 
 ### `PATCH /problems/{problem_id}`, `DELETE /problems/{problem_id}`
 
-Edit metadata/settings or delete (teacher owns problem, or admin).
+Edit metadata/settings or delete (teacher owns problem).
 
 ### `POST /problems/{problem_id}/grade`
 
