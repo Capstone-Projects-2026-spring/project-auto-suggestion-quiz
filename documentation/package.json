@@ -4,8 +4,6 @@
   "version": "2.0.0",
   "scripts": {
     "docusaurus": "docusaurus",
-    "prestart": "cd ../backend && python3 -c \"import json; from main import app; open('../documentation/static/openApi/openapi.json','w').write(json.dumps(app.openapi(), indent=2))\"",
-    "prebuild": "cd ../backend && python3 -c \"import json; from main import app; open('../documentation/static/openApi/openapi.json','w').write(json.dumps(app.openapi(), indent=2))\"",
     "start": "docusaurus start --host 0.0.0.0 ",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
