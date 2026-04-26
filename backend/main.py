@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+import os
 load_dotenv()
 
 from routes_auth import router as auth_router
@@ -37,7 +38,8 @@ def _run_migrations():
         conn.commit()
 
 
-_run_migrations()
+if os.getenv("SKIP_MIGRATIONS") != "1":
+    _run_migrations()
 
 app = FastAPI(
     title="AutoSuggestion Quiz API",
