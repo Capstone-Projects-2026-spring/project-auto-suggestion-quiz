@@ -49,6 +49,20 @@ jobs:
       - name: Install Dependencies
         run: cd documentation && yarn install
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Backend Python Dependencies
+        run: python -m pip install --upgrade pip && pip install -r backend/requirements.txt
+
+      - name: Generate OpenAPI JSON For Docs
+        run: |
+          mkdir -p documentation/static/openApi
+          cd backend
+          python -c "import json; from main import app; open('../documentation/static/openApi/openapi.json','w').write(json.dumps(app.openapi(), indent=2))"
+
       - name: Generate Dependencies Page
         if: github.repository_owner == 'applebaumian'
         run: node documentation/scripts/generate-dependencies.js
