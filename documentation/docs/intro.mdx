@@ -1,5 +1,18 @@
 ---
 sidebar_position: 1
 ---
+
 # Introduction
 
+**AutoSuggestion Quiz** is a web application for computer science education. Teachers publish coding problems; students work in an in-browser editor, choose among AI-generated next-line suggestions, run code, and submit attempts for grading and feedback. The product is designed so students evaluate suggested code instead of accepting it without reading it.
+
+## Who the system is for
+
+- **Teachers** sign in with email (one-time codes through Supabase in production, or a development login when enabled), create problems and test data, share access codes with a class, and review submissions and telemetry.
+- **Students** open a problem with an access code, work within session and time limits, and submit their work in the main flow without maintaining a separate account.
+
+## How it is built (at a glance)
+
+The app is a **React** single-page client, a **FastAPI** server, and **PostgreSQL** (for example on Supabase) for data. The backend calls **OpenAI** for suggestions and autofill, **Supabase Auth** for teacher one-time passcodes, and **Judge0** for non-Python execution. **Python** for students runs in the browser with **Pyodide**; other languages are executed through the API and Judge0.
+
+For a structured view of components, data, and deployment, start with the [system architecture overview](system-architecture/overview). For REST endpoints, see [interface specifications](api-specification/interface-specifications).

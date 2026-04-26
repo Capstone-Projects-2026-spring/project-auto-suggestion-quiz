@@ -19,7 +19,11 @@ AutoSuggestion Quiz is a web-based educational application that helps students d
 
 ## High Level Requirement
 
-Describe the requirements – i.e., what the product does and how it does it from a user point of view – at a high level.
+From a user’s perspective, AutoSuggestion Quiz must offer a clear and easy-to-use web platform that helps students practice programming while learning how to analyze AI-generated code suggestions critically.The application must allow teachers to create and upload quizzes, manage programming problems, review student submissions, assign scores, and provide feedback. Students must be able to access quizzes, write and run Python code directly in the browser, and answer questions by choosing from multiple AI-generated code suggestions.
+
+The system must support an interactive coding environment that helps students test their ideas while working through challenging programming problems. It must generate relevant AI code suggestions and provide explanations that help students understand why a suggestion may or may not be appropriate. The platform must encourage students to think carefully before accepting AI-generated code rather than relying on it without understanding.
+
+The application must also securely manage teacher access using email-based authentication and reliably store quizzes, submissions, scores, feedback, and problem data. Overall, AutoSuggestion Quiz must support both students and teachers by making AI-assisted coding practice structured, educational, and easy to use.
 
 ## Conceptual Design
 

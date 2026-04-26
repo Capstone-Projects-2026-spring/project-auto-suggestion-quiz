@@ -4,7 +4,6 @@ sidebar_position: 5
 
 # Use-case descriptions
 
-![alt text](image-1.png)
 ---
 ## Teacher User
 ### Use Case 1 - Account Creation
