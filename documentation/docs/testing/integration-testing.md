@@ -1,7 +1,7 @@
 ---
 sidebar_position: 2
 ---
-# **Integration Tests**
+# Integration Tests
 
 We will be using Pytest for backend and React Testing Library for the frontend. Integration tests will be based on the use cases description for the teacher and student.
 
