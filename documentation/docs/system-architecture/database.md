@@ -110,14 +110,14 @@ erDiagram
 
 ### 1. USERS
 
-Represents teachers and admins (and any password-based accounts). Roles distinguish capabilities in the API.
+Represents teachers. Roles distinguish capabilities in the API.
 
 | Attribute | Type | Key | Notes |
 |-----------|------|-----|--------|
 | `id` | integer | **PK** | Surrogate key |
 | `name` | string | | Display name |
 | `email` | string | **UK** | Login identifier; duplicate rejected on register |
-| `role` | string | | e.g. `teacher`, `admin` |
+| `role` | string | | e.g. `teacher` |
 | `password` | string | | Optional; OTP-only teachers may have no password hash |
 
 **Relationships**
