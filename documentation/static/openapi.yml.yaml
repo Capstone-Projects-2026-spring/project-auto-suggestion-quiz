@@ -1,800 +1,1587 @@
-openapi: 3.0.2
+openapi: 3.0.3
 info:
-  title: Swagger Petstore - OpenAPI 3.0
+  title: AutoSuggestion Quiz API
   description: |-
-    This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
-    Swagger at [http://swagger.io](http://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
-    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
-    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+    REST API for the AutoSuggestion Quiz platform — a tool that lets teachers create
+    fill-in-the-blank coding problems and present students with AI-generated code
+    suggestions to choose from.
 
-    Some useful links:
-    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
-    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
-  termsOfService: http://swagger.io/terms/
+    ## Authentication
+    Most teacher-facing endpoints require a **Bearer JWT** in the `Authorization` header.
+    Obtain a token via `/auth/login` (email + password) or `/auth/otp/verify` (Supabase OTP).
+    Student-facing endpoints (starting a submission, autosaving, submitting) are public and
+    require no authentication.
+
+    ## Roles
+    | Role | Description |
+    |------|-------------|
+    | `teacher` | Can create, edit, delete problems and view/grade submissions |
+    | `admin` | Same as teacher but can act on any problem, not just their own |
+    | `student` | Implied; submission endpoints are unauthenticated |
+  version: 0.1.0
   contact:
-    email: apiteam@swagger.io
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.11
-externalDocs:
-  description: Find out more about Swagger
-  url: http://swagger.io
+    name: AutoSuggestion Quiz Team
+
 servers:
-  - url: /api/v3
+  - url: https://autosuggestions.onrender.com
+    description: Production
+  - url: http://localhost:8000
+    description: Local development
+
 tags:
-  - name: pet
-    description: Everything about your Pets
-    externalDocs:
-      description: Find out more
-      url: http://swagger.io
-  - name: store
-    description: Access to Petstore orders
-    externalDocs:
-      description: Find out more about our store
-      url: http://swagger.io
-  - name: user
-    description: Operations about user
+  - name: health
+    description: Service health check
+  - name: auth
+    description: Authentication — register, login, OTP flow
+  - name: problems
+    description: Problem management (teacher-only write access)
+  - name: submissions
+    description: Student submission lifecycle
+  - name: quiz
+    description: Multiple-choice quiz attempts
+  - name: ai
+    description: AI-powered suggestion and autofill endpoints
+  - name: code
+    description: Remote code execution via Judge0
+
 paths:
-  /pet:
-    put:
-      tags:
-        - pet
-      summary: Update an existing pet
-      description: Update an existing pet by Id
-      operationId: updatePet
-      requestBody:
-        description: Update an existent pet in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Pet'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Pet'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Pet'
-        required: true
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Pet'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '405':
-          description: Validation exception
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-    post:
-      tags:
-        - pet
-      summary: Add a new pet to the store
-      description: Add a new pet to the store
-      operationId: addPet
-      requestBody:
-        description: Create a new pet in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Pet'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Pet'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Pet'
-        required: true
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Pet'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-        '405':
-          description: Invalid input
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-  /pet/findByStatus:
+
+  # ── Health ──────────────────────────────────────────────────────────────────
+  /:
     get:
-      tags:
-        - pet
-      summary: Finds Pets by status
-      description: Multiple status values can be provided with comma separated strings
-      operationId: findPetsByStatus
-      parameters:
-        - name: status
-          in: query
-          description: Status values that need to be considered for filter
-          required: false
-          explode: true
-          schema:
-            type: string
-            default: available
-            enum:
-              - available
-              - pending
-              - sold
+      tags: [health]
+      summary: Health check
+      description: Returns a simple JSON object confirming the API is running.
+      operationId: healthCheck
       responses:
         '200':
-          description: successful operation
-          content:
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
-        '400':
-          description: Invalid status value
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-  /pet/findByTags:
-    get:
-      tags:
-        - pet
-      summary: Finds Pets by tags
-      description: Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
-      operationId: findPetsByTags
-      parameters:
-        - name: tags
-          in: query
-          description: Tags to filter by
-          required: false
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
-        '400':
-          description: Invalid tag value
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-  /pet/{petId}:
-    get:
-      tags:
-        - pet
-      summary: Find pet by ID
-      description: Returns a single pet
-      operationId: getPetById
-      parameters:
-        - name: petId
-          in: path
-          description: ID of pet to return
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Pet'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-      security:
-        - api_key: []
-        - petstore_auth:
-            - write:pets
-            - read:pets
-    post:
-      tags:
-        - pet
-      summary: Updates a pet in the store with form data
-      description: ''
-      operationId: updatePetWithForm
-      parameters:
-        - name: petId
-          in: path
-          description: ID of pet that needs to be updated
-          required: true
-          schema:
-            type: integer
-            format: int64
-        - name: name
-          in: query
-          description: Name of pet that needs to be updated
-          schema:
-            type: string
-        - name: status
-          in: query
-          description: Status of pet that needs to be updated
-          schema:
-            type: string
-      responses:
-        '405':
-          description: Invalid input
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-    delete:
-      tags:
-        - pet
-      summary: Deletes a pet
-      description: ''
-      operationId: deletePet
-      parameters:
-        - name: api_key
-          in: header
-          description: ''
-          required: false
-          schema:
-            type: string
-        - name: petId
-          in: path
-          description: Pet id to delete
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '400':
-          description: Invalid pet value
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-  /pet/{petId}/uploadImage:
-    post:
-      tags:
-        - pet
-      summary: uploads an image
-      description: ''
-      operationId: uploadFile
-      parameters:
-        - name: petId
-          in: path
-          description: ID of pet to update
-          required: true
-          schema:
-            type: integer
-            format: int64
-        - name: additionalMetadata
-          in: query
-          description: Additional Metadata
-          required: false
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-  /store/inventory:
-    get:
-      tags:
-        - store
-      summary: Returns pet inventories by status
-      description: Returns a map of status codes to quantities
-      operationId: getInventory
-      responses:
-        '200':
-          description: successful operation
+          description: API is running
           content:
             application/json:
               schema:
                 type: object
-                additionalProperties:
-                  type: integer
-                  format: int32
-      security:
-        - api_key: []
-  /store/order:
+                properties:
+                  message:
+                    type: string
+                    example: AutoSuggestion Quiz API is running
+
+  # ── Auth ────────────────────────────────────────────────────────────────────
+  /auth/register:
     post:
-      tags:
-        - store
-      summary: Place an order for a pet
-      description: Place a new order in the store
-      operationId: placeOrder
+      tags: [auth]
+      summary: Register a teacher or admin account
+      description: |-
+        Creates a new user with role `teacher` or `admin`. Role `student` is not
+        allowed here — students are identified only by their name at submission time.
+        Returns a JWT and the new user object.
+      operationId: registerUser
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Order'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Order'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Order'
+              $ref: '#/components/schemas/RegisterRequest'
+            example:
+              name: Jane Smith
+              email: jane@school.edu
+              password: s3cur3P@ss
+              role: teacher
       responses:
         '200':
-          description: successful operation
+          description: Registration successful
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Order'
-        '405':
-          description: Invalid input
-  /store/order/{orderId}:
-    get:
-      tags:
-        - store
-      summary: Find purchase order by ID
-      description: For valid response try integer IDs with value <= 5 or > 10. Other values will generate exceptions.
-      operationId: getOrderById
-      parameters:
-        - name: orderId
-          in: path
-          description: ID of order that needs to be fetched
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Order'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Order'
+                $ref: '#/components/schemas/AuthResponse'
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Order not found
-    delete:
-      tags:
-        - store
-      summary: Delete purchase order by ID
-      description: For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors
-      operationId: deleteOrder
-      parameters:
-        - name: orderId
-          in: path
-          description: ID of the order that needs to be deleted
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Order not found
-  /user:
-    post:
-      tags:
-        - user
-      summary: Create user
-      description: This can only be done by the logged in user.
-      operationId: createUser
-      requestBody:
-        description: Created user object
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        default:
-          description: successful operation
+          description: Email already registered or invalid role
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-  /user/createWithList:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  /auth/login:
     post:
-      tags:
-        - user
-      summary: Creates list of users with given input array
-      description: Creates list of users with given input array
-      operationId: createUsersWithListInput
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/User'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        default:
-          description: successful operation
-  /user/login:
-    get:
-      tags:
-        - user
-      summary: Logs user into the system
-      description: ''
+      tags: [auth]
+      summary: Login with email and password
+      description: Authenticates a teacher or admin and returns a 30-day JWT.
       operationId: loginUser
-      parameters:
-        - name: username
-          in: query
-          description: The user name for login
-          required: false
-          schema:
-            type: string
-        - name: password
-          in: query
-          description: The password for login in clear text
-          required: false
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          headers:
-            X-Rate-Limit:
-              description: calls per hour allowed by the user
-              schema:
-                type: integer
-                format: int32
-            X-Expires-After:
-              description: date in UTC when token expires
-              schema:
-                type: string
-                format: date-time
-          content:
-            application/xml:
-              schema:
-                type: string
-            application/json:
-              schema:
-                type: string
-        '400':
-          description: Invalid username/password supplied
-  /user/logout:
-    get:
-      tags:
-        - user
-      summary: Logs out current logged in user session
-      description: ''
-      operationId: logoutUser
-      parameters: []
-      responses:
-        default:
-          description: successful operation
-  /user/{username}:
-    get:
-      tags:
-        - user
-      summary: Get user by user name
-      description: ''
-      operationId: getUserByName
-      parameters:
-        - name: username
-          in: path
-          description: 'The name that needs to be fetched. Use user1 for testing. '
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          description: Invalid username supplied
-        '404':
-          description: User not found
-    put:
-      tags:
-        - user
-      summary: Update user
-      description: This can only be done by the logged in user.
-      operationId: updateUser
-      parameters:
-        - name: username
-          in: path
-          description: name that need to be deleted
-          required: true
-          schema:
-            type: string
       requestBody:
-        description: Update an existent user in the store
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              email: jane@school.edu
+              password: s3cur3P@ss
       responses:
-        default:
-          description: successful operation
-    delete:
-      tags:
-        - user
-      summary: Delete user
-      description: This can only be done by the logged in user.
-      operationId: deleteUser
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid email or password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  /auth/otp/request:
+    post:
+      tags: [auth]
+      summary: Request a one-time password
+      description: |-
+        Sends a magic-link / OTP to the given email address via Supabase.
+        Used as the primary login flow for teachers — no password required.
+      operationId: requestOtp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtpRequestRequest'
+            example:
+              email: jane@school.edu
+      responses:
+        '200':
+          description: OTP sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: OTP sent
+        '500':
+          description: Supabase is not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '502':
+          description: Supabase failed to send OTP
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  /auth/otp/verify:
+    post:
+      tags: [auth]
+      summary: Verify OTP and get a JWT
+      description: |-
+        Verifies the OTP with Supabase. If the email exists in the local database the
+        user is returned; otherwise a new `teacher` account is auto-created. Returns a
+        local JWT valid for 30 days.
+      operationId: verifyOtp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtpVerifyRequest'
+            example:
+              email: jane@school.edu
+              token: "123456"
+      responses:
+        '200':
+          description: OTP verified, JWT returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid or expired OTP
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  /auth/dev-login:
+    post:
+      tags: [auth]
+      summary: Development-only login (DEBUG mode)
+      description: |-
+        Returns a valid JWT for the seeded teacher account without requiring OTP.
+        **Only available when `DEBUG=True` in the server environment.**
+        Returns 404 in production.
+      operationId: devLogin
+      responses:
+        '200':
+          description: Dev login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '404':
+          description: Endpoint disabled (not in DEBUG mode)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '500':
+          description: Seed teacher not found — run seed data first
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  # ── Problems ────────────────────────────────────────────────────────────────
+  /problems/:
+    get:
+      tags: [problems]
+      summary: Get all problems for the authenticated teacher
+      description: |-
+        Returns every problem created by the requesting teacher, ordered newest first.
+        Each problem includes its sections, suggestions, test cases, and submitted sessions.
+        Requires `teacher` or `admin` role.
+      operationId: getTeacherProblems
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of problems
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Problem'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '403':
+          description: Role is not teacher or admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+    post:
+      tags: [problems]
+      summary: Create a new problem
+      description: |-
+        Creates a problem with sections, suggestions, and test cases. Generates a
+        unique 6-digit access code automatically. Returns the full problem object.
+        Requires `teacher` or `admin` role.
+      operationId: createProblem
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProblemRequest'
+      responses:
+        '200':
+          description: Problem created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '403':
+          description: Role is not teacher or admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  /problems/access/{code}:
+    get:
+      tags: [problems]
+      summary: Get a problem by 6-digit access code
+      description: |-
+        Public endpoint — no authentication required. Students use this to load a
+        problem before starting their submission. Returns the full problem including
+        sections and suggestions (but not other students' submissions).
+      operationId: getProblemByCode
       parameters:
-        - name: username
+        - name: code
           in: path
-          description: The name that needs to be deleted
           required: true
+          description: 6-digit numeric access code printed on the assignment
           schema:
             type: string
+            pattern: '^\d{6}$'
+            example: "482910"
       responses:
+        '200':
+          description: Problem found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
         '400':
-          description: Invalid username supplied
+          description: Access code is not a 6-digit number
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
         '404':
-          description: User not found
+          description: Problem not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  /problems/{problem_id}:
+    patch:
+      tags: [problems]
+      summary: Edit a problem's metadata and settings
+      description: |-
+        Partial update — only the fields provided are changed. Teachers can only edit
+        their own problems; admins can edit any problem.
+      operationId: editProblem
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ProblemId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditProblemRequest'
+      responses:
+        '200':
+          description: Updated problem
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '403':
+          description: Not allowed to edit this problem
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '404':
+          description: Problem not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+    delete:
+      tags: [problems]
+      summary: Delete a problem
+      description: |-
+        Permanently deletes a problem and cascades to all related sections, suggestions,
+        sessions, and logs. This action cannot be undone.
+      operationId: deleteProblem
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ProblemId'
+      responses:
+        '204':
+          description: Problem deleted successfully
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '403':
+          description: Not allowed to delete this problem
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '404':
+          description: Problem not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  /problems/{problem_id}/grade:
+    post:
+      tags: [problems]
+      summary: Manually grade a student submission
+      description: |-
+        Assigns a 0–100 integer grade to a specific submission session. Overwrites
+        any previously stored score. Requires `teacher` or `admin` role and ownership
+        of the problem.
+      operationId: gradeSubmission
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ProblemId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GradeSubmissionRequest'
+            example:
+              session_id: 42
+              grade: 85
+      responses:
+        '200':
+          description: Grade saved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_id:
+                    type: integer
+                  grade:
+                    type: integer
+        '400':
+          description: Grade is outside 0–100
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '403':
+          description: Not allowed to grade this problem's submissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '404':
+          description: Problem or submission not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  # ── Submissions ──────────────────────────────────────────────────────────────
+  /submissions/start:
+    post:
+      tags: [submissions]
+      summary: Start or resume a submission session
+      description: |-
+        Public endpoint — no authentication required. Identifies the student by name.
+
+        - If the student already has an open (unsubmitted) draft for this problem, that
+          session is returned with `has_draft: true` and the saved code.
+        - Otherwise a new session is created.
+        - If the problem has a `max_attempts` limit and the student has reached it,
+          returns `403`.
+      operationId: startSubmission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartSubmissionRequest'
+            example:
+              problem_id: 7
+              student_name: Alex Johnson
+      responses:
+        '201':
+          description: Session started or resumed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartSubmissionResponse'
+        '403':
+          description: Submission limit reached
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '404':
+          description: Problem not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  /submissions/{session_id}/draft:
+    put:
+      tags: [submissions]
+      summary: Autosave code draft
+      description: |-
+        Saves the student's current code without submitting. Called periodically
+        by the frontend while the student is working. Returns `409` if the session
+        has already been submitted.
+      operationId: saveDraft
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DraftRequest'
+      responses:
+        '200':
+          description: Draft saved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_id:
+                    type: integer
+                  status:
+                    type: string
+                    example: saved
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '409':
+          description: Session already submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  /submissions/{session_id}/submit:
+    post:
+      tags: [submissions]
+      summary: Final submission with telemetry
+      description: |-
+        Submits the student's final code along with telemetry logs collected during
+        the session: suggestion interactions, tab switches, test run results, and paste
+        events. Sets `submitted_at` timestamp. Returns `409` if already submitted or
+        `403` if submission limit is reached.
+      operationId: submitSession
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitRequest'
+      responses:
+        '200':
+          description: Submission accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_id:
+                    type: integer
+                  status:
+                    type: string
+                    example: submitted
+        '403':
+          description: Submission limit reached
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '409':
+          description: Already submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  /submissions/{session_id}:
+    get:
+      tags: [submissions]
+      summary: Get session state
+      description: Returns the current code and whether the session has been submitted.
+      operationId: getSession
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: Session state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionStateResponse'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  /submissions/{session_id}/feedback:
+    put:
+      tags: [submissions]
+      summary: Save teacher feedback on a submission
+      description: |-
+        Attaches written feedback to a submitted session. Visible to the student on
+        their results page. Requires `teacher` or `admin` role.
+      operationId: saveFeedback
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+            example:
+              feedback: Great use of the dictionary approach. Watch your indentation on line 4.
+      responses:
+        '200':
+          description: Feedback saved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_id:
+                    type: integer
+                  status:
+                    type: string
+                    example: saved
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '403':
+          description: Role is not teacher or admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  # ── Quiz ────────────────────────────────────────────────────────────────────
+  /quiz/submit:
+    post:
+      tags: [quiz]
+      summary: Submit a quiz attempt
+      description: |-
+        Records a completed multiple-choice quiz attempt for the authenticated user.
+        Calculates the score server-side from the provided `is_correct` flags.
+        Returns `201` with the full attempt record.
+      operationId: submitQuiz
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizSubmitRequest'
+      responses:
+        '201':
+          description: Quiz attempt recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizAttemptResponse'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '404':
+          description: Problem not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  /quiz/attempts/{user_id}:
+    get:
+      tags: [quiz]
+      summary: Get all quiz attempts for a user
+      description: |-
+        Returns a list of all quiz attempt summaries (without per-question answers)
+        for the given user. Students can only view their own attempts; teachers and
+        admins can view any user's attempts.
+      operationId: getQuizAttempts
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: Database ID of the user whose attempts to retrieve
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of quiz attempts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuizAttemptResponse'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '403':
+          description: Students cannot view other users' attempts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  /quiz/attempt/{attempt_id}:
+    get:
+      tags: [quiz]
+      summary: Get a single quiz attempt with all answers
+      description: |-
+        Returns the full attempt record including each question's selected option and
+        correctness flag. Students can only retrieve their own attempts.
+      operationId: getQuizAttemptDetail
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: attempt_id
+          in: path
+          required: true
+          description: Database ID of the quiz attempt
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Full quiz attempt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizAttemptResponse'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '404':
+          description: Attempt not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  # ── AI ──────────────────────────────────────────────────────────────────────
+  /ai/suggestion:
+    post:
+      tags: [ai]
+      summary: Generate AI code suggestions
+      description: |-
+        Calls OpenAI GPT-4o-mini to produce code suggestions for the current
+        section. Pass `is_correct: true` to get a correct suggestion or `false` to
+        get a plausible-but-wrong distractor. Returns a list of suggestion objects
+        each with a code snippet and a plain-English explanation.
+      operationId: getAiSuggestion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AISuggestionRequest'
+            example:
+              problem_id: 7
+              current_code: "def most_frequent(nums):\n"
+              problem_prompt: Return the most frequent element in a list.
+              is_correct: true
+      responses:
+        '200':
+          description: Suggestions generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AISuggestionResponse'
+        '500':
+          description: OpenAI call failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  /ai/autofill:
+    post:
+      tags: [ai]
+      summary: Parse raw problem text into a structured problem schema
+      description: |-
+        Accepts raw instructor text (copy-pasted problem statement, example code,
+        test cases, etc.) and uses GPT-4o-mini to return a structured JSON object
+        ready to populate the problem creation form. If the input is too vague an
+        `error` key is returned instead.
+      operationId: autofillProblem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutofillRequest'
+            example:
+              raw_text: |-
+                Write a function most_frequent(nums) that returns the element appearing
+                most often in the list. If there's a tie, return the one with the
+                smallest value. Example: most_frequent([1,2,2,3,3]) -> 2
+      responses:
+        '200':
+          description: Parsed problem schema or error object
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/AutofillSuccess'
+                  - $ref: '#/components/schemas/AutofillError'
+        '500':
+          description: OpenAI call failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  # ── Code Execution ───────────────────────────────────────────────────────────
+  /code/execute:
+    post:
+      tags: [code]
+      summary: Execute code via Judge0
+      description: |-
+        Submits source code to a self-hosted Judge0 instance and returns stdout and
+        stderr. Supports Python, JavaScript, C, and Java. Input is passed via stdin.
+        The response is returned synchronously (Judge0 `wait=true` mode).
+      operationId: executeCode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CodeExecutionRequest'
+            example:
+              code: "print(sum([1, 2, 3]))"
+              language: python
+              input: ""
+      responses:
+        '200':
+          description: Execution result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeExecutionResponse'
+        '400':
+          description: Unsupported language
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '500':
+          description: Judge0 URL not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '502':
+          description: Judge0 request failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+# ── Reusable Components ──────────────────────────────────────────────────────
 components:
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: >
+        JWT obtained from `/auth/login` or `/auth/otp/verify`.
+        Include as `Authorization: Bearer <token>`.
+
+  parameters:
+    ProblemId:
+      name: problem_id
+      in: path
+      required: true
+      description: Database ID of the problem
+      schema:
+        type: integer
+    SessionId:
+      name: session_id
+      in: path
+      required: true
+      description: Database ID of the submission session
+      schema:
+        type: integer
+
   schemas:
-    Order:
+
+    # ── Auth schemas ───────────────────────────────────────────────────────────
+    RegisterRequest:
       type: object
+      required: [name, email, password]
       properties:
-        id:
-          type: integer
-          format: int64
-          example: 10
-        petId:
-          type: integer
-          format: int64
-          example: 198772
-        quantity:
-          type: integer
-          format: int32
-          example: 7
-        shipDate:
-          type: string
-          format: date-time
-        status:
-          type: string
-          description: Order Status
-          example: approved
-          enum:
-            - placed
-            - approved
-            - delivered
-        complete:
-          type: boolean
-      xml:
-        name: order
-    Customer:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 100000
-        username:
-          type: string
-          example: fehguy
-        address:
-          type: array
-          xml:
-            name: addresses
-            wrapped: true
-          items:
-            $ref: '#/components/schemas/Address'
-      xml:
-        name: customer
-    Address:
-      type: object
-      properties:
-        street:
-          type: string
-          example: 437 Lytton
-        city:
-          type: string
-          example: Palo Alto
-        state:
-          type: string
-          example: CA
-        zip:
-          type: string
-          example: '94301'
-      xml:
-        name: address
-    Category:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 1
         name:
           type: string
-          example: Dogs
-      xml:
-        name: category
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 10
-        username:
-          type: string
-          example: theUser
-        firstName:
-          type: string
-          example: John
-        lastName:
-          type: string
-          example: James
+          example: Jane Smith
         email:
           type: string
-          example: john@email.com
+          format: email
+          example: jane@school.edu
         password:
           type: string
-          example: '12345'
-        phone:
+          format: password
+          example: s3cur3P@ss
+        role:
           type: string
-          example: '12345'
-        userStatus:
-          type: integer
-          description: User Status
-          format: int32
-          example: 1
-      xml:
-        name: user
-    Tag:
+          enum: [teacher, admin]
+          default: teacher
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    OtpRequestRequest:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+
+    OtpVerifyRequest:
+      type: object
+      required: [email, token]
+      properties:
+        email:
+          type: string
+          format: email
+        token:
+          type: string
+          description: 6-digit OTP sent to the teacher's email
+
+    UserResponse:
       type: object
       properties:
         id:
           type: integer
-          format: int64
         name:
           type: string
-      xml:
-        name: tag
-    Pet:
-      required:
-        - name
-        - photoUrls
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [student, teacher, admin]
+
+    AuthResponse:
       type: object
       properties:
-        id:
-          type: integer
-          format: int64
-          example: 10
-        name:
+        token:
           type: string
-          example: doggie
-        category:
-          $ref: '#/components/schemas/Category'
-        photoUrls:
-          type: array
-          xml:
-            wrapped: true
-          items:
-            type: string
-            xml:
-              name: photoUrl
-        tags:
-          type: array
-          xml:
-            wrapped: true
-          items:
-            $ref: '#/components/schemas/Tag'
-        status:
-          type: string
-          description: pet status in the store
-          enum:
-            - available
-            - pending
-            - sold
-      xml:
-        name: pet
-    ApiResponse:
+          description: JWT valid for 30 days
+        user:
+          $ref: '#/components/schemas/UserResponse'
+
+    # ── Problem schemas ────────────────────────────────────────────────────────
+    SuggestionIn:
       type: object
+      required: [type, isCorrect]
       properties:
-        code:
-          type: integer
-          format: int32
         type:
           type: string
-        message:
+          enum: [ai, manual]
+          description: "`ai` — generated by GPT; `manual` — teacher-written"
+        isCorrect:
+          type: boolean
+        content:
           type: string
-      xml:
-        name: '##default'
-  requestBodies:
-    Pet:
-      description: Pet object that needs to be added to the store
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Pet'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Pet'
-    UserArray:
-      description: List of user object
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/User'
-  securitySchemes:
-    petstore_auth:
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
-          scopes:
-            write:pets: modify pets in your account
-            read:pets: read your pets
-    api_key:
-      type: apiKey
-      name: api_key
-      in: header
+          default: ""
+          description: Populated later by the AI generation step when type is `ai`
+
+    SectionIn:
+      type: object
+      required: [order, label, code]
+      properties:
+        order:
+          type: integer
+          description: 0-based display order
+        label:
+          type: string
+          description: Instruction shown above the code block (student-facing)
+        code:
+          type: object
+          description: Map of language → starter code for this section
+          additionalProperties:
+            type: string
+          example:
+            python: "def most_frequent(nums):\n"
+        suggestions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SuggestionIn'
+
+    TestCaseIn:
+      type: object
+      properties:
+        input:
+          type: string
+          description: Valid Python call expression, e.g. `most_frequent([1,2,2])`
+        expected:
+          type: string
+          description: Expected return value as a string, e.g. `"2"`
+        explanation:
+          type: string
+
+    CreateProblemRequest:
+      type: object
+      required: [title, description, languages, boilerplate, sections]
+      properties:
+        title:
+          type: string
+          example: Most Frequent Element
+        description:
+          type: string
+          example: Return the element that appears most often in the list.
+        languages:
+          type: array
+          items:
+            type: string
+            enum: [python, javascript, java, c]
+          example: [python]
+        boilerplate:
+          type: object
+          description: Map of language → boilerplate shown before section code (usually empty string)
+          additionalProperties:
+            type: string
+          example:
+            python: ""
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/SectionIn'
+        testCases:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestCaseIn'
+        timeLimitSeconds:
+          type: integer
+          nullable: true
+          description: Optional time limit in seconds; null = no limit
+        maxSubmissions:
+          type: integer
+          nullable: true
+          description: Optional cap on the number of submissions per student
+        allowCopyPaste:
+          type: boolean
+          default: true
+        trackTabSwitching:
+          type: boolean
+          default: false
+
+    EditProblemRequest:
+      type: object
+      description: All fields are optional — only provided fields are updated
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        timeLimitSeconds:
+          type: integer
+          nullable: true
+        maxSubmissions:
+          type: integer
+          nullable: true
+        allowCopyPaste:
+          type: boolean
+        trackTabSwitching:
+          type: boolean
+
+    GradeSubmissionRequest:
+      type: object
+      required: [session_id, grade]
+      properties:
+        session_id:
+          type: integer
+        grade:
+          type: integer
+          minimum: 0
+          maximum: 100
+
+    Suggestion:
+      type: object
+      properties:
+        id:
+          type: integer
+        content:
+          type: string
+        is_correct:
+          type: boolean
+        source:
+          type: string
+          enum: [ai, manual]
+
+    Section:
+      type: object
+      properties:
+        id:
+          type: integer
+        order_index:
+          type: integer
+        label:
+          type: string
+        code:
+          type: object
+          additionalProperties:
+            type: string
+        suggestions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Suggestion'
+
+    TestCase:
+      type: object
+      properties:
+        id:
+          type: integer
+        input:
+          type: string
+        expected:
+          type: string
+        explanation:
+          type: string
+
+    Submission:
+      type: object
+      properties:
+        session_id:
+          type: integer
+        student_name:
+          type: string
+        submitted_at:
+          type: string
+          format: date-time
+        score:
+          type: integer
+          nullable: true
+        total:
+          type: integer
+          nullable: true
+        grade:
+          type: integer
+          nullable: true
+          description: Percentage (0–100), derived from score/total
+        code:
+          type: string
+        suggestion_log:
+          type: array
+          items:
+            $ref: '#/components/schemas/SuggestionLogEntry'
+        tab_switch_log:
+          type: array
+          items:
+            $ref: '#/components/schemas/TabSwitchEntry'
+        test_results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestResult'
+        paste_log:
+          type: array
+          items:
+            $ref: '#/components/schemas/PasteLogEntry'
+        feedback:
+          type: string
+          nullable: true
+
+    Problem:
+      type: object
+      properties:
+        id:
+          type: integer
+        access_code:
+          type: string
+          description: 6-digit code students use to look up the problem
+          example: "482910"
+        title:
+          type: string
+        description:
+          type: string
+        language:
+          type: string
+          description: Primary language (first in the languages list)
+        languages:
+          type: array
+          items:
+            type: string
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/Section'
+        test_cases:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestCase'
+        submissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Submission'
+        time_limit_seconds:
+          type: integer
+          nullable: true
+        max_attempts:
+          type: integer
+          nullable: true
+        allow_copy_paste:
+          type: boolean
+        track_tab_switching:
+          type: boolean
+
+    # ── Submission schemas ─────────────────────────────────────────────────────
+    StartSubmissionRequest:
+      type: object
+      required: [problem_id, student_name]
+      properties:
+        problem_id:
+          type: integer
+        student_name:
+          type: string
+          example: Alex Johnson
+
+    StartSubmissionResponse:
+      type: object
+      properties:
+        session_id:
+          type: integer
+        has_draft:
+          type: boolean
+          description: True if an existing unsubmitted draft was found
+        code:
+          type: string
+          nullable: true
+          description: Previously saved code, or null for a new session
+        started_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    DraftRequest:
+      type: object
+      required: [code]
+      properties:
+        code:
+          type: string
+
+    SuggestionLogEntry:
+      type: object
+      properties:
+        time:
+          type: string
+          description: ISO 8601 timestamp of the event
+        action:
+          type: string
+          description: "e.g. `viewed`, `selected`, `dismissed`"
+        label:
+          type: string
+          description: Label of the section the suggestion belonged to
+
+    TabSwitchEntry:
+      type: object
+      properties:
+        time:
+          type: string
+          description: ISO 8601 timestamp when the tab lost focus
+
+    TestResult:
+      type: object
+      properties:
+        input:
+          type: string
+        expected:
+          type: string
+        actual:
+          type: string
+        passed:
+          type: boolean
+
+    PasteLogEntry:
+      type: object
+      properties:
+        time:
+          type: string
+        type:
+          type: string
+          description: "e.g. `paste`, `cut`"
+        charCount:
+          type: integer
+        preview:
+          type: string
+          description: First few characters of the pasted content
+
+    SubmitRequest:
+      type: object
+      required: [code]
+      properties:
+        code:
+          type: string
+        suggestion_log:
+          type: array
+          items:
+            $ref: '#/components/schemas/SuggestionLogEntry'
+          default: []
+        tab_switch_log:
+          type: array
+          items:
+            $ref: '#/components/schemas/TabSwitchEntry'
+          default: []
+        test_results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestResult'
+          default: []
+        paste_log:
+          type: array
+          items:
+            $ref: '#/components/schemas/PasteLogEntry'
+          default: []
+
+    FeedbackRequest:
+      type: object
+      required: [feedback]
+      properties:
+        feedback:
+          type: string
+
+    SessionStateResponse:
+      type: object
+      properties:
+        session_id:
+          type: integer
+        code:
+          type: string
+          nullable: true
+        submitted:
+          type: boolean
+
+    # ── Quiz schemas ───────────────────────────────────────────────────────────
+    QuizAnswer:
+      type: object
+      required: [question_index, selected_option, is_correct]
+      properties:
+        question_index:
+          type: integer
+        selected_option:
+          type: string
+        is_correct:
+          type: boolean
+
+    QuizSubmitRequest:
+      type: object
+      required: [problem_id, language, answers]
+      properties:
+        problem_id:
+          type: integer
+        language:
+          type: string
+          enum: [python, javascript, java, c]
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuizAnswer'
+        time_taken_seconds:
+          type: integer
+          nullable: true
+
+    QuizAttemptResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        problem_id:
+          type: integer
+        user_id:
+          type: integer
+        language:
+          type: string
+        score:
+          type: integer
+          description: Number of correct answers
+        total:
+          type: integer
+          description: Total number of questions
+        time_taken_seconds:
+          type: integer
+          nullable: true
+        submitted_at:
+          type: string
+          format: date-time
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuizAnswer'
+          description: Empty on list endpoints, populated on detail endpoint
+
+    # ── AI schemas ─────────────────────────────────────────────────────────────
+    AISuggestionRequest:
+      type: object
+      required: [problem_id, current_code, problem_prompt]
+      properties:
+        problem_id:
+          type: integer
+        current_code:
+          type: string
+          description: Code accumulated so far from previous sections
+        problem_prompt:
+          type: string
+          description: The full problem description shown to the student
+        is_correct:
+          type: boolean
+          default: true
+          description: >
+            `true` → generate a correct implementation;
+            `false` → generate a plausible but incorrect distractor
+
+    SingleSuggestion:
+      type: object
+      properties:
+        suggestion:
+          type: string
+          description: Code snippet for this suggestion
+        explanation:
+          type: string
+          description: Plain-English explanation of why this approach works (or doesn't)
+
+    AISuggestionResponse:
+      type: object
+      properties:
+        suggestions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SingleSuggestion'
+
+    AutofillRequest:
+      type: object
+      required: [raw_text]
+      properties:
+        raw_text:
+          type: string
+          description: Raw instructor text to parse (minimum 30 characters)
+
+    AutofillSuccess:
+      type: object
+      description: Structured problem schema ready to populate the creation form
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        languages:
+          type: array
+          items:
+            type: string
+        boilerplate:
+          type: object
+          additionalProperties:
+            type: string
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/SectionIn'
+        testCases:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestCaseIn'
+        timeLimitMinutes:
+          nullable: true
+        maxSubmissions:
+          nullable: true
+        allowCopyPaste:
+          type: boolean
+        trackTabSwitching:
+          type: boolean
+
+    AutofillError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Not enough detail. Please include at minimum: what the function should do, and at least one example or expected input/output."
+
+    # ── Code execution schemas ─────────────────────────────────────────────────
+    CodeExecutionRequest:
+      type: object
+      required: [code, language]
+      properties:
+        code:
+          type: string
+        language:
+          type: string
+          enum: [python, javascript, c, java]
+        input:
+          type: string
+          default: ""
+          description: Content passed to the program via stdin
+
+    CodeExecutionResponse:
+      type: object
+      properties:
+        output:
+          type: string
+          description: Program stdout
+        error:
+          type: string
+          default: ""
+          description: stderr, compile errors, or Judge0 status message
+
+    # ── Shared ─────────────────────────────────────────────────────────────────
+    ErrorDetail:
+      type: object
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message
