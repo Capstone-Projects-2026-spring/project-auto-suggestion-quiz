@@ -471,35 +471,60 @@ function StepTestCases({ testCases, setTestCases }) {
     <div className="cp-step">
       <div className="cp-step-intro">
         <h3 className="cp-step-title">Test Cases</h3>
+        <p className="cp-step-subtitle">Add input/output pairs to automatically check student solutions when they run their code.</p>
       </div>
 
       {testCases.map((tc, index) => (
         <div key={index} className="cp-testcase-row">
-          <textarea
-            placeholder="Input"
-            value={tc.input}
-            onChange={(e) => updateTestCase(index, 'input', e.target.value)}
-          />
-
-          <textarea
-            placeholder="Expected Output"
-            value={tc.expected}
-            onChange={(e) => updateTestCase(index, 'expected', e.target.value)}
-          />
-
-          <textarea
-            placeholder="Explanation (optional)"
-            value={tc.explanation}
-            onChange={(e) => updateTestCase(index, 'explanation', e.target.value)}
-          />
-
+          <div className="cp-testcase-fields">
+            <div className="form-field">
+              <label className="form-label">Call Expression</label>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="e.g. add(1, 2)"
+                value={tc.input}
+                onChange={(e) => updateTestCase(index, 'input', e.target.value)}
+                spellCheck={false}
+              />
+            </div>
+            <div className="form-field">
+              <label className="form-label">Expected Output</label>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="e.g. 3"
+                value={tc.expected}
+                onChange={(e) => updateTestCase(index, 'expected', e.target.value)}
+                spellCheck={false}
+              />
+            </div>
+            <div className="form-field">
+              <label className="form-label">Explanation <span style={{ color: '#666', fontWeight: 400 }}>(optional)</span></label>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="e.g. Basic addition of two positive integers"
+                value={tc.explanation}
+                onChange={(e) => updateTestCase(index, 'explanation', e.target.value)}
+              />
+            </div>
+          </div>
           {testCases.length > 1 && (
-            <button onClick={() => removeTestCase(index)}>×</button>
+            <button
+              type="button"
+              className="cp-remove-btn"
+              style={{ alignSelf: 'flex-end', marginBottom: '4px' }}
+              onClick={() => removeTestCase(index)}
+              title="Remove test case"
+            >
+              ×
+            </button>
           )}
         </div>
       ))}
 
-      <button onClick={addTestCase}>
+      <button type="button" className="cp-add-section-btn" onClick={addTestCase}>
         + Add Test Case
       </button>
     </div>

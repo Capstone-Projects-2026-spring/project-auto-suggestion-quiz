@@ -45,12 +45,14 @@ function ProblemPage({ problem, onBack, studentName }) {
   const [pasteLog, setPasteLog] = useState([]);
   const [testResults, setTestResults] = useState(null);
 
-  const periodicSaveRef = useRef(null);
+  const [suggestionToast, setSuggestionToast] = useState(null);
   const debounceRef = useRef(null);
   const timerRef = useRef(null);
   const codeRef = useRef(code);
   useEffect(() => { codeRef.current = code; }, [code]);
 
+  const periodicSaveRef = useRef(null);
+  const suggestionToastRef = useRef(null);
   const editorRef = useRef(null);
   const monacoRef = useRef(null);
   const idleTimerRef = useRef(null);
@@ -105,6 +107,7 @@ function ProblemPage({ problem, onBack, studentName }) {
                     label: item.suggestion || 'AI Suggestion',
                     insertText: item.suggestion || '',
                     explanation: item.explanation || '',
+                    is_correct: item.is_correct ?? false,
                   }));
                 }
               }
@@ -132,6 +135,7 @@ function ProblemPage({ problem, onBack, studentName }) {
                   monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                 range,
                 sortText: `0${idx}`,
+                is_correct: s.is_correct ?? false,
               };
             });
 
@@ -193,6 +197,7 @@ function ProblemPage({ problem, onBack, studentName }) {
           if (matchedSuggestion) {
             const logKey = `${matchedSuggestion.label}::${insertedText}`;
             if (lastLoggedSuggestionRef.current !== logKey) {
+              const isCorrect = matchedSuggestion.is_correct ?? false;
               setSuggestionLog((prev) => [
                 ...prev,
                 {
@@ -202,8 +207,12 @@ function ProblemPage({ problem, onBack, studentName }) {
                     typeof matchedSuggestion.label === 'string'
                       ? matchedSuggestion.label
                       : 'Suggestion',
+                  is_correct: isCorrect,
                 },
               ]);
+              if (suggestionToastRef.current) clearTimeout(suggestionToastRef.current);
+              setSuggestionToast(isCorrect);
+              suggestionToastRef.current = setTimeout(() => setSuggestionToast(null), 3000);
               lastLoggedSuggestionRef.current = logKey;
             }
             break;
@@ -394,27 +403,46 @@ function ProblemPage({ problem, onBack, studentName }) {
     initPyodide();
   }, []);
 
-  // Run code
-  const handleRunCode = async () => {
-    if (language !== 'python') {
-      setIsRunning(true); setActiveTab('output'); setOutput('Running code...\n');
-      try {
-        const result = await executeCode(code, language);
-        let out = '';
-        if (result.output) out += result.output;
-        if (result.error) out += result.error ? `Error:\n${result.error}` : '';
-        setOutput(out || 'Code executed successfully (no output)\n');
-      } catch (err) {
-        setOutput(`Error: ${err.message}\n`);
-      } finally {
-        setIsRunning(false);
+  // Wrap Java code in a Main class for Judge0
+  const wrapJava = (studentCode) => {
+    // If code already has a public class Main with main(), send as-is
+    if (/public\s+class\s+Main/.test(studentCode)) return studentCode;
+    // If code has any outer class definition, extract its body and re-wrap
+    const classBodyMatch = studentCode.match(/class\s+\w+\s*\{([\s\S]*)\}\s*$/);
+    const methods = classBodyMatch ? classBodyMatch[1] : studentCode;
+    return `public class Main {\n${methods}\n  public static void main(String[] args) {}\n}`;
+  };
+
+  // Build code for a single test case (appends a print of the call expression)
+  const buildTestCode = (currentCode, callExpr, lang) => {
+    switch (lang) {
+      case 'javascript': return `${currentCode}\nconsole.log(${callExpr});`;
+      case 'java': {
+        // Convert single-quoted strings to double-quoted for Java compatibility
+        const javaExpr = callExpr.replace(/'([^']*)'/g, '"$1"');
+        // Extract methods from student code, wrap in Main with a main that prints the result
+        if (/public\s+class\s+Main/.test(currentCode)) return currentCode;
+        const classBodyMatch = currentCode.match(/class\s+\w+\s*\{([\s\S]*)\}\s*$/);
+        const methods = classBodyMatch ? classBodyMatch[1] : currentCode;
+        return `public class Main {\n${methods}\n  public static void main(String[] args) {\n    System.out.println(${javaExpr});\n  }\n}`;
       }
-      return;
+      case 'c': return `${currentCode}\n#include <stdio.h>\nint main() { printf("%d\\n", ${callExpr}); return 0; }`;
+      default: return currentCode;
     }
-    if (!pyodide) { setOutput('Error: Python runtime not loaded yet. Please wait...\n'); return; }
-    setIsRunning(true); setActiveTab('output'); setOutput('');
-    try {
-      const fullCode = `
+  };
+
+  // Run code + test cases together
+  const handleRun = async () => {
+    const testCases = problem.test_cases || [];
+    const hasCases = testCases.length > 0;
+    setIsRunning(true);
+    setOutput('');
+
+    if (language === 'python') {
+      if (!pyodide) { setOutput('Error: Python runtime not loaded yet. Please wait...\n'); setIsRunning(false); return; }
+      // Run code for output
+      try {
+        const fullCode = `
 import sys
 from io import StringIO
 _stdout_buf = StringIO()
@@ -425,50 +453,128 @@ ${code}
 _stdout = _stdout_buf.getvalue()
 _stderr = _stderr_buf.getvalue()
 `;
-      await pyodide.runPythonAsync(fullCode);
-      const stdout = pyodide.globals.get('_stdout');
-      const stderr = pyodide.globals.get('_stderr');
-      let returnValue = '';
-      const lines = code.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
-      const lastLine = lines[lines.length - 1];
-      if (lastLine) {
-        try {
-          const val = await pyodide.runPythonAsync(lastLine);
-          if (val !== undefined && val !== null) returnValue = `\n=> ${val}`;
-        } catch { /* not an expression */ }
+        await pyodide.runPythonAsync(fullCode);
+        const stdout = pyodide.globals.get('_stdout');
+        const stderr = pyodide.globals.get('_stderr');
+        let returnValue = '';
+        const lines = code.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+        const lastLine = lines[lines.length - 1];
+        if (lastLine) {
+          try {
+            const val = await pyodide.runPythonAsync(lastLine);
+            if (val !== undefined && val !== null) returnValue = `\n=> ${val}`;
+          } catch { /* not an expression */ }
+        }
+        let out = '';
+        if (stdout) out += stdout;
+        if (returnValue) out += returnValue;
+        if (stderr) out += 'Error: ' + stderr;
+        setOutput(out || 'Code executed successfully (no output)\n');
+      } catch (error) {
+        setOutput(`Error executing Python code:\n${error?.message || String(error)}\n`);
       }
-      let result = '';
-      if (stdout) result += stdout;
-      if (returnValue) result += returnValue;
-      if (stderr) result += 'Error: ' + stderr;
-      setOutput(result || 'Code executed successfully (no output)\n');
-    } catch (error) {
-      const errorMessage = error?.message || String(error) || 'Unknown error';
-      setOutput(`Error executing Python code:\n${errorMessage}\n`);
-    } finally {
-      setIsRunning(false);
+      // Run test cases
+      if (hasCases) {
+        const results = [];
+        for (const tc of testCases) {
+          let actual = ''; let passed = false;
+          try {
+            await pyodide.runPythonAsync(code);
+            const result = await pyodide.runPythonAsync(tc.input);
+            actual = result === null || result === undefined ? 'None' : String(result);
+            passed = actual.trim() === String(tc.expected).trim();
+          } catch (err) {
+            const rawMsg = err.message || String(err);
+            const firstLine = rawMsg.split('\n').find(l => l.trim()) || rawMsg;
+            actual = firstLine.length > 80 ? firstLine.slice(0, 77) + '...' : firstLine;
+            passed = false;
+          }
+          results.push({ input: tc.input, expected: String(tc.expected), actual, passed });
+        }
+        setTestResults(results);
+        setActiveTab('tests');
+      } else {
+        setActiveTab('output');
+      }
+    } else {
+      // Non-Python: run code via Judge0 for output
+      setActiveTab(hasCases ? 'tests' : 'output');
+      try {
+        const codeToRun = language === 'java' ? wrapJava(code) : code;
+        const result = await executeCode(codeToRun, language);
+        let out = '';
+        if (result.output) out += result.output;
+        if (result.error) out += `Error:\n${result.error}`;
+        setOutput(out || 'Code executed successfully (no output)\n');
+      } catch (err) {
+        setOutput(`Error: ${err.message}\n`);
+      }
+      // Run test cases via Judge0
+      if (hasCases) {
+        const results = [];
+        for (const tc of testCases) {
+          let actual = ''; let passed = false;
+          try {
+            const testCode = buildTestCode(code, tc.input, language);
+            const result = await executeCode(testCode, language);
+            if (result.error) {
+              actual = result.error.split('\n').find(l => l.trim()) || result.error;
+              actual = actual.length > 80 ? actual.slice(0, 77) + '...' : actual;
+            } else {
+              actual = (result.output || '').trim();
+              passed = actual === String(tc.expected).trim();
+            }
+          } catch (err) {
+            actual = err.message;
+          }
+          results.push({ input: tc.input, expected: String(tc.expected), actual, passed });
+        }
+        setTestResults(results);
+      }
     }
+    setIsRunning(false);
   };
 
-  // Run test cases
+  // Run test cases only (used by handleSubmit)
   const runTestCases = async (currentCode) => {
     const testCases = problem.test_cases || [];
-    if (!pyodide || testCases.length === 0) return [];
+    if (testCases.length === 0) return [];
     const results = [];
-    for (const tc of testCases) {
-      let actual = ''; let passed = false;
-      try {
-        await pyodide.runPythonAsync(currentCode);
-        const result = await pyodide.runPythonAsync(tc.input);
-        actual = result === null || result === undefined ? 'None' : String(result);
-        passed = actual.trim() === String(tc.expected).trim();
-      } catch (err) {
-        const rawMsg = err.message || String(err);
-        const firstLine = rawMsg.split('\n').find(l => l.trim()) || rawMsg;
-        actual = firstLine.length > 80 ? firstLine.slice(0, 77) + '...' : firstLine;
-        passed = false;
+    if (language === 'python') {
+      if (!pyodide) return [];
+      for (const tc of testCases) {
+        let actual = ''; let passed = false;
+        try {
+          await pyodide.runPythonAsync(currentCode);
+          const result = await pyodide.runPythonAsync(tc.input);
+          actual = result === null || result === undefined ? 'None' : String(result);
+          passed = actual.trim() === String(tc.expected).trim();
+        } catch (err) {
+          const rawMsg = err.message || String(err);
+          const firstLine = rawMsg.split('\n').find(l => l.trim()) || rawMsg;
+          actual = firstLine.length > 80 ? firstLine.slice(0, 77) + '...' : firstLine;
+          passed = false;
+        }
+        results.push({ input: tc.input, expected: String(tc.expected), actual, passed });
       }
-      results.push({ input: tc.input, expected: String(tc.expected), actual, passed });
+    } else {
+      for (const tc of testCases) {
+        let actual = ''; let passed = false;
+        try {
+          const testCode = buildTestCode(currentCode, tc.input, language);
+          const result = await executeCode(testCode, language);
+          if (result.error) {
+            actual = result.error.split('\n').find(l => l.trim()) || result.error;
+            actual = actual.length > 80 ? actual.slice(0, 77) + '...' : actual;
+          } else {
+            actual = (result.output || '').trim();
+            passed = actual === String(tc.expected).trim();
+          }
+        } catch (err) {
+          actual = err.message;
+        }
+        results.push({ input: tc.input, expected: String(tc.expected), actual, passed });
+      }
     }
     return results;
   };
@@ -495,6 +601,19 @@ _stderr = _stderr_buf.getvalue()
 
   return (
     <div className="app">
+      {suggestionToast !== null && (
+        <div style={{
+          position: 'fixed', top: '16px', right: '16px', zIndex: 9999,
+          padding: '10px 16px', borderRadius: '6px', fontSize: '13px', fontWeight: 600,
+          backgroundColor: suggestionToast ? '#1a3a2a' : '#3a1a1a',
+          border: `1px solid ${suggestionToast ? '#4caf50' : '#f44336'}`,
+          color: suggestionToast ? '#4caf50' : '#f44336',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+          transition: 'opacity 0.2s',
+        }}>
+          {suggestionToast ? '✓ Correct suggestion accepted' : '✗ Incorrect suggestion accepted'}
+        </div>
+      )}
       {showTimesUpModal && (
         <div className="restore-overlay">
           <div className="restore-dialog">
@@ -590,14 +709,9 @@ _stderr = _stderr_buf.getvalue()
               </select>
             </div>
             <div className="editor-actions">
-              <button className="btn btn-run" onClick={handleRunCode} disabled={isRunning || (language === 'python' && pyodideLoading)}>
-                {isRunning ? '⏳ Running...' : language === 'python' && pyodideLoading ? '⏳ Loading Python...' : '▶ Run Code'}
+              <button className="btn btn-run" onClick={handleRun} disabled={isRunning || (language === 'python' && pyodideLoading)}>
+                {isRunning ? '⏳ Running...' : language === 'python' && pyodideLoading ? '⏳ Loading Python...' : '▶ Run'}
               </button>
-              {(problem.test_cases || []).length > 0 && (
-                <button className="btn btn-outline" onClick={async () => { setActiveTab('tests'); const results = await runTestCases(code); setTestResults(results); }} disabled={isRunning || (language === 'python' && pyodideLoading)}>
-                  Run Tests
-                </button>
-              )}
             </div>
           </div>
 
@@ -643,7 +757,7 @@ _stderr = _stderr_buf.getvalue()
               ) : activeTab === 'tests' ? (
                 <div className="suggestion-log">
                   {testResults === null ? (
-                    <p className="log-empty">Click "Run Tests" to run your code against the test cases.</p>
+                    <p className="log-empty">Click "▶ Run" to run your code against the test cases.</p>
                   ) : testResults.length === 0 ? (
                     <p className="log-empty">No test cases available for this problem.</p>
                   ) : (

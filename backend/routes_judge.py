@@ -30,6 +30,11 @@ class CodeExecutionResponse(BaseModel):
 def build_judge0_headers() -> dict[str, str]:
     headers = {"content-type": "application/json"}
 
+    rapidapi_key = os.getenv("JUDGE0_API_KEY")
+    if rapidapi_key:
+        headers["X-RapidAPI-Key"] = rapidapi_key
+        headers["X-RapidAPI-Host"] = "judge0-ce.p.rapidapi.com"
+
     auth_token = os.getenv("JUDGE0_AUTH_TOKEN")
     if auth_token:
         headers["X-Auth-Token"] = auth_token

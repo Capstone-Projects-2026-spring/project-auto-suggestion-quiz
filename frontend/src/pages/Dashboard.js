@@ -319,7 +319,7 @@ function SubmissionsModal({ problem, token, onGraded, onReview, onClose }) {
 
 // ─── Problem Card ─────────────────────────────────────────────────────────────
 
-function ProblemCard({ problem, onShare, onDelete, onEdit, onViewSubmissions }) {
+function ProblemCard({ problem, onShare, onDelete, onViewSubmissions }) {
     const submissionCount = (problem.submissions || []).length;
     const gradedCount = (problem.submissions || []).filter(s => s.grade != null).length;
 
@@ -367,37 +367,32 @@ function ProblemCard({ problem, onShare, onDelete, onEdit, onViewSubmissions }) 
                 </div>
             )}
 
-            <div style={{ display: 'flex', gap: '6px', marginTop: 'auto', paddingTop: '10px', borderTop: '1px solid #333' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: 'auto', paddingTop: '10px', borderTop: '1px solid #333' }}>
                 <button
-                    className="btn btn-outline"
-                    style={{ flex: 1, fontSize: '11px', padding: '4px 8px' }}
+                    className="btn btn-run"
+                    style={{ width: '100%', fontSize: '13px', padding: '8px' }}
                     onClick={() => onViewSubmissions(problem)}
                 >
-                    Submissions
+                    View Submissions
                 </button>
-                <button
-                    className="btn btn-outline"
-                    style={{ flex: 1, fontSize: '11px', padding: '4px 8px' }}
-                    onClick={() => onEdit(problem)}
-                >
-                    Edit
-                </button>
-                <button
-                    className="btn btn-outline"
-                    style={{ flex: 1, fontSize: '11px', padding: '4px 8px' }}
-                    onClick={() => onShare(problem)}
-                >
-                    Share
-                </button>
-                <button
-                    className="btn btn-outline"
-                    style={{ flex: 1, fontSize: '11px', padding: '4px 8px', borderColor: '#3c3c3c', color: '#888' }}
-                    onMouseEnter={(e) => { e.currentTarget.style.color = '#f48771'; e.currentTarget.style.borderColor = '#f48771'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.color = '#888'; e.currentTarget.style.borderColor = '#3c3c3c'; }}
-                    onClick={() => onDelete(problem)}
-                >
-                    Delete
-                </button>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                    <button
+                        className="btn btn-outline"
+                        style={{ flex: 1, fontSize: '11px', padding: '4px 8px' }}
+                        onClick={() => onShare(problem)}
+                    >
+                        Share
+                    </button>
+                    <button
+                        className="btn btn-outline"
+                        style={{ flex: 1, fontSize: '11px', padding: '4px 8px', borderColor: '#3c3c3c', color: '#888' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.color = '#f48771'; e.currentTarget.style.borderColor = '#f48771'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.color = '#888'; e.currentTarget.style.borderColor = '#3c3c3c'; }}
+                        onClick={() => onDelete(problem)}
+                    >
+                        Delete
+                    </button>
+                </div>
             </div>
         </div>
     );
@@ -561,7 +556,6 @@ function Dashboard({ problems = [], problemsLoading = false, problemsError = '',
                                 problem={problem}
                                 onShare={(p) => setShareModal(p)}
                                 onDelete={(p) => setDeleteModal(p)}
-                                onEdit={(p) => setEditModal(p)}
                                 onViewSubmissions={(p) => setSubmissionsModal(p)}
                             />
                         ))}
