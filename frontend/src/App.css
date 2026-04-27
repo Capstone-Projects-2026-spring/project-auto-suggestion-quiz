@@ -1725,6 +1725,26 @@
 }
 .cp-add-section-btn:hover { border-color: #569cd6; color: #569cd6; }
 
+.cp-testcase-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+}
+
+.cp-testcase-fields {
+    flex: 1;
+    display: flex;
+    gap: 12px;
+}
+
+.cp-testcase-fields .form-field {
+    flex: 1;
+}
+
 .cp-compiled-preview {
     margin-top: 20px;
     border: 1px solid #222;

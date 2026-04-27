@@ -23,6 +23,7 @@ class AISuggestionRequest(BaseModel):
 class SingleSuggestion(BaseModel):
     suggestion: str
     explanation: str
+    is_correct: bool = False
 
 
 class AISuggestionResponse(BaseModel):
