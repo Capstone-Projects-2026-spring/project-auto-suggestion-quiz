@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { DIFFICULTY_COLORS } from '../constants';
-import { editProblem, gradeSubmission } from '../api';
+import { gradeSubmission } from '../api';
 
 // ─── Share Modal ──────────────────────────────────────────────────────────────
 
@@ -58,139 +58,6 @@ function DeleteModal({ problem, onConfirm, onClose }) {
                         <button className="btn btn-outline" onClick={onClose}>Cancel</button>
                         <button className="btn btn-danger" onClick={() => onConfirm(problem.id)}>
                             Delete Problem
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-// ─── Edit Modal ───────────────────────────────────────────────────────────────
-
-function EditModal({ problem, token, onSaved, onClose }) {
-    const [title, setTitle] = useState(problem.title);
-    const [description, setDescription] = useState(problem.description);
-    const totalSecs = problem.time_limit_seconds ?? null;
-    const [timeLimitMins, setTimeLimitMins] = useState(totalSecs !== null ? Math.floor(totalSecs / 60) : '');
-    const [timeLimitSecs, setTimeLimitSecs] = useState(totalSecs !== null ? totalSecs % 60 : '');
-    const [maxSubmissions, setMaxSubmissions] = useState(problem.max_attempts ?? '');
-    const [allowCopyPaste, setAllowCopyPaste] = useState(problem.allow_copy_paste);
-    const [trackTabSwitching, setTrackTabSwitching] = useState(problem.track_tab_switching);
-    const [saving, setSaving] = useState(false);
-    const [error, setError] = useState('');
-
-    const handleSave = async () => {
-        if (!title.trim()) { setError('Title is required.'); return; }
-        setSaving(true);
-        setError('');
-        try {
-            const updated = await editProblem(problem.id, {
-                title: title.trim(),
-                description: description.trim(),
-                timeLimitSeconds: (timeLimitMins !== '' || timeLimitSecs !== '')
-                    ? (Number(timeLimitMins || 0) * 60 + Number(timeLimitSecs || 0)) || null
-                    : null,
-                maxSubmissions: maxSubmissions !== '' ? Number(maxSubmissions) : null,
-                allowCopyPaste,
-                trackTabSwitching,
-            }, token);
-            onSaved(updated);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setSaving(false);
-        }
-    };
-
-    return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-card modal-card-wide" onClick={(e) => e.stopPropagation()}>
-                <div className="modal-header">
-                    <span className="modal-title">Edit Problem</span>
-                    <button className="modal-close-btn" onClick={onClose}>×</button>
-                </div>
-                <div className="modal-body">
-                    <div className="form-field">
-                        <label className="form-label">Title</label>
-                        <input
-                            type="text"
-                            className="form-input"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                        />
-                    </div>
-                    <div className="form-field">
-                        <label className="form-label">Description</label>
-                        <textarea
-                            className="form-input form-textarea"
-                            rows={5}
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                        />
-                    </div>
-                    <div style={{ display: 'flex', gap: '16px' }}>
-                        <div className="form-field" style={{ flex: 1 }}>
-                        <label className="form-label">Time Limit</label>
-                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                                <input
-                                    type="number"
-                                    className="form-input"
-                                    placeholder="0"
-                                    value={timeLimitMins}
-                                    min={0}
-                                    style={{ width: '80px' }}
-                                    onChange={(e) => setTimeLimitMins(e.target.value)}
-                                />
-                                <span style={{ color: '#aaa', fontSize: '13px' }}>min</span>
-                                <input
-                                    type="number"
-                                    className="form-input"
-                                    placeholder="0"
-                                    value={timeLimitSecs}
-                                    min={0}
-                                    max={59}
-                                    style={{ width: '72px' }}
-                                    onChange={(e) => setTimeLimitSecs(e.target.value)}
-                                />
-                                <span style={{ color: '#aaa', fontSize: '13px' }}>sec</span>
-                            </div>
-                        </div>
-                        <div className="form-field" style={{ flex: 1 }}>
-                            <label className="form-label">Max Submissions</label>
-                            <input
-                                type="number"
-                                className="form-input"
-                                placeholder="Unlimited"
-                                value={maxSubmissions}
-                                min={1}
-                                onChange={(e) => setMaxSubmissions(e.target.value)}
-                            />
-                        </div>
-                    </div>
-                    <div style={{ display: 'flex', gap: '16px' }}>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#ccc', cursor: 'pointer' }}>
-                            <input
-                                type="checkbox"
-                                checked={allowCopyPaste}
-                                onChange={(e) => setAllowCopyPaste(e.target.checked)}
-                            />
-                            Allow Copy &amp; Paste
-                        </label>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#ccc', cursor: 'pointer' }}>
-                            <input
-                                type="checkbox"
-                                checked={trackTabSwitching}
-                                onChange={(e) => setTrackTabSwitching(e.target.checked)}
-                            />
-                            Track Tab Switching
-                        </label>
-                    </div>
-                    {error && <p className="form-error">{error}</p>}
-                    <div className="modal-actions">
-                        <button className="btn btn-outline" onClick={onClose}>Cancel</button>
-                        <button className="btn btn-run" onClick={handleSave} disabled={saving}>
-                            {saving ? 'Saving...' : 'Save Changes'}
                         </button>
                     </div>
                 </div>
@@ -404,7 +271,6 @@ function Dashboard({ problems = [], problemsLoading = false, problemsError = '',
     const [searchQuery, setSearchQuery] = useState('');
     const [shareModal, setShareModal] = useState(null);
     const [deleteModal, setDeleteModal] = useState(null);
-    const [editModal, setEditModal] = useState(null);
     const [submissionsModal, setSubmissionsModal] = useState(null);
 
     const totalSubmissions = problems.reduce((acc, p) => acc + (p.submissions?.length || 0), 0);
@@ -425,15 +291,6 @@ function Dashboard({ problems = [], problemsLoading = false, problemsError = '',
     const handleConfirmDelete = (problemId) => {
         if (onDeleteProblem) onDeleteProblem(problemId);
         setDeleteModal(null);
-    };
-
-    const handleProblemSaved = (updatedProblem) => {
-        if (onProblemsUpdate) {
-            onProblemsUpdate((prev) =>
-                prev.map((p) => p.id === updatedProblem.id ? updatedProblem : p)
-            );
-        }
-        setEditModal(null);
     };
 
     const handleGraded = (problemId, sessionId, grade) => {
@@ -572,14 +429,6 @@ function Dashboard({ problems = [], problemsLoading = false, problemsError = '',
                     problem={deleteModal}
                     onConfirm={handleConfirmDelete}
                     onClose={() => setDeleteModal(null)}
-                />
-            )}
-            {editModal && (
-                <EditModal
-                    problem={editModal}
-                    token={user?.token}
-                    onSaved={handleProblemSaved}
-                    onClose={() => setEditModal(null)}
                 />
             )}
             {submissionsModal && (
