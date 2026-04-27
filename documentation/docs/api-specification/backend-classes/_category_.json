@@ -1,0 +1,8 @@
+{
+  "label": "Backend Class Reference",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "Javadoc-style reference for every module in the AutoSuggestion Quiz FastAPI backend. Each page covers one source file — its classes, data fields, methods, parameters, return values, and exceptions."
+  }
+}
