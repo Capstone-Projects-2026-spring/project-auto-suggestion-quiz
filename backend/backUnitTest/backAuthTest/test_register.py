@@ -18,7 +18,8 @@ def test_register_success():
     mock_cursor = MagicMock()
     mock_conn = MagicMock()
     mock_conn.cursor.return_value = mock_cursor
-    mock_cursor.fetchone.return_value = None  
+    # First fetchone() for SELECT returns None (email not found), second for INSERT RETURNING id returns {"id": 1}
+    mock_cursor.fetchone.side_effect = [None, {"id": 1}]
     mock_cursor.lastrowid = 1
 
     with patch("routes_auth.get_connection", return_value=mock_conn):
