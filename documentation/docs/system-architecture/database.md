@@ -286,3 +286,4 @@ One row per answered question index for a quiz attempt.
 - **Problem deletion:** Removing a problem may cascade to related rows depending on foreign-key definitions in the database.
 - **Submission limits:** Submitted attempts for a given `student_name` and `problem_id` are counted against `problems.max_attempts`.
 - **Time limit column:** Older databases may still use `time_limit_minutes`; the application can normalize values to `time_limit_seconds` at startup when needed.
+- **Time limit column:** Older databases may still use `time_limit_minutes`; the application can normalize values to `time_limit_seconds` at startup when needed.
