@@ -1,61 +1,222 @@
 ---
-sidebar_position: 3
+sidebar_position: 4
 ---
 
-# CalculatorModel.java
-(generated using [Javadoc to Markdown](https://delight-im.github.io/Javadoc-to-Markdown/))
+# Backend Data Models
 
-## `public class CalculatorModel`
+Reference for the Pydantic request/response models used by the FastAPI backend. These match the schemas in the [interactive API spec](./openapi-spec).
 
-This is the model of this MVC implementation of a calculator. It performs the functions of the calculator and keeps track of what the user has entered.
+## Auth
 
-* **Author:** Tom Bylander
+### `RegisterRequest`
+| Field | Type | Required | Default | Notes |
+|-------|------|----------|---------|-------|
+| `name` | string | ✅ | — | Full name |
+| `email` | string | ✅ | — | Must be unique |
+| `password` | string | ✅ | — | SHA-256 hashed before storage |
+| `role` | string | ❌ | `"teacher"` | One of `teacher`, `admin` |
 
-## `private double displayValue`
+### `LoginRequest`
+| Field | Type | Required |
+|-------|------|----------|
+| `email` | string | ✅ |
+| `password` | string | ✅ |
 
-This is the numeric value of the number the user is entering, or the number that was just calculated.
+### `OtpRequestRequest`
+| Field | Type | Required |
+|-------|------|----------|
+| `email` | string | ✅ |
 
-## `private double internalValue`
+### `OtpVerifyRequest`
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `email` | string | ✅ | |
+| `token` | string | ✅ | 6-digit OTP from email |
 
-This is the previous value entered or calculated.
+### `AuthResponse`
+| Field | Type | Notes |
+|-------|------|-------|
+| `token` | string | JWT valid for 30 days |
+| `user` | `UserResponse` | |
 
-## `private String displayString`
+### `UserResponse`
+| Field | Type |
+|-------|------|
+| `id` | integer |
+| `name` | string |
+| `email` | string |
+| `role` | string |
 
-This is the String corresponding to what the user. is entering
+---
 
-## `private String operation`
+## Problems
 
-This is the last operation entered by the user.
+### `CreateProblemRequest`
+| Field | Type | Required | Default | Notes |
+|-------|------|----------|---------|-------|
+| `title` | string | ✅ | — | |
+| `description` | string | ✅ | — | Student-facing |
+| `languages` | list[string] | ✅ | — | e.g. `["python"]` |
+| `boilerplate` | dict[str, str] | ✅ | — | Language → starter code (usually `""`) |
+| `sections` | list[SectionIn] | ✅ | — | 2–4 logical chunks of the solution |
+| `testCases` | list[TestCaseIn] | ❌ | `[]` | |
+| `timeLimitSeconds` | int \| null | ❌ | `null` | |
+| `maxSubmissions` | int \| null | ❌ | `null` | Per-student cap |
+| `allowCopyPaste` | bool | ❌ | `true` | |
+| `trackTabSwitching` | bool | ❌ | `false` | |
 
-## `private boolean start`
+### `SectionIn`
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `order` | integer | ✅ | 0-based display order |
+| `label` | string | ✅ | Instruction displayed above the code block |
+| `code` | dict[str, str] | ✅ | Language → starter code for this section |
+| `suggestions` | list[SuggestionIn] | ❌ | |
 
-This is true if the next digit entered starts a new value.
+### `SuggestionIn`
+| Field | Type | Required | Default | Notes |
+|-------|------|----------|---------|-------|
+| `type` | string | ✅ | — | `"ai"` or `"manual"` |
+| `isCorrect` | bool | ✅ | — | |
+| `content` | string | ❌ | `""` | Filled by AI generation step when `type = "ai"` |
 
-## `private boolean dot`
+### `TestCaseIn`
+| Field | Type | Notes |
+|-------|------|-------|
+| `input` | string | Valid Python call expression, e.g. `most_frequent([1,2,2])` |
+| `expected` | string | Return value as string, e.g. `"2"` |
+| `explanation` | string | |
 
-This is true if a decimal dot has been entered for the current value.
+### `EditProblemRequest`
+All fields optional — only provided fields are updated.
 
-## `public CalculatorModel()`
+| Field | Type |
+|-------|------|
+| `title` | string |
+| `description` | string |
+| `timeLimitSeconds` | int \| null |
+| `maxSubmissions` | int \| null |
+| `allowCopyPaste` | bool |
+| `trackTabSwitching` | bool |
 
-Initializes the instance variables.
+### `GradeSubmissionRequest`
+| Field | Type | Notes |
+|-------|------|-------|
+| `session_id` | integer | |
+| `grade` | integer | 0–100 inclusive |
 
-## `public String getValue()`
+---
 
-* **Returns:** the String value of what was just calculated
+## Submissions
 
-  or what the user is entering
+### `StartSubmissionRequest`
+| Field | Type | Required |
+|-------|------|----------|
+| `problem_id` | integer | ✅ |
+| `student_name` | string | ✅ |
 
-## `public void update(String text)`
+### `DraftRequest`
+| Field | Type |
+|-------|------|
+| `code` | string |
 
-Updates the values maintained by the calculator based on the button that the user has just clicked.
+### `SubmitRequest`
+| Field | Type | Default |
+|-------|------|---------|
+| `code` | string | (required) |
+| `suggestion_log` | list[SuggestionLogEntry] | `[]` |
+| `tab_switch_log` | list[TabSwitchEntry] | `[]` |
+| `test_results` | list[TestResult] | `[]` |
+| `paste_log` | list[PasteLogEntry] | `[]` |
 
-* **Parameters:** `text` — is the name of the button that the user has just clicked
+### Telemetry entry types
 
-## `public double operationAdd(double rhs, double lhs)`
+**`SuggestionLogEntry`** — records each interaction with a suggestion panel
 
-Operation to add two numbers. <pre> operationAdd(3,2); // should equal 5.0 </pre>
+| Field | Type | Notes |
+|-------|------|-------|
+| `time` | string | ISO 8601 timestamp |
+| `action` | string | e.g. `viewed`, `selected`, `dismissed` |
+| `label` | string | Section label the suggestion belonged to |
 
-* **Parameters:**
-  * `rhs` — `double` representing the right hand side of the operator
-  * `lhs` — `double` representing the left hand side of the operator
-* **Returns:** `double`
+**`TabSwitchEntry`** — records when the student left the browser tab
+
+| Field | Type |
+|-------|------|
+| `time` | string |
+
+**`TestResult`** — result of running one test case client-side
+
+| Field | Type |
+|-------|------|
+| `input` | string |
+| `expected` | string |
+| `actual` | string |
+| `passed` | boolean |
+
+**`PasteLogEntry`** — records paste/cut events in the editor
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `time` | string | |
+| `type` | string | e.g. `paste`, `cut` |
+| `charCount` | integer | |
+| `preview` | string | First few characters of pasted content |
+
+### `FeedbackRequest`
+| Field | Type |
+|-------|------|
+| `feedback` | string |
+
+---
+
+## Quiz
+
+### `QuizSubmitRequest`
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `problem_id` | integer | ✅ | |
+| `language` | string | ✅ | One of `python`, `javascript`, `java`, `c` |
+| `answers` | list[QuizAnswer] | ✅ | |
+| `time_taken_seconds` | int \| null | ❌ | |
+
+### `QuizAnswer`
+| Field | Type |
+|-------|------|
+| `question_index` | integer |
+| `selected_option` | string |
+| `is_correct` | boolean |
+
+---
+
+## AI
+
+### `AISuggestionRequest`
+| Field | Type | Required | Default | Notes |
+|-------|------|----------|---------|-------|
+| `problem_id` | integer | ✅ | — | |
+| `current_code` | string | ✅ | — | Code accumulated from previous sections |
+| `problem_prompt` | string | ✅ | — | Full problem description |
+| `is_correct` | bool | ❌ | `true` | `false` → generate a distractor |
+
+### `AutofillRequest`
+| Field | Type | Notes |
+|-------|------|-------|
+| `raw_text` | string | Minimum 30 characters |
+
+---
+
+## Code Execution
+
+### `CodeExecutionRequest`
+| Field | Type | Required | Default | Notes |
+|-------|------|----------|---------|-------|
+| `code` | string | ✅ | — | Source code to run |
+| `language` | string | ✅ | — | One of `python`, `javascript`, `c`, `java` |
+| `input` | string | ❌ | `""` | stdin passed to the program |
+
+### `CodeExecutionResponse`
+| Field | Type | Notes |
+|-------|------|-------|
+| `output` | string | Program stdout |
+| `error` | string | stderr, compile errors, or Judge0 status |
