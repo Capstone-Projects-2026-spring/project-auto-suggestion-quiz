@@ -338,6 +338,7 @@ sequenceDiagram
     API-->>FE: 403
     FE-->>Student: Limit message
   end
+  FE-->>Student: Final code, grade, feedback fields
 ```
 
 ---
