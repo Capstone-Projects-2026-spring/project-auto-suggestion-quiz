@@ -129,7 +129,9 @@ In Terminal:
 open -a TextEdit "/Users/[Your Computer Name]/Library/Group Containers/group.com.docker/settings-store.json"
 ```
 
-Then replace the file contents with:
+
+Add 'deprecatedCgroupv1: true' at the bottom of the json.
+It should look like this:
 
 ```json
 {
@@ -147,6 +149,13 @@ Then replace the file contents with:
 ```
 
 Reopen Docker, and the app should be able to reach Judge0.
+
+---
+
+## Windows
+
+For Windows user, trying to run the script will prompt a choice between Git Windows and VS Studio Code.
+Pick Git Windows, and do not click "Always run this program". 
 
 ---
 

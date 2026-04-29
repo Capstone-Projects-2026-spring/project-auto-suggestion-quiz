@@ -39,3 +39,24 @@ def test_ai_suggestion_returns_response():
         assert result.suggestions[0].explanation is not None
         assert len(result.suggestions[0].suggestion) > 0
         assert len(result.suggestions[0].explanation) > 0
+
+
+def test_ai_suggestion_incorrect_mode_branch():
+    mock_completion = MagicMock()
+    mock_completion.choices[0].message.content = json.dumps({
+        "suggestions": [
+            {"suggestion": "return a - b", "explanation": "Returns a value"}
+        ]
+    })
+
+    with patch("aiSuggestion.OpenAI") as mock_openai:
+        mock_openai.return_value.chat.completions.create.return_value = mock_completion
+
+        result = aiSuggestion(
+            "def add_numbers(a,b):",
+            "create a function that adds 2 numbers together",
+            False,
+        )
+
+        assert result.suggestions is not None
+        assert len(result.suggestions) == 1

@@ -58,4 +58,5 @@ def test_loginRoute_wrong_password():
             "password": "wrongpassword"
         })
 
-        assert response.status_code #Meaning something went wrong
+        assert response.status_code == 401
+        assert response.json()["detail"] == "Invalid email or password"
