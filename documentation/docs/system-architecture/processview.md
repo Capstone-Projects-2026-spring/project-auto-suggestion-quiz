@@ -4,68 +4,52 @@ sidebar_position: 6
 
 # Process View
 
-The process view describes concurrency, control flow, and the runtime behavior of the system.
+This view describes the runtime flow of login, authoring, solving, autosaving, and submission.
 
----
+## End-to-end runtime flow
 
-## Request Lifecycle
+1. Teacher logs in via OTP (`/auth/otp/request` + `/auth/otp/verify`) or dev bypass in debug.
+2. Teacher creates a problem (`/problems/`) with sections, suggestions, and tests.
+3. Student enters problem access code (`/problems/access/{code}`).
+4. Student session starts/resumes (`/submissions/start`).
+5. Student works in Monaco editor:
+   - AI suggestions requested after idle pauses (`/ai/suggestion`).
+   - Draft autosaved through `PUT /submissions/{id}/draft`.
+   - Python execution runs in-browser via Pyodide.
+   - Other languages run through backend `POST /code/execute`.
+6. Student submits final code + telemetry logs (`POST /submissions/{id}/submit`).
+7. Teacher reviews attempts from `GET /problems/` and can grade (`POST /problems/{problem_id}/grade`).
 
-1. Client sends request to Backend API.
-2. Backend validates authentication and role.
-3. Backend processes request:
-   - For AI requests: asynchronous call to AI service.
-   - For code execution: isolated runner process.
-4. Backend waits for response (non-blocking).
-5. Backend logs event and returns response.
+## Concurrency and state model
 
----
+- FastAPI handles concurrent HTTP requests with independent DB connections per request path.
+- Long-latency operations (OpenAI, Supabase, Judge0) are handled through async HTTP calls.
+- Student attempt state is persisted server-side in `sessions` instead of memory.
+- Draft-based persistence supports interruption recovery (refresh/reopen continues unfinished attempt).
 
-## Concurrency Model
+## Editor interaction loop
 
-- Backend supports concurrent HTTP requests.
-- AI and Code Runner calls are asynchronous.
-- Resource limits prevent blocking.
-- Database transactions ensure consistency.
+```mermaid
+sequenceDiagram
+  participant Student
+  participant FE as Frontend Editor
+  participant API as Backend API
+  participant AI as OpenAI
 
----
-
-## AI Algorithm Overview
-
-The AI Suggestion Engine follows this structured workflow:
-
-1. Receive context:
-   - Problem description
-   - Student's current code
-   - Programming language
-   - Cursor position
-
-2. Generate next-line suggestion using a Large Language Model (LLM).
-
-3. Optionally generate an explanation for the suggestion.
-
-4. If in quiz mode:
-   - Generate 0–2 plausible distractors.
-
-5. Return a structured JSON response to the backend API.
-
-Example JSON structure:
-
-```json
-{
-  "suggestion": "for i in range(n):",
-  "distractors": [
-    "for i in n:",
-    "while i < n:"
-  ],
-  "explanation": "This iterates from 0 to n-1."
-}
+  Student->>FE: Type code
+  FE->>FE: idle timer (~2s)
+  FE->>API: POST /ai/suggestion
+  API->>AI: Build prompt and request suggestions
+  AI-->>API: suggestion payload
+  API-->>FE: suggestions + explanations
+  Student->>FE: Accept/reject suggestion
+  FE->>FE: Append action to local suggestion_log
 ```
 
-**Performance Considerations**
+## Submission process
 
-To maintain low latency and responsiveness:
-
-* Asynchronous API calls are used.
-* Timeout thresholds are enforced.
-* Optional caching may be applied for repeated prompts.
-* AI calls are isolated from core backend logic.
+- Drafts and final submissions are distinct operations:
+  - Draft: mutable, no `submitted_at`.
+  - Submit: writes telemetry JSON and sets `submitted_at = NOW()`.
+- Attempt limits are enforced using existing submitted session counts per student/problem.
+- Grading updates session `score`/`total`, allowing both auto-derived and manual review workflows.
