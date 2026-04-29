@@ -18,7 +18,13 @@ def test_register_success():
     mock_cursor = MagicMock()
     mock_conn = MagicMock()
     mock_conn.cursor.return_value = mock_cursor
+<<<<<<< HEAD:backend/backUnitTest/authTest/test_register.py
     mock_cursor.fetchone.side_effect = [None, {"id": 1}]
+=======
+    # First fetchone() for SELECT returns None (email not found), second for INSERT RETURNING id returns {"id": 1}
+    mock_cursor.fetchone.side_effect = [None, {"id": 1}]
+    mock_cursor.lastrowid = 1
+>>>>>>> 3f46e0b (fixed register test):backend/backUnitTest/backAuthTest/test_register.py
 
     with patch("routes_auth.get_connection", return_value=mock_conn):
         response = client.post("/auth/register", json={
